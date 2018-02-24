@@ -1,0 +1,5 @@
+.key NAME/A
+.bra {
+.ket }
+
+gccv -c -Isys:gnudoom {NAME}

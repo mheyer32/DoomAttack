@@ -1,0 +1,9 @@
+cd amigaasm
+
+asm m_fixedamiga
+asm am_mapamiga
+asm r_engine
+asm analogjoy
+asm clip
+
+cd /

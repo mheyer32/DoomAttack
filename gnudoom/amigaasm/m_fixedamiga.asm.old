@@ -1,0 +1,1565 @@
+	include "DoomFont.i"
+
+	MACHINE 68020
+
+SLOPERANGE=2048
+
+MAXWIDTH=1120
+MAXHEIGHT=832
+
+SCREENWIDTH=320
+SCREENHEIGHT=200
+
+FUZZTABLE=50
+
+
+	SECTION code,CODE
+
+;/*= TextChunky =================================================================*/
+
+;4(sp) = framebuffer; 8(sp) = text; 12(sp) = textlen ; 16(sp) = posx ; 20(sp) = posy;24(sp) = color a;28(sp) = color b
+
+	XDEF	_TextChunky
+	
+_TextChunky:
+	movem.l	d2-d5/a2-a3,-(sp)
+	
+	move.l	24+4(sp),a0
+	move.l	24+20(sp),d0
+	mulu	#SCREENWIDTH,d0
+	add.l	24+16(sp),d0
+	lea		(a0,d0.l),a0		;a0 = ziel
+	
+	move.l	24+8(sp),a1			;a1 = text
+	lea		DoomFontData,a2		;a2 = Font
+	move.l	24+12(sp),d1
+	subq	#1,d1				;d1 = loopcounter
+
+	move.l	24+24(sp),d2		;d2 = FG
+	move.l	24+28(sp),d3		;d3 = BG
+
+.charloop:
+	moveq	#0,d0
+	move.b	(a1)+,d0
+	lea		(a2,d0.w*8),a3		;a3 = Zeichen
+	
+	moveq	#7,d0
+.zeilenloop:
+	moveq	#7,d4
+	
+.pixelloop:
+	move.b	(a3)+,d5
+	beq.s	.bg
+	
+	move.b	d2,(a0)+
+	bra.s	.nextpixel
+	
+.bg:
+	move.b	d3,(a0)+
+	
+.nextpixel:
+	dbf		d4,.pixelloop
+	
+	lea		DOOMFONTWIDTH-8(a3),a3
+	lea		SCREENWIDTH-8(a0),a0
+	dbf		d0,.zeilenloop
+	lea		(-SCREENWIDTH*8)+8(a0),a0
+	dbf		d1,.charloop
+
+	movem.l	(sp)+,d2-d5/a2-a3
+	rts
+
+	
+	
+;/*= Chunky2Planar =================================================================*/
+
+Quelle=11*4+4
+Ziel=11*4+4+4
+bytes=11*4+4+8
+Planes=11*4+4+12
+
+	XDEF	_Chunky2Planar
+	
+_Chunky2Planar:
+	movem.l	d2-d7/a2-a6,-(sp)
+	
+	move.l	Ziel(sp),a1
+	move.l	Quelle(sp),a3
+	move.l	bytes(sp),d0
+	lea		0(a3,d0.l),a3
+	move.l	a3,Quelle(sp)
+	move	d0,d4
+	lsr		#4,d0
+	moveq	#0,d1
+	move	d0,d1
+	add		d1,d1				;(* d1 = Modulo *)
+	subq	#1,d0				;(* d0 = Counter X *)
+	move.l	Planes(sp),d3		;(* d3 = Counter Planes *)
+	lea		0(a1,d1),a1
+	add		d1,d1
+	subq	#1,d3
+
+.Loop1:
+	move.l	Quelle(sp),a3
+	move	d0,d2
+.Loop2:
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	move.b	-(a3),d5
+	ror.l	#1,d5
+	move.b	d5,(a3)
+	swap	d5
+	move	d5,-(a1)
+	dbf		d2,.Loop2
+	add.l	d1,a1
+	dbf		d3,.Loop1
+	movem.l	(sp)+,d2-d7/a2-a6
+	rts
+
+
+;/*= SlopeDiv ======================================================================*/
+
+
+num=4
+den=8
+
+	XDEF	_SlopeDiv
+	
+	CNOP	0,8
+
+_SlopeDiv:
+	move.l		den(sp),d1
+	cmp.l		#512,d1
+	blo.s		.raus
+
+	lsr.l		#8,d1
+	move.l		num(sp),d0
+	lsl.l		#3,d0
+	divul.l		d1,d0:d0
+
+	cmp.l		#SLOPERANGE+1,d0
+	blo.s		.raus2
+
+.raus:
+	move.l		#SLOPERANGE,d0
+.raus2:
+	rts
+
+;/*= FixedMul =====================================================================*/
+
+;/* FRACBITS must be 16!!! */
+
+;	XDEF	_FixedMul
+
+	CNOP	0,8
+		
+_FixedMul:
+	move.l	4(sp),d0
+	move.l	8(sp),d1
+
+	muls.l	d1,d1:d0
+	
+	;// BBBBxxxx.0000AAAA
+	
+	move	d1,d0
+	;// BBBBAAAA
+	
+	swap	d0
+	;// AAAABBBB
+	
+	rts
+	
+;/*= FixedDiv ======================================================================*/
+
+;	XDEF	_FixedDiv
+	
+;	CNOP	0,8
+
+;_FixedDiv:
+;	move.l	4(sp),d0
+;	move.l	8(sp),d1
+
+;	movem.l	d2/d3,-(sp)
+;	move.l	d0,d3
+;	swap	d0
+;	move.w	d0,d2
+;	ext.l	d2
+;	clr.w	d0
+;	tst.l	d1
+;	beq.l	.3
+;	divs.l	d1,d2:d0
+;	bvc.b	.1
+;.3	eor.l	d1,d3
+;	bmi.b	.2
+;	move.l	#$7fffffff,d0
+;	bra.b	.1
+;.2	move.l	#$80000000,d0
+;.1	movem.l	(sp)+,d2/d3
+;	rts
+
+	
+;/*= R_DrawColumn =================================================================*/
+
+	XDEF _R_DrawColumn
+	XDEF _dc_yh
+	XDEF _dc_yl
+	XDEF _dc_x
+	XDEF _dc_iscale
+	XDEF _dc_texturemid
+	XDEF _dc_source
+	XDEF _dc_colormap
+
+	XREF _centery
+
+_dc_yh:				dc.l	0
+_dc_yl:				dc.l	0
+_dc_x:				dc.l	0
+_dc_iscale:			dc.l	0
+_dc_texturemid:		dc.l	0
+_dc_source:			dc.l	0
+_dc_colormap:		dc.l	0
+
+	CNOP	0,8
+
+_R_DrawColumn:
+	
+	; dest=ylookup[dc_yl] 
+	
+	move.l	_dc_yh(pc),d0
+	move.l	_dc_yl(pc),d1	;d1=dc_yl
+	sub.l	d1,d0		;d0=count
+	bmi.s	.raus
+	
+	movem.l	d2-d4/a2,-(sp)
+
+	; dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	move.l	_dc_x(pc),d2
+		
+	move.l	(a0,d1.w*4),a0
+	add.l	(a1,d2.w*4),a0	;a0=dest
+
+	;fracstep = dc_iscale
+	
+	move.l	_dc_iscale(pc),d3	;d3=fracstep
+
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	sub.l	_centery,d1
+	muls.l	d3,d1
+	add.l	_dc_texturemid(pc),d1	;d1=frac
+	
+	move.l	_dc_colormap(pc),a1
+	move.l	_dc_source(pc),a2
+
+	moveq	#0,d2
+	move.l	#SCREENWIDTH,d4
+
+.loop:
+	bfextu	d1{9:7},d2
+	move.b	(a2,d2.w),d2
+	add.l	d3,d1
+	move.b	(a1,d2.w),(a0)
+	add.l	d4,a0
+	dbf		d0,.loop
+
+	movem.l	(sp)+,d2-d4/a2
+.raus:
+	rts
+
+;/*= R_DrawColumn_Check ============================================================*/
+
+	XDEF _R_DrawColumn_Check
+
+	CNOP	0,8
+
+_R_DrawColumn_Check:
+	
+	; dest=ylookup[dc_yl] 
+	
+	move.l	_dc_yh(pc),d0
+	cmp.l	#SCREENHEIGHT,d0
+	bhs.s	.raus
+	move.l	_dc_yl(pc),d1	;d1=dc_yl
+	bmi.s	.raus
+	
+	
+	sub.l	d1,d0		;d0=count
+	bmi.s	.raus
+	
+	movem.l	d2-d4/a2,-(sp)
+
+	; dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	move.l	_dc_x(pc),d2
+	move.l	#SCREENWIDTH,d4
+	cmp.l	d4,d2
+	bhs.s	.done
+	
+	move.l	(a0,d1.w*4),a0
+	add.l	(a1,d2.w*4),a0	;a0=dest
+
+	;fracstep = dc_iscale
+	
+	move.l	_dc_iscale(pc),d3	;d3=fracstep
+
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	sub.l	_centery,d1
+	muls.l	d3,d1
+	add.l	_dc_texturemid(pc),d1	;d1=frac
+	
+	move.l	_dc_colormap(pc),a1
+	move.l	_dc_source(pc),a2
+
+	moveq	#0,d2
+.loop:
+	bfextu	d1{9:7},d2
+	move.b	(a2,d2.w),d2
+	add.l	d3,d1
+	move.b	(a1,d2.w),(a0)
+	add.l	d4,a0
+	dbf		d0,.loop
+.done:
+	movem.l	(sp)+,d2-d4/a2
+.raus:
+	rts
+
+;/*= R_DrawColumnLow ==============================================================*/
+
+	XDEF _R_DrawColumnLow
+
+	CNOP	0,8
+
+_R_DrawColumnLow:
+	
+	; dest=ylookup[dc_yl] 
+	
+	move.l	_dc_yh(pc),d0
+	move.l	_dc_yl(pc),d1	;d1=dc_yl
+	sub.l	d1,d0		;d0=count
+	bmi.s	.raus
+	
+	movem.l	d2-d4/a2,-(sp)
+
+	; dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	move.l	_dc_x(pc),d2
+
+	; dc_x <<= 1
+	add.l	d2,d2
+
+	move.l	(a0,d1.w*4),a0
+	add.l	(a1,d2.w*4),a0	;a0=dest
+
+	;fracstep = dc_iscale
+	
+	move.l	_dc_iscale(pc),d3	;d3=fracstep
+
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	sub.l	_centery,d1
+	muls.l	d3,d1
+	add.l	_dc_texturemid(pc),d1	;d1=frac
+	
+	move.l	_dc_colormap(pc),a1
+	move.l	_dc_source(pc),a2
+
+	move.l	#SCREENWIDTH,d4
+	moveq	#0,d2
+.loop:
+	bfextu	d1{9:7},d2
+	move.b	(a2,d2.w),d2
+	move.b	(a1,d2.w),d2
+	move.b	d2,(a0)
+	add.l	d3,d1
+	move.b	d2,1(a0)
+	add.l	d4,a0
+	dbf		d0,.loop
+
+	movem.l	(sp)+,d2-d4/a2
+.raus:
+	rts
+
+;/*= R_DrawColumnLow_Check =========================================================*/
+
+	XDEF _R_DrawColumnLow_Check
+
+	CNOP	0,8
+
+_R_DrawColumnLow_Check:
+	
+	; dest=ylookup[dc_yl] 
+	
+	move.l	_dc_yh(pc),d0
+	cmp.l	#SCREENHEIGHT,d0
+	bhs.s	.raus
+
+	move.l	_dc_yl(pc),d1	;d1=dc_yl
+	bmi.s	.raus
+
+	sub.l	d1,d0		;d0=count
+	bmi.s	.raus
+	
+	movem.l	d2-d4/a2,-(sp)
+
+	; dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	move.l	_dc_x(pc),d2
+
+	; dc_x <<= 1
+	add.l	d2,d2
+
+	cmp.l	#SCREENWIDTH-1,d2
+	bhs.s	.done
+
+	move.l	(a0,d1.w*4),a0
+	add.l	(a1,d2.w*4),a0	;a0=dest
+
+	;fracstep = dc_iscale
+	
+	move.l	_dc_iscale(pc),d3	;d3=fracstep
+
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	sub.l	_centery,d1
+	muls.l	d3,d1
+	add.l	_dc_texturemid(pc),d1	;d1=frac
+	
+	move.l	_dc_colormap(pc),a1
+	move.l	_dc_source(pc),a2
+
+	moveq	#0,d2
+	move.l	#SCREENWIDTH,d4
+
+.loop:
+	bfextu	d1{9:7},d2
+	move.b	(a2,d2.w),d2
+	move.b	(a1,d2.w),d2
+	move.b	d2,(a0)
+	add.l	d3,d1
+	move.b	d2,1(a0)
+	add.l	d4,a0
+	dbf		d0,.loop
+
+.done:
+	movem.l	(sp)+,d2-d4/a2
+.raus:
+	rts
+	
+
+;/*= R_DrawTranslatedColumn =======================================================*/
+
+	XDEF	_R_DrawTranslatedColumn
+	XDEF	_dc_translation
+
+	CNOP	0,8
+
+_R_DrawTranslatedColumn:
+	
+	; dest=ylookup[dc_yl] 
+	
+	move.l	_dc_yh(pc),d0
+	move.l	_dc_yl(pc),d1	;d1=dc_yl
+	sub.l	d1,d0		;d0=count
+	bmi.s	.raus
+	
+	movem.l	d2-d4/a2-a3,-(sp)
+
+	; dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	move.l	_dc_x(pc),d2
+		
+	move.l	(a0,d1.w*4),a0
+	add.l	(a1,d2.w*4),a0	;a0=dest
+
+	;fracstep = dc_iscale
+	
+	move.l	_dc_iscale(pc),d3	;d3=fracstep
+
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	sub.l	_centery,d1
+	muls.l	d3,d1
+	add.l	_dc_texturemid(pc),d1	;d1=frac
+	
+	move.l	_dc_colormap(pc),a1
+	move.l	_dc_source(pc),a2
+	move.l	_dc_translation(pc),a3
+
+	moveq	#0,d2
+	move.l	#SCREENWIDTH,d4
+
+.loop:
+	bfextu	d1{9:7},d2
+	move.b	(a2,d2.w),d2		;source
+	move.b	(a3,d2.w),d2		;translation
+	add.l	d3,d1
+	move.b	(a1,d2.w),(a0)		;colormap
+	add.l	d4,a0
+	dbf		d0,.loop
+
+	movem.l	(sp)+,d2-d4/a2-a3
+.raus:
+	rts
+
+;/*= R_DrawTranslatedColumn_Check ==================================================*/
+
+	XDEF	_R_DrawTranslatedColumn_Check
+
+	CNOP	0,8
+
+_R_DrawTranslatedColumn_Check:
+	
+	; dest=ylookup[dc_yl] 
+	
+	move.l	_dc_yh(pc),d0
+	cmp.l	#SCREENHEIGHT,d0
+	bhs.s	.raus
+
+	move.l	_dc_yl(pc),d1	;d1=dc_yl
+	bmi.s	.raus
+
+	sub.l	d1,d0		;d0=count
+	bmi.s	.raus
+	
+	movem.l	d2-d4/a2-a3,-(sp)
+
+	; dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	move.l	_dc_x(pc),d2
+	move.l	#SCREENWIDTH,d4
+	cmp.l	d4,d2
+	bhs.s	.done
+
+	move.l	(a0,d1.w*4),a0
+	add.l	(a1,d2.w*4),a0	;a0=dest
+
+	;fracstep = dc_iscale
+	
+	move.l	_dc_iscale(pc),d3	;d3=fracstep
+
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	sub.l	_centery,d1
+	muls.l	d3,d1
+	add.l	_dc_texturemid(pc),d1	;d1=frac
+	
+	move.l	_dc_colormap(pc),a1
+	move.l	_dc_source(pc),a2
+	move.l	_dc_translation(pc),a3
+
+	moveq	#0,d2
+.loop:
+	bfextu	d1{9:7},d2
+	move.b	(a2,d2.w),d2		;source
+	move.b	(a3,d2.w),d2		;translation
+	add.l	d3,d1
+	move.b	(a1,d2.w),(a0)		;colormap
+	add.l	d4,a0
+	dbf		d0,.loop
+
+.done:
+	movem.l	(sp)+,d2-d4/a2-a3
+.raus:
+	rts
+
+;/*= R_DrawTranslatedColumnLow ====================================================*/
+
+	XDEF	_R_DrawTranslatedColumnLow
+
+	CNOP	0,8
+
+_R_DrawTranslatedColumnLow:
+	
+	; dest=ylookup[dc_yl] 
+	
+	move.l	_dc_yh(pc),d0
+	move.l	_dc_yl(pc),d1	;d1=dc_yl
+	sub.l	d1,d0		;d0=count
+	bmi.s	.raus
+	
+	movem.l	d2-d4/a2-a3,-(sp)
+
+	; dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	move.l	_dc_x(pc),d2
+	add.l	d2,d2
+
+	move.l	(a0,d1.w*4),a0
+	add.l	(a1,d2.w*4),a0	;a0=dest
+
+	;fracstep = dc_iscale
+	
+	move.l	_dc_iscale(pc),d3	;d3=fracstep
+
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	sub.l	_centery,d1
+	muls.l	d3,d1
+	add.l	_dc_texturemid(pc),d1	;d1=frac
+	
+	move.l	_dc_colormap(pc),a1
+	move.l	_dc_source(pc),a2
+	move.l	_dc_translation(pc),a3
+
+	moveq	#0,d2
+	move.l	#SCREENWIDTH,d4
+
+.loop:
+	bfextu	d1{9:7},d2
+	move.b	(a2,d2.w),d2		;source
+	move.b	(a3,d2.w),d2		;translation
+	move.b	(a1,d2.w),d2		;colormap
+
+	move.b	d2,(a0)
+
+	add.l	d3,d1
+
+	move.b	d2,1(a0)
+	add.l	d4,a0
+	dbf		d0,.loop
+
+	movem.l	(sp)+,d2-d4/a2-a3
+.raus:
+	rts
+
+;/*= R_DrawTranslatedColumnLow_Check *==============================================*/
+
+	XDEF	_R_DrawTranslatedColumnLow_Check
+
+	CNOP	0,8
+
+_R_DrawTranslatedColumnLow_Check:
+	
+	; dest=ylookup[dc_yl] 
+	
+	move.l	_dc_yh(pc),d0
+	cmp.l	#SCREENHEIGHT,d0
+	bhs.s	.raus
+
+	move.l	_dc_yl(pc),d1	;d1=dc_yl
+	bmi.s	.raus
+
+	sub.l	d1,d0		;d0=count
+	bmi.s	.raus
+	
+	movem.l	d2-d4/a2-a3,-(sp)
+
+	; dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	move.l	_dc_x(pc),d2
+	add.l	d2,d2
+	cmp.l	#SCREENWIDTH-1,d0
+	bhs.s	.done
+
+	move.l	(a0,d1.w*4),a0
+	add.l	(a1,d2.w*4),a0	;a0=dest
+
+	;fracstep = dc_iscale
+	
+	move.l	_dc_iscale(pc),d3	;d3=fracstep
+
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	sub.l	_centery,d1
+	muls.l	d3,d1
+	add.l	_dc_texturemid(pc),d1	;d1=frac
+	
+	move.l	_dc_colormap(pc),a1
+	move.l	_dc_source(pc),a2
+	move.l	_dc_translation(pc),a3
+
+	moveq	#0,d2
+	move.l	#SCREENWIDTH,d4
+
+.loop:
+	bfextu	d1{9:7},d2
+	move.b	(a2,d2.w),d2		;source
+	move.b	(a3,d2.w),d2		;translation
+	move.b	(a1,d2.w),d2		;colormap
+	move.b	d2,(a0)
+	add.l	d3,d1
+	move.b	d2,1(a0)
+	add.l	d4,a0
+	dbf		d0,.loop
+
+.done:
+	movem.l	(sp)+,d2-d4/a2-a3
+.raus:
+	rts
+
+_dc_translation:			dc.l 0
+
+
+;/*= R_DrawFuzzColumn ============================================================*/
+
+	XDEF	_R_DrawFuzzColumn
+	XREF	_fuzzoffset
+	XREF	_colormaps
+
+	CNOP	0,8
+
+_R_DrawFuzzColumn:
+	move.l	d2,-(sp)
+
+    ;/* Adjust borders. Low... */
+    ;if (!dc_yl) dc_yl = 1;
+    
+    move.l	_dc_yl(pc),d1		;d1=dc_yl
+    bne.s	.lowok
+    moveq	#1,d1
+
+.lowok:
+    ;if (dc_yh == viewheight-1) dc_yh = viewheight - 2; 
+
+	move.l	_dc_yh(pc),d2		;d2=dc_yh
+	move.l	_viewheight(pc),d0
+	subq.l	#1,d0
+	cmp.l	d0,d2
+	bne.s	.highok
+	subq.l	#1,d2
+
+
+.highok:
+    ;count = dc_yh - dc_yl; 
+    sub.l	d1,d2				;d2=count
+
+    ;/* Zero length.*/
+    ;if (count < 0) return; 
+	bmi.s	.raus
+	
+	movem.l	a2/d3-d4,-(sp)
+
+    ;/* Does not work with blocky mode.*/
+    ;dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	move.l	(a0,d1.w*4),a0
+    lea		_columnofs(pc),a1
+    move.l	_dc_x(pc),d0
+    add.l	(a1,d0.w*4),a0		;a0=dest
+
+    ;/* Looks familiar.*/
+    ;fracstep = dc_iscale; 
+    
+    ;move.l	dc_iscale(pc),d3	;d3=fracstep
+    
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	;sub.l	_centery,d1
+	;muls.l	d3,d1
+	;add.l	_dc_texturemid(pc),d1	;d1=frac
+
+
+    ;/* Looks like an attempt at dithering,*/
+    ;/*  using the colormap #6 (of 0-31, a bit*/
+    ;/*  brighter than average).*/
+
+	move.l	_colormaps,a1
+	lea		6*256(a1),a1
+	lea		_fuzzoffset,a2
+	move.l	fuzzpos(pc),d1
+	moveq	#0,d3
+	move.l	#SCREENWIDTH,d4
+
+.loop: 
+	;/* Lookup framebuffer, and retrieve*/
+	;/*  a pixel that is either one column*/
+	;/*  left or right of the current one.*/
+	;/* Add index from colormap to index.*/
+	
+	;*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]];
+	
+	move.l	(a2,d1.l*4),d0		;fuzzoffset[fuzzpos];
+	move.b	(a0,d0.l),d3		;dest[..]
+	addq.l	#1,d1
+	move.b	(a1,d3.w),(a0)		;colormaps[..]
+
+	;/* Clamp table lookup index.*/
+	;if (++fuzzpos == FUZZTABLE) 
+	;    fuzzpos = 0;
+	cmp.l	#FUZZTABLE,d1
+	bne.s	.fuzzposok
+	moveq	#0,d1
+
+.fuzzposok:
+	;dest += SCREENWIDTH;
+	add.l	d4,a0
+
+	;frac += fracstep; 
+	;add.l	d3,d1
+
+    ;} while (count--); 
+	dbf		d2,.loop
+	lea		fuzzpos(pc),a2
+	move.l	d1,(a2)
+
+	movem.l	(sp)+,a2/d3-d4
+.raus:
+	move.l	(sp)+,d2
+	rts
+
+;/*= R_DrawFuzzColumn_Check ========================================================*/
+
+	XDEF	_R_DrawFuzzColumn_Check
+
+	CNOP	0,8
+
+_R_DrawFuzzColumn_Check:
+	move.l	d2,-(sp)
+
+    ;/* Adjust borders. Low... */
+    ;if (!dc_yl) dc_yl = 1;
+    
+    move.l	_dc_yl(pc),d1		;d1=dc_yl
+    bmi.s	.raus
+
+    bne.s	.lowok
+    moveq	#1,d1
+
+.lowok:
+    ;if (dc_yh == viewheight-1) dc_yh = viewheight - 2; 
+
+	move.l	_dc_yh(pc),d2		;d2=dc_yh
+	cmp.l	#SCREENHEIGHT,d2
+	bhs.s	.raus
+
+	move.l	_viewheight(pc),d0
+
+	subq.l	#1,d0
+	cmp.l	d0,d2
+	bne.s	.highok
+	subq.l	#1,d2
+
+
+.highok:
+    ;count = dc_yh - dc_yl; 
+    sub.l	d1,d2				;d2=count
+
+    ;/* Zero length.*/
+    ;if (count < 0) return; 
+	bmi.s	.raus
+	
+	movem.l	a2/d3-d4,-(sp)
+
+    ;/* Does not work with blocky mode.*/
+    ;dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	move.l	(a0,d1.w*4),a0
+    lea		_columnofs(pc),a1
+    move.l	_dc_x(pc),d0
+    move.l	#SCREENWIDTH,d4
+    cmp.l	d4,d0
+    bhs.s	.done
+
+    add.l	(a1,d0.w*4),a0		;a0=dest
+
+    ;/* Looks familiar.*/
+    ;fracstep = dc_iscale; 
+    
+    ;move.l	dc_iscale(pc),d3	;d3=fracstep
+    
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	;sub.l	_centery,d1
+	;muls.l	d3,d1
+	;add.l	_dc_texturemid(pc),d1	;d1=frac
+
+
+    ;/* Looks like an attempt at dithering,*/
+    ;/*  using the colormap #6 (of 0-31, a bit*/
+    ;/*  brighter than average).*/
+
+	move.l	_colormaps,a1
+	lea		6*256(a1),a1
+	lea		_fuzzoffset,a2
+	move.l	fuzzpos(pc),d1
+	moveq	#0,d3
+
+.loop: 
+	;/* Lookup framebuffer, and retrieve*/
+	;/*  a pixel that is either one column*/
+	;/*  left or right of the current one.*/
+	;/* Add index from colormap to index.*/
+	
+	;*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]];
+	
+	move.l	(a2,d1.l*4),d0		;fuzzoffset[fuzzpos];
+	move.b	(a0,d0.l),d3		;dest[..]
+	addq.l	#1,d1
+	move.b	(a1,d3.w),(a0)		;colormaps[..]
+
+	;/* Clamp table lookup index.*/
+	;if (++fuzzpos == FUZZTABLE) 
+	;    fuzzpos = 0;
+	cmp.l	#FUZZTABLE,d1
+	bne.s	.fuzzposok
+	moveq	#0,d1
+
+.fuzzposok:
+	;dest += SCREENWIDTH;
+	add.l	d4,a0
+
+	;frac += fracstep; 
+	;add.l	d3,d1
+
+    ;} while (count--); 
+	dbf		d2,.loop
+	lea		fuzzpos(pc),a2
+	move.l	d1,(a2)
+
+.done:
+	movem.l	(sp)+,a2/d3-d4
+.raus:
+	move.l	(sp)+,d2
+	rts
+
+
+;/*= R_DrawFuzzColumnLow =========================================================*/
+
+	XDEF	_R_DrawFuzzColumnLow
+
+	CNOP	0,8
+
+_R_DrawFuzzColumnLow:
+	move.l	d2,-(sp)
+
+    ;/* Adjust borders. Low... */
+    ;if (!dc_yl) dc_yl = 1;
+    
+    move.l	_dc_yl(pc),d1		;d1=dc_yl
+    bne.s	.lowok
+    moveq	#1,d1
+
+.lowok:
+    ;if (dc_yh == viewheight-1) dc_yh = viewheight - 2; 
+
+	move.l	_dc_yh(pc),d2		;d2=dc_yh
+	move.l	_viewheight(pc),d0
+	subq.l	#1,d0
+	cmp.l	d0,d2
+	bne.s	.highok
+	subq.l	#1,d2
+
+
+.highok:
+    ;count = dc_yh - dc_yl; 
+    sub.l	d1,d2				;d2=count
+
+    ;/* Zero length.*/
+    ;if (count < 0) return; 
+	bmi.s	.raus
+	
+	movem.l	a2/d3-d4,-(sp)
+
+    ;/* Does not work with blocky mode.*/
+    ;dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	move.l	(a0,d1.w*4),a0
+    lea		_columnofs(pc),a1
+    move.l	_dc_x(pc),d0
+    add.l	d0,d0
+    add.l	(a1,d0.w*4),a0		;a0=dest
+
+    ;/* Looks familiar.*/
+    ;fracstep = dc_iscale; 
+    
+    ;move.l	dc_iscale(pc),d3	;d3=fracstep
+    
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	;sub.l	_centery,d1
+	;muls.l	d3,d1
+	;add.l	_dc_texturemid(pc),d1	;d1=frac
+
+
+    ;/* Looks like an attempt at dithering,*/
+    ;/*  using the colormap #6 (of 0-31, a bit*/
+    ;/*  brighter than average).*/
+
+	move.l	_colormaps,a1
+	lea		6*256(a1),a1
+	lea		_fuzzoffset,a2
+	move.l	fuzzpos(pc),d1
+	moveq	#0,d3
+	move.l	#SCREENWIDTH,d4
+	
+.loop: 
+	;/* Lookup framebuffer, and retrieve*/
+	;/*  a pixel that is either one column*/
+	;/*  left or right of the current one.*/
+	;/* Add index from colormap to index.*/
+	
+	;*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]];
+	
+	move.l	(a2,d1.l*4),d0		;fuzzoffset[fuzzpos];
+	move.b	(a0,d0.l),d3		;dest[..]
+	move.b	(a1,d3.w),d3		;colormaps[..]
+
+	move.b	d3,(a0)
+	addq.l	#1,d1
+	move.b	d3,1(a0)
+
+	;/* Clamp table lookup index.*/
+	;if (++fuzzpos == FUZZTABLE) 
+	;    fuzzpos = 0;
+
+	cmp.l	#FUZZTABLE,d1
+	bne.s	.fuzzposok
+	moveq	#0,d1
+
+.fuzzposok:
+	;dest += SCREENWIDTH;
+	add.l	d4,a0
+
+	;frac += fracstep; 
+	;add.l	d3,d1
+
+    ;} while (count--); 
+	dbf		d2,.loop
+
+	lea		fuzzpos(pc),a2
+	move.l	d1,(a2)
+
+	movem.l	(sp)+,a2/d3-d4
+.raus:
+	move.l	(sp)+,d2
+	rts
+	
+fuzzpos:		dc.l	0
+
+
+;/*= R_DrawFuzzColumnLow_Check ====================================================*/
+
+	XDEF	_R_DrawFuzzColumnLow_Check
+
+	CNOP	0,8
+
+_R_DrawFuzzColumnLow_Check:
+	move.l	d2,-(sp)
+
+    ;/* Adjust borders. Low... */
+    ;if (!dc_yl) dc_yl = 1;
+    
+    move.l	_dc_yl(pc),d1		;d1=dc_yl
+    bmi.s	.raus
+
+    bne.s	.lowok
+    moveq	#1,d1
+
+.lowok:
+    ;if (dc_yh == viewheight-1) dc_yh = viewheight - 2; 
+
+	move.l	_dc_yh(pc),d2		;d2=dc_yh
+	cmp.l	#SCREENHEIGHT,d2
+	bhs.s	.raus
+
+	move.l	_viewheight(pc),d0
+	subq.l	#1,d0
+	cmp.l	d0,d2
+	bne.s	.highok
+	subq.l	#1,d2
+
+
+.highok:
+    ;count = dc_yh - dc_yl; 
+    sub.l	d1,d2				;d2=count
+
+    ;/* Zero length.*/
+    ;if (count < 0) return; 
+	bmi.s	.raus
+	
+	movem.l	a2/d3-d4,-(sp)
+
+    ;/* Does not work with blocky mode.*/
+    ;dest = ylookup[dc_yl] + columnofs[dc_x];
+
+	lea		_ylookup(pc),a0
+	move.l	(a0,d1.w*4),a0
+    lea		_columnofs(pc),a1
+    move.l	_dc_x(pc),d0
+    add.l	d0,d0
+    cmp.l	#SCREENWIDTH-1,d0
+    bhs.s	.done
+    
+    add.l	(a1,d0.w*4),a0		;a0=dest
+
+    ;/* Looks familiar.*/
+    ;fracstep = dc_iscale; 
+    
+    ;move.l	dc_iscale(pc),d3	;d3=fracstep
+    
+	;frac=dc_texturemid + (dc_yl-centery)*fracstep
+	
+	;sub.l	_centery,d1
+	;muls.l	d3,d1
+	;add.l	_dc_texturemid(pc),d1	;d1=frac
+
+
+    ;/* Looks like an attempt at dithering,*/
+    ;/*  using the colormap #6 (of 0-31, a bit*/
+    ;/*  brighter than average).*/
+
+	move.l	_colormaps,a1
+	lea		6*256(a1),a1
+	lea		_fuzzoffset,a2
+	move.l	fuzzpos(pc),d1
+	moveq	#0,d3
+	move.l	#SCREENWIDTH,d4
+
+.loop: 
+	;/* Lookup framebuffer, and retrieve*/
+	;/*  a pixel that is either one column*/
+	;/*  left or right of the current one.*/
+	;/* Add index from colormap to index.*/
+	
+	;*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]];
+	
+	move.l	(a2,d1.l*4),d0		;fuzzoffset[fuzzpos];
+	move.b	(a0,d0.l),d3		;dest[..]
+	move.b	(a1,d3.w),d3		;colormaps[..]
+
+	move.b	d3,(a0)
+	addq.l	#1,d1
+	move.b	d3,1(a0)
+
+	;/* Clamp table lookup index.*/
+	;if (++fuzzpos == FUZZTABLE) 
+	;    fuzzpos = 0;
+
+	cmp.l	#FUZZTABLE,d1
+	bne.s	.fuzzposok
+	moveq	#0,d1
+
+.fuzzposok:
+	;dest += SCREENWIDTH;
+	add.l	d4,a0
+
+	;frac += fracstep; 
+	;add.l	d3,d1
+
+    ;} while (count--); 
+	dbf		d2,.loop
+
+	lea		fuzzpos(pc),a2
+	move.l	d1,(a2)
+
+.done:
+	movem.l	(sp)+,a2/d3-d4
+.raus:
+	move.l	(sp)+,d2
+	rts
+
+
+;/*= R_DrawSpan ==================================================================*/
+
+	XDEF	_R_DrawSpan
+	XDEF	_ds_y
+	XDEF	_ds_x1
+	XDEF	_ds_x2
+	XDEF	_ds_colormap
+	XDEf	_ds_xfrac
+	XDEF	_ds_yfrac
+	XDEF	_ds_xstep
+	XDEF	_ds_ystep
+	XDEF	_ds_source
+
+	CNOP	0,8
+
+_R_DrawSpan:    
+	movem.l	a2-a3/d2-d7,-(sp)
+
+    ;dest = ylookup[ds_y] + columnofs[ds_x1];
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	
+	move.l	_ds_y(pc),d0
+	move.l	(a0,d0.w*4),a0
+	move.l	_ds_x1(pc),d1			;d1=ds_x1
+	add.l	(a1,d1.w*4),a0			;a0=dest
+	
+
+    ;/* We do not check for zero spans here?*/
+    ;count = ds_x2 - ds_x1; 
+
+	move.l	_ds_x2(pc),d0
+	sub.l	d1,d0					;d0=count
+
+    ;xfrac = ds_xfrac; 
+    move.l	_ds_xfrac(pc),d1		;d1=xfrac
+
+    ;yfrac = ds_yfrac; 
+	move.l	_ds_yfrac(pc),d2		;d2=yfrac
+
+	move.l	_ds_colormap(pc),a1
+	move.l	_ds_source(pc),a2
+	move.l	_ds_xstep(pc),d5		;d5=xstep
+	move.l	#63*64,d7
+	move.l	_ds_ystep(pc),a3		;a3=ystep
+	moveq	#10,d6
+	
+.loop:
+	; (yfrac>>(16-6))&(63*64)
+	move.l	d2,d3
+	asr.l	d6,d3
+	and.l	d7,d3
+	
+	; (xfrac>>16)&63
+	bfextu	d1{10:6},d4
+	add.l	d4,d3
+	
+	; *dest++ = ds_colormap[ds_source[spot]];
+
+	move.b	(a2,d3.l),d4
+
+	;/* Next step in u,v.*/
+	;xfrac += ds_xstep; 	
+	add.l	d5,d1
+
+	;yfrac += ds_ystep;
+	add.l	a3,d2
+
+	move.b	(a1,d4.w),(a0)+
+	
+	
+	dbf		d0,.loop
+
+	movem.l	(sp)+,a2-a3/d2-d7
+	rts
+
+
+_ds_y:						dc.l 0
+_ds_x1:						dc.l 0
+_ds_x2:						dc.l 0
+_ds_colormap:				dc.l 0
+_ds_xfrac:					dc.l 0
+_ds_yfrac:					dc.l 0
+_ds_xstep:					dc.l 0
+_ds_ystep:					dc.l 0
+_ds_source:					dc.l 0
+
+;/*= R_DrawSpan_Check =============================================================*/
+
+	XDEF	_R_DrawSpan_Check
+
+	CNOP	0,8
+
+_R_DrawSpan_Check:
+	movem.l	a2-a3/d2-d7,-(sp)
+
+    ;dest = ylookup[ds_y] + columnofs[ds_x1];
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	
+	move.l	_ds_y(pc),d0
+	cmp.l	#SCREENHEIGHT,d0
+	bhs.s	.raus
+
+	move.l	(a0,d0.w*4),a0
+	move.l	_ds_x1(pc),d1			;d1=ds_x1
+	bmi.s	.raus
+
+	add.l	(a1,d1.w*4),a0			;a0=dest
+	
+
+    ;/* We do not check for zero spans here?*/
+    ;count = ds_x2 - ds_x1; 
+
+	move.l	_ds_x2(pc),d0
+	cmp.l	d1,d0
+	blt.s	.raus
+	cmp.l	#SCREENWIDTH,d0
+	bhs.s	.raus
+	
+	sub.l	d1,d0					;d0=count
+
+    ;xfrac = ds_xfrac; 
+    move.l	_ds_xfrac(pc),d1		;d1=xfrac
+
+    ;yfrac = ds_yfrac; 
+	move.l	_ds_yfrac(pc),d2		;d2=yfrac
+
+	move.l	_ds_colormap(pc),a1
+	move.l	_ds_source(pc),a2
+	move.l	_ds_xstep(pc),d5		;d5=xstep
+	move.l	#63*64,d7
+	move.l	_ds_ystep(pc),a3		;a3=ystep
+	moveq	#10,d6
+
+.loop:
+	; (yfrac>>(16-6))&(63*64)
+	move.l	d2,d3
+	asr.l	d6,d3
+	and.l	d7,d3
+	
+	; (xfrac>>16)&63
+	bfextu	d1{10:6},d4
+	add.l	d4,d3
+	
+	; *dest++ = ds_colormap[ds_source[spot]];
+
+	move.b	(a2,d3.l),d4
+
+	;/* Next step in u,v.*/
+	;xfrac += ds_xstep; 	
+	add.l	d5,d1
+
+	;yfrac += ds_ystep;
+	add.l	a3,d2
+
+	move.b	(a1,d4.w),(a0)+
+	
+	
+	dbf		d0,.loop
+
+.raus:
+	movem.l	(sp)+,a2-a3/d2-d7
+	rts
+
+;/*= R_DrawSpanLow ===============================================================*/
+
+	XDEF	_R_DrawSpanLow
+
+	CNOP	0,8
+
+_R_DrawSpanLow:    
+	movem.l	a2-a3/d2-d7,-(sp)
+
+    ;dest = ylookup[ds_y] + columnofs[ds_x1];
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	
+	move.l	_ds_y(pc),d0
+	move.l	(a0,d0.w*4),a0
+	move.l	_ds_x1(pc),d1			;d1=ds_x1*2
+	add.l	d1,d1
+	add.l	(a1,d1.w*4),a0			;a0=dest
+	
+
+    ;/* We do not check for zero spans here?*/
+    ;count = ds_x2 - ds_x1; 
+
+	move.l	_ds_x2(pc),d0
+	add.l	d0,d0					;ds_x2*2
+	sub.l	d1,d0					;d0=count
+	lsr.l	#1,d0
+
+    ;xfrac = ds_xfrac; 
+    move.l	_ds_xfrac(pc),d1		;d1=xfrac
+
+    ;yfrac = ds_yfrac; 
+	move.l	_ds_yfrac(pc),d2		;d2=yfrac
+
+	move.l	_ds_colormap(pc),a1
+	move.l	_ds_source(pc),a2
+	move.l  #63*64,d7
+	move.l	_ds_xstep(pc),d5		;d5=ds_xstep
+	move.l	_ds_ystep(pc),a3		;a3=ds_ystep
+
+	moveq	#10,d6
+	
+.loop:
+	; (yfrac>>(16-6))&(63*64)
+	move.l	d2,d3
+	asr.l	d6,d3
+	and.l	d7,d3
+	
+	; (xfrac>>16)&63
+	bfextu	d1{10:6},d4
+	add.l	d4,d3
+	
+	; *dest++ = ds_colormap[ds_source[spot]];
+	; *dest++ = ds_colormap[ds_source[spot]];
+
+	move.b	(a2,d3.l),d4
+
+	;/* Next step in u,v.*/
+
+	;xfrac += ds_xstep; 	
+	add.l	d5,d1
+
+	move.b	(a1,d4.w),d4
+	;yfrac += ds_ystep;
+	add.l	a3,d2
+
+	move.b	d4,(a0)+
+	move.b	d4,(a0)+
+	
+	
+	dbf		d0,.loop
+
+	movem.l	(sp)+,a2-a3/d2-d7
+	rts
+
+;/*= R_DrawSpanLow_Check ==========================================================*/
+
+	XDEF	_R_DrawSpanLow_Check
+
+	CNOP	0,8
+
+_R_DrawSpanLow_Check:    
+	movem.l	a2-a3/d2-d7,-(sp)
+
+    ;dest = ylookup[ds_y] + columnofs[ds_x1];
+	lea		_ylookup(pc),a0
+	lea		_columnofs(pc),a1
+	
+	move.l	_ds_y(pc),d0
+	cmp.l	#SCREENHEIGHT,d0
+	bhs.s	.raus
+
+	move.l	(a0,d0.w*4),a0
+	move.l	_ds_x1(pc),d1			;d1=ds_x1*2
+	bmi.s	.raus
+
+	add.l	d1,d1
+	add.l	(a1,d1.w*4),a0			;a0=dest
+	
+
+    ;/* We do not check for zero spans here?*/
+    ;count = ds_x2 - ds_x1; 
+
+	move.l	_ds_x2(pc),d0
+	add.l	d0,d0					;ds_x2*2
+	cmp.l	#SCREENWIDTH-1,d0
+	bhs.s	.raus
+	cmp.l	d1,d0
+	blt.s	.raus
+
+	sub.l	d1,d0					;d0=count
+	lsr.l	#1,d0
+
+    ;xfrac = ds_xfrac; 
+    move.l	_ds_xfrac(pc),d1		;d1=xfrac
+
+    ;yfrac = ds_yfrac; 
+	move.l	_ds_yfrac(pc),d2		;d2=yfrac
+
+	move.l	_ds_colormap(pc),a1
+	move.l	_ds_source(pc),a2
+	move.l  #63*64,d7
+	move.l	_ds_xstep(pc),d5		;d5=ds_xstep
+	move.l	_ds_ystep(pc),a3		;a3=ds_ystep
+	moveq	#10,d6
+
+.loop:
+	; (yfrac>>(16-6))&(63*64)
+	move.l	d2,d3
+	asr.l	d6,d3
+	and.l	d7,d3
+	
+	; (xfrac>>16)&63
+	bfextu	d1{10:6},d4
+	add.l	d4,d3
+	
+	; *dest++ = ds_colormap[ds_source[spot]];
+	; *dest++ = ds_colormap[ds_source[spot]];
+
+	move.b	(a2,d3.l),d4
+
+	;/* Next step in u,v.*/
+
+	;xfrac += ds_xstep; 	
+	add.l	d5,d1
+
+	move.b	(a1,d4.w),d4
+
+	;yfrac += ds_ystep;
+	add.l	a3,d2
+
+	move.b	d4,(a0)+
+	move.b	d4,(a0)+
+	
+	
+	dbf		d0,.loop
+
+.raus:
+	movem.l	(sp)+,a2-a3/d2-d7
+	rts
+
+
+	XDEF	_viewimage
+	XDEF	_viewwidth
+	XDEF	_scaledviewwidth
+	XDEF	_viewheight
+	XDEF	_viewwindowx
+	XDEF	_viewwindowy
+	
+_viewimage:				dc.l 0
+_viewwidth:				dc.l 0
+_scaledviewwidth:		dc.l 0
+_viewheight:			dc.l 0
+_viewwindowx:			dc.l 0
+_viewwindowy:			dc.l 0
+
+	XDEF	_ylookup
+	XDEF	_columnofs
+	
+_ylookup:	blk.l	MAXHEIGHT,0
+_columnofs:	blk.l	MAXWIDTH,0
+
+
+	END
+	

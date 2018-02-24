@@ -1,0 +1,264 @@
+**************************************************************************
+*                                                                        *
+* R_PLANE.C                                                              *
+*                                                                        *
+**************************************************************************
+
+[Variablen]
+
+fixed_t	realyslope[MAXSCREENHEIGHT*3];
+fixed_t *yslope;
+
+
+**************************************************************************
+*                                                                        *
+* R_MAIN.C                                                               *
+*                                                                        *
+**************************************************************************
+
+[R_ExecuteSetViewSize]
+
+	...
+
+	fixed_t dy;
+	int i,n;
+
+	n=viewheight*3;
+
+    /* planes*/
+    for (i=0 ; i<n ; i++)
+    {
+		dy = ((i-(n/2))<<FRACBITS) +FRACUNIT/2;
+		dy = abs(dy);
+		realyslope[i] = FixedDivFast ( (viewwidth<<detailshift)/2*FRACUNIT, dy);
+    }
+
+	yslope=realyslope+viewheight;
+
+	...
+
+	
+[R_RenderPlayerView]
+
+-->8--
+	centery=viewheight/2+(updownangle>>16);
+	centeryfrac=((viewheight/2)<<16)+updownangle;
+	yslope=realyslope+(viewheight)-(updownangle>>16);
+-->8--
+	
+    R_SetupFrame (player);
+
+    /* Clear buffers.*/
+    R_ClearClipSegs ();
+    R_ClearDrawSegs ();
+
+	...
+	
+
+**************************************************************************
+*                                                                        *
+* R_THINGS.C                                                             *
+*                                                                        *
+**************************************************************************
+
+[R_DrawPlayerSprites]
+
+	...
+
+    /* clip to screen bounds*/
+    mfloorclip = screenheightarray;
+    mceilingclip = negonearray;
+    
+-->8-- [damit, die Weapon Grafik nicht mitgescrollt wird]
+
+	 old_centery=centery;
+	 old_centeryfrac=centeryfrac;
+
+	 centery=(viewheight/2);
+	 centeryfrac=centery << FRACBITS;
+
+-->8--
+
+    /* add all active psprites*/
+    for (i=0, psp=viewplayer->psprites;i<NUMPSPRITES;i++,psp++)
+    {
+		if (psp->state) R_DrawPSprite (psp);
+    }
+
+-->8--    
+
+    centery=old_centery;
+    centeryfrac=old_centeryfrac;
+
+-->8--
+
+}
+
+**************************************************************************
+*                                                                        *
+* G_GAME.C                                                               *
+*                                                                        *
+**************************************************************************
+
+[G_BuildTicCmd]
+
+	...
+
+    if (turnheld < SLOWTURNTICS) 
+	tspeed = 2;             /* slow turn */
+    else 
+	tspeed = speed;
+
+-->8--
+
+    if (gamekeydown[key_lookup] || ((gamekeydown[key_look] || mousebuttons[mouseblook] || joybuttons[joyblook]) && (gamekeydown[keyuplook] || (joyymove==joylookup))))
+    {
+    	updownangle += keylookspeed*64*viewheight;
+    	if ((updownangle>>16)>=(viewheight))
+    	{
+    		updownangle=(viewheight)<<16;
+    	}
+   } else if (gamekeydown[key_lookdown] || ((gamekeydown[key_look] || mousebuttons[mouseblook] || joybuttons[joyblook]) && (gamekeydown[keydownlook] || (joyymove==joylookdown))))
+    {
+    	updownangle -= keylookspeed*64*viewheight;
+    	if ((updownangle>>16)<=(-viewheight))
+    	{
+    		updownangle=(-viewheight)<<16;
+    	}
+    } else if (gamekeydown[key_lookcenter])
+    {
+    	updownangle=0;
+    }
+    
+-->8--
+
+	...
+	
+	 if (forward)
+	 {
+	    if (forward > MAXPLMOVE)
+	    { 
+			forward = MAXPLMOVE;
+		 } else if (forward < -MAXPLMOVE) 
+		 {
+			forward = -MAXPLMOVE;
+		 }
+
+-->8--
+
+		 if (autocenterlook && updownangle &&
+		 	  (abs(theconsoleplayer->mo->momx) > FRACUNIT ||
+		 	  abs(theconsoleplayer->mo->momy) > FRACUNIT))
+		 {
+			if (updownangle<0)
+			{
+				updownangle+=keylookspeed*64*viewheight;
+				if (updownangle>0) updownangle=0;
+			} else {
+				updownangle-=keylookspeed*64*viewheight;
+				if (updownangle<0) updownangle=0;
+			}
+		}
+	 }
+
+-->8--
+
+	...
+	
+[G_Responder]
+
+      case ev_mouse: 
+			mousebuttons[0] = ev->data1 & 1; 
+			mousebuttons[1] = ev->data1 & 2; 
+			mousebuttons[2] = ev->data1 & 4; 
+
+			mousex = ev->data2*(mouseSensitivity+5)/10; 
+
+-->8-- [= Mouse Look]
+
+			if (NoMouseRun==2 || gamekeydown[key_look] || mousebuttons[mouseblook])
+			{
+				if (!invertlook)
+				{
+			    	updownangle += ev->data3*mouselookspeed*viewheight;
+			   } else {
+			   	updownangle -= ev->data3*mouselookspeed*viewheight;
+			   }
+		    	if ((updownangle>>16)>=(viewheight))
+		    	{
+		    		updownangle=(viewheight)<<16;
+		    	} else if ((updownangle>>16)<=(-viewheight))
+		    	{
+		    		updownangle=(-viewheight)<<16;
+		    	}
+			} else if (!NoMouseRun)
+			{
+				mousey = ev->data3*(mouseSensitivity+5)/10;
+			}
+			
+-->8--
+	...
+	
+
+**************************************************************************
+*                                                                        *
+* P_MOBJ.C                                                               *
+*                                                                        *
+**************************************************************************
+
+[P_SpawnPlayerMissile]
+
+	...
+
+    /* see which target is to be aimed at*/
+    an = source->angle;
+
+-->8-- [= manuelles Zielen für Missile Launcher, Plasma, BFG9]
+
+	 if (noautoaim && source->type == MT_PLAYER && source->player == theconsoleplayer)
+	 {
+/*		 slope=updownangle*5/(viewheight*4);*/
+		slope = updownangle/((viewwidth<<detailshift)/2);
+
+	 } else {
+
+-->8--
+
+	    slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
+	    if (!linetarget)
+	    {
+			an += 1<<26;
+			slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
+		
+			if (!linetarget)
+			{
+
+	...
+	
+
+**************************************************************************
+*                                                                        *
+* P_PSPR.C                                                               *
+*                                                                        *
+**************************************************************************
+
+[P_BulletSlope]
+
+    angle_t	an;
+    
+-->8-- [= manuelles Zielen für Pistol, Shotgun, Chaingun]
+ 
+	if (noautoaim && mo->type == MT_PLAYER && mo->player == theconsoleplayer)
+	{
+/*		bulletslope = updownangle*5/(viewheight*4);*/
+		bulletslope = updownangle/((viewwidth<<detailshift)/2);
+	} else {
+	
+-->8--
+
+    /* see which target is to be aimed at*/
+    an = mo->angle;
+    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
+
+	...
+	

@@ -1,0 +1,2 @@
+ar r ram:archive $LASTGCCFILE.o
+
