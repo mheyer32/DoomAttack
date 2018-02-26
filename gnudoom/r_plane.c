@@ -23,15 +23,13 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-
-static const char
-rcsid[] = "$Id: r_plane.c,v 1.4 1997/02/03 16:47:55 b1 Exp $";
+static const char rcsid[] = "$Id: r_plane.c,v 1.4 1997/02/03 16:47:55 b1 Exp $";
 
 #include <stdlib.h>
 
 #include "i_system.h"
-#include "z_zone.h"
 #include "w_wad.h"
+#include "z_zone.h"
 
 #include "doomdef.h"
 #include "doomstat.h"
@@ -40,10 +38,8 @@ rcsid[] = "$Id: r_plane.c,v 1.4 1997/02/03 16:47:55 b1 Exp $";
 #include "r_sky.h"
 #include "v_video.h"
 
-
-
-planefunction_t		floorfunc;
-planefunction_t		ceilingfunc;
+planefunction_t floorfunc;
+planefunction_t ceilingfunc;
 
 /**/
 /* opening*/
@@ -54,34 +50,32 @@ planefunction_t		ceilingfunc;
 /* #define MAXVISPLANES	128 */
 
 /*visplane_t		visplanes[MAXVISPLANES];*/
-extern visplane_t	*visplanes;
+extern visplane_t *visplanes;
 
-extern visplane_t*		lastvisplane;
+extern visplane_t *lastvisplane;
 /*visplane_t*		floorplane;
 visplane_t*		ceilingplane;*/
-extern visplane_t*		maxvisplane;		/*exclusive!!*/
-
+extern visplane_t *maxvisplane; /*exclusive!!*/
 
 /* ?*/
-#define MAXOPENINGS	MAXSCREENWIDTH*64
-short			openings[MAXOPENINGS];
-extern short*			lastopening;
-
+#define MAXOPENINGS MAXSCREENWIDTH * 64
+short openings[MAXOPENINGS];
+extern short *lastopening;
 
 /**/
 /* Clip values are the solid pixel bounding the range.*/
 /*  floorclip starts out SCREENHEIGHT*/
 /*  ceilingclip starts out -1*/
 /**/
-short			floorclip[MAXSCREENWIDTH];
-short			ceilingclip[MAXSCREENWIDTH];
+short floorclip[MAXSCREENWIDTH];
+short ceilingclip[MAXSCREENWIDTH];
 
 /**/
 /* spanstart holds the start of a plane span*/
 /* initialized to 0 at start*/
 /**/
-int			spanstart[MAXSCREENHEIGHT];
-int			spanstop[MAXSCREENHEIGHT];
+int spanstart[MAXSCREENHEIGHT];
+int spanstop[MAXSCREENHEIGHT];
 
 /**/
 /* texture mapping*/
@@ -92,16 +86,15 @@ lighttable_t**		planezlight;
 fixed_t			planeheight;
 */
 
-extern fixed_t			basexscale;
-extern fixed_t			baseyscale;
+extern fixed_t basexscale;
+extern fixed_t baseyscale;
 
-
-fixed_t			distscale[MAXSCREENWIDTH];
-fixed_t			realyslope[MAXSCREENHEIGHT*3];
-fixed_t			cachedheight[MAXSCREENHEIGHT];
-fixed_t			cacheddistance[MAXSCREENHEIGHT];
-fixed_t			cachedxstep[MAXSCREENHEIGHT];
-fixed_t			cachedystep[MAXSCREENHEIGHT];
+fixed_t distscale[MAXSCREENWIDTH];
+fixed_t realyslope[MAXSCREENHEIGHT * 3];
+fixed_t cachedheight[MAXSCREENHEIGHT];
+fixed_t cacheddistance[MAXSCREENHEIGHT];
+fixed_t cachedxstep[MAXSCREENHEIGHT];
+fixed_t cachedystep[MAXSCREENHEIGHT];
 
 extern fixed_t *yslope;
 
@@ -116,16 +109,15 @@ void *mymalloc(unsigned long size);
 
 void R_SetupPlanes(void)
 {
-	visplanes = (visplane_t *)mymalloc(maxvisplanes*sizeof(visplane_t));
-	memset(visplanes,0,maxvisplanes*sizeof(visplane_t));
+    visplanes = (visplane_t *)mymalloc(maxvisplanes * sizeof(visplane_t));
+    memset(visplanes, 0, maxvisplanes * sizeof(visplane_t));
 }
 
-void R_InitPlanes (void)
+void R_InitPlanes(void)
 {
-	maxvisplane=&visplanes[maxvisplanes];
-  /* Doh!*/
+    maxvisplane = &visplanes[maxvisplanes];
+    /* Doh!*/
 }
-
 
 /**/
 /* R_MapPlane*/
@@ -151,7 +143,7 @@ void R_MapPlane
     fixed_t	distance;
     fixed_t	length;
     unsigned	index;
-	
+
 #ifdef RANGECHECK
     if (x2 < x1
 	|| x1<0
@@ -208,99 +200,92 @@ void R_MapPlane
 /* R_ClearPlanes*/
 /* At begining of frame.*/
 /**/
-void R_ClearPlanes (void)
+void R_ClearPlanes(void)
 {
-    int		i;
-    angle_t	angle;
-    
+    int i;
+    angle_t angle;
+
     /* opening / clipping determination*/
 
-	__asm __volatile
-	(
-		"lea		_floorclip,a0 \n\t"
-		"lea		_ceilingclip,a1 \n\t"
-		
-		"move.l	_viewwidth,d0 \n\t"
-		"lsr.w	#4,d0 \n\t"			/* / 16 */
-		"sub		#1,d0 \n\t"			/* d0 = loop counter */
-		"move.l	_viewheight,d1 \n\t"
-		"move		d1,d2 \n\t"
-		"swap		d1 \n\t"
-		"move		d2,d1 \n\t"
+    __asm __volatile(
+        "lea		_floorclip,a0 \n\t"
+        "lea		_ceilingclip,a1 \n\t"
 
-		"moveq	#-1,d2 \n"
-		
-		"1: \n\t"
-		"move.l		d1,(a0)+ \n\t"
-		"move.l		d1,(a0)+ \n\t"
-		"move.l		d1,(a0)+ \n\t"
-		"move.l		d1,(a0)+ \n\t"
-		"move.l		d1,(a0)+ \n\t"
-		"move.l		d1,(a0)+ \n\t"
-		"move.l		d1,(a0)+ \n\t"
-		"move.l		d1,(a0)+ \n\t"
+        "move.l	_viewwidth,d0 \n\t"
+        "lsr.w	#4,d0 \n\t"     /* / 16 */
+        "sub		#1,d0 \n\t" /* d0 = loop counter */
+        "move.l	_viewheight,d1 \n\t"
+        "move		d1,d2 \n\t"
+        "swap		d1 \n\t"
+        "move		d2,d1 \n\t"
 
-		"move.l		d2,(a1)+ \n\t"
-		"move.l		d2,(a1)+ \n\t"
-		"move.l		d2,(a1)+ \n\t"
-		"move.l		d2,(a1)+ \n\t"
-		"move.l		d2,(a1)+ \n\t"
-		"move.l		d2,(a1)+ \n\t"
-		"move.l		d2,(a1)+ \n\t"
-		"move.l		d2,(a1)+ \n\t"
-		"dbf		d0,1b"
-		
-		: /* no result */
-		: /* no input */
-		: "a0", "a1", "d0", "d1", "d2", "memory"
-	);
-	
-/*    for (i=0 ; i<viewwidth ; i++)
-    {
-	floorclip[i] = viewheight;
-	ceilingclip[i] = -1;
-    }*/
+        "moveq	#-1,d2 \n"
+
+        "1: \n\t"
+        "move.l		d1,(a0)+ \n\t"
+        "move.l		d1,(a0)+ \n\t"
+        "move.l		d1,(a0)+ \n\t"
+        "move.l		d1,(a0)+ \n\t"
+        "move.l		d1,(a0)+ \n\t"
+        "move.l		d1,(a0)+ \n\t"
+        "move.l		d1,(a0)+ \n\t"
+        "move.l		d1,(a0)+ \n\t"
+
+        "move.l		d2,(a1)+ \n\t"
+        "move.l		d2,(a1)+ \n\t"
+        "move.l		d2,(a1)+ \n\t"
+        "move.l		d2,(a1)+ \n\t"
+        "move.l		d2,(a1)+ \n\t"
+        "move.l		d2,(a1)+ \n\t"
+        "move.l		d2,(a1)+ \n\t"
+        "move.l		d2,(a1)+ \n\t"
+        "dbf		d0,1b"
+
+        : /* no result */
+        : /* no input */
+        : "a0", "a1", "d0", "d1", "d2", "memory");
+
+    /*    for (i=0 ; i<viewwidth ; i++)
+        {
+        floorclip[i] = viewheight;
+        ceilingclip[i] = -1;
+        }*/
 
     lastvisplane = visplanes;
     lastopening = openings;
-    
+
     /* texture calculation*/
-    
-    __asm __volatile
-    (
-    	"lea		_cachedheight,a0 \n\t"
-    	"move.l	_viewheight,d0 \n\t"
-    	"lsr.w	#3,d0 \n\t"			/* / 8 */
-    	"sub		#1,d0 \n"
-    	
-    	"1: clr.l	(a0)+ \n\t"		/* 1 */
-    	"clr.l	(a0)+ \n\t"			/* 2 */
-    	"clr.l	(a0)+ \n\t"			/* 3 */
-    	"clr.l	(a0)+ \n\t"			/* 4 */
-    	"clr.l	(a0)+ \n\t"			/* 5 */
-    	"clr.l	(a0)+ \n\t"			/* 6 */
-    	"clr.l	(a0)+ \n\t"			/* 7 */
-    	"clr.l	(a0)+ \n\t"			/* 8 */
-    	"dbf		d0,1b"
-    	
-    	: /* no result */
-    	: /* no input */
-    	: "a0", "d0", "memory"
-    );
-    
-/*    
-    memset (cachedheight, 0, sizeof(cachedheight));
-*/
+
+    __asm __volatile(
+        "lea		_cachedheight,a0 \n\t"
+        "move.l	_viewheight,d0 \n\t"
+        "lsr.w	#3,d0 \n\t" /* / 8 */
+        "sub		#1,d0 \n"
+
+        "1: clr.l	(a0)+ \n\t" /* 1 */
+        "clr.l	(a0)+ \n\t"     /* 2 */
+        "clr.l	(a0)+ \n\t"     /* 3 */
+        "clr.l	(a0)+ \n\t"     /* 4 */
+        "clr.l	(a0)+ \n\t"     /* 5 */
+        "clr.l	(a0)+ \n\t"     /* 6 */
+        "clr.l	(a0)+ \n\t"     /* 7 */
+        "clr.l	(a0)+ \n\t"     /* 8 */
+        "dbf		d0,1b"
+
+        : /* no result */
+        : /* no input */
+        : "a0", "d0", "memory");
+
+    /*
+        memset (cachedheight, 0, sizeof(cachedheight));
+    */
     /* left to right mapping*/
-    angle = (viewangle-ANG90)>>ANGLETOFINESHIFT;
-	
+    angle = (viewangle - ANG90) >> ANGLETOFINESHIFT;
+
     /* scale will be unit scale at SCREENWIDTH/2 distance*/
-    basexscale = FixedDiv2 (finecosine[angle],centerxfrac);
-    baseyscale = -FixedDiv2 (finesine[angle],centerxfrac);
+    basexscale = FixedDiv2(finecosine[angle], centerxfrac);
+    baseyscale = -FixedDiv2(finesine[angle], centerxfrac);
 }
-
-
-
 
 /**/
 /* R_FindPlane*/
@@ -451,7 +436,6 @@ void R_MakeSpans
 }
 #endif
 
-
 /**/
 /* R_DrawPlanes*/
 /* At the end of each frame.*/
@@ -465,7 +449,7 @@ void R_DrawPlanes (void)
     int			x;
     int			stop;
     int			angle;
-			
+
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
 	I_Error ("R_DrawPlanes: drawsegs overflow (%i)",
@@ -546,4 +530,3 @@ void R_DrawPlanes (void)
     }
 }
 #endif
-

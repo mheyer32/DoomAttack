@@ -23,17 +23,13 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-
 static const char rcsid[] = "$Id: r_main.c,v 1.5 1997/02/03 22:45:12 b1 Exp $";
 
-
-
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
-
-#include "doomdef.h"
 #include "d_net.h"
+#include "doomdef.h"
 
 #include "m_bbox.h"
 
@@ -42,68 +38,64 @@ static const char rcsid[] = "$Id: r_main.c,v 1.5 1997/02/03 22:45:12 b1 Exp $";
 #include "st_stuff.h"
 #include "v_video.h"
 
-
-
 /* Fineangles in the SCREENWIDTH wide window.*/
-#define FIELDOFVIEW		2048	
+#define FIELDOFVIEW 2048
 
-fixed_t updownangle=0;
-fixed_t keylookspeed=1000/64;
+fixed_t updownangle = 0;
+fixed_t keylookspeed = 1000 / 64;
 
-int			viewangleoffset;
+int viewangleoffset;
 
 /* increment every time a check is made*/
-extern int			validcount; /*= 1;		*/
+extern int validcount; /*= 1;		*/
 
+extern lighttable_t* fixedcolormap;
+extern lighttable_t** walllights;
 
-extern lighttable_t*		fixedcolormap;
-extern lighttable_t**	walllights;
+extern int centerx;
+extern int centery;
 
-extern int			centerx;
-extern int			centery;
-
-extern fixed_t			centerxfrac;
-extern fixed_t			centeryfrac;
-extern fixed_t			projection;
+extern fixed_t centerxfrac;
+extern fixed_t centeryfrac;
+extern fixed_t projection;
 
 /* just for profiling purposes*/
-int			framecount;	
+int framecount;
 
-int			sscount;
-int			linecount;
-int			loopcount;
+int sscount;
+int linecount;
+int loopcount;
 
-extern fixed_t			viewx;
-extern fixed_t			viewy;
-extern fixed_t			viewz;
+extern fixed_t viewx;
+extern fixed_t viewy;
+extern fixed_t viewz;
 
-extern angle_t			viewangle;
+extern angle_t viewangle;
 
-extern fixed_t			viewcos;
-extern fixed_t			viewsin;
+extern fixed_t viewcos;
+extern fixed_t viewsin;
 
-player_t*		viewplayer;
+player_t* viewplayer;
 
 /* 0 = high, 1 = low*/
-extern int			detailshift;	
+extern int detailshift;
 
 /**/
 /* precalculated math tables*/
 /**/
-extern angle_t			clipangle;
-extern angle_t	doubleclipangle;
+extern angle_t clipangle;
+extern angle_t doubleclipangle;
 
 /* The viewangletox[viewangle + FINEANGLES/4] lookup*/
 /* maps the visible view angles to screen X coordinates,*/
 /* flattening the arc to a flat projection plane.*/
 /* There will be many angles mapped to the same X. */
-int			viewangletox[FINEANGLES/2];
+int viewangletox[FINEANGLES / 2];
 
 /* The xtoviewangleangle[] table maps a screen pixel*/
 /* to the lowest viewangle that maps back to x ranges*/
 /* from clipangle to -clipangle.*/
-angle_t			xtoviewangle[MAXSCREENWIDTH+1];
-
+angle_t xtoviewangle[MAXSCREENWIDTH + 1];
 
 /* UNUSED.*/
 /* The finetangentgent[angle+FINEANGLES/4] table*/
@@ -113,45 +105,39 @@ angle_t			xtoviewangle[MAXSCREENWIDTH+1];
 
 /* fixed_t		finesine[5*FINEANGLES/4];*/
 /*fixed_t*		finecosine = &finesine[FINEANGLES/4];*/
-extern fixed_t *finecosine;
+extern fixed_t* finecosine;
 
-lighttable_t*		scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
-lighttable_t*		scalelightfixed[MAXLIGHTSCALE];
-lighttable_t*		zlight[LIGHTLEVELS][MAXLIGHTZ];
+lighttable_t* scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
+lighttable_t* scalelightfixed[MAXLIGHTSCALE];
+lighttable_t* zlight[LIGHTLEVELS][MAXLIGHTZ];
 
 /* bumped light from gun blasts*/
-extern int			extralight;			
+extern int extralight;
 
-static boolean	medres;
+static boolean medres;
 
-extern void (*colfunc) (void);
-extern void (*basecolfunc) (void);
-extern void (*fuzzcolfunc) (void);
-extern void (*transcolfunc) (void);
-extern void (*spanfunc) (void);
-
-
+extern void (*colfunc)(void);
+extern void (*basecolfunc)(void);
+extern void (*fuzzcolfunc)(void);
+extern void (*transcolfunc)(void);
+extern void (*spanfunc)(void);
 
 /**/
 /* R_AddPointToBox*/
 /* Expand a given bbox*/
 /* so that it encloses a given point.*/
 /**/
-void R_AddPointToBox
-( int		x,
-  int		y,
-  fixed_t*	box )
+void R_AddPointToBox(int x, int y, fixed_t* box)
 {
-    if (x< box[BOXLEFT])
-	box[BOXLEFT] = x;
-    if (x> box[BOXRIGHT])
-	box[BOXRIGHT] = x;
-    if (y< box[BOXBOTTOM])
-	box[BOXBOTTOM] = y;
-    if (y> box[BOXTOP])
-	box[BOXTOP] = y;
+    if (x < box[BOXLEFT])
+        box[BOXLEFT] = x;
+    if (x > box[BOXRIGHT])
+        box[BOXRIGHT] = x;
+    if (y < box[BOXBOTTOM])
+        box[BOXBOTTOM] = y;
+    if (y > box[BOXTOP])
+        box[BOXTOP] = y;
 }
-
 
 /**/
 /* R_PointOnSide*/
@@ -161,119 +147,104 @@ void R_AddPointToBox
 /**/
 
 #ifdef hallohallohallo
-int R_PointOnSide(fixed_t x,fixed_t	y,node_t* node )
+int R_PointOnSide(fixed_t x, fixed_t y, node_t* node)
 {
-    fixed_t	dx;
-    fixed_t	dy;
-    fixed_t	left;
-    fixed_t	right;
-	
-    if (!node->dx)
-    {
-	if (x <= node->x)
-	    return node->dy > 0;
-	
-	return node->dy < 0;
+    fixed_t dx;
+    fixed_t dy;
+    fixed_t left;
+    fixed_t right;
+
+    if (!node->dx) {
+        if (x <= node->x)
+            return node->dy > 0;
+
+        return node->dy < 0;
     }
-    if (!node->dy)
-    {
-	if (y <= node->y)
-	    return node->dx < 0;
-	
-	return node->dx > 0;
+    if (!node->dy) {
+        if (y <= node->y)
+            return node->dx < 0;
+
+        return node->dx > 0;
     }
-	
+
     dx = (x - node->x);
     dy = (y - node->y);
-	
+
     /* Try to quickly decide by looking at sign bits.*/
-    if ( (node->dy ^ node->dx ^ dx ^ dy)&0x80000000 )
-    {
-	if  ( (node->dy ^ dx) & 0x80000000 )
-	{
-	    /* (left is negative)*/
-	    return 1;
-	}
-	return 0;
+    if ((node->dy ^ node->dx ^ dx ^ dy) & 0x80000000) {
+        if ((node->dy ^ dx) & 0x80000000) {
+            /* (left is negative)*/
+            return 1;
+        }
+        return 0;
     }
 
-    left = FixedMul ( node->dy>>FRACBITS , dx );
-    right = FixedMul ( dy , node->dx>>FRACBITS );
-	
-    if (right < left)
-    {
-	/* front side*/
-	return 0;
+    left = FixedMul(node->dy >> FRACBITS, dx);
+    right = FixedMul(dy, node->dx >> FRACBITS);
+
+    if (right < left) {
+        /* front side*/
+        return 0;
     }
     /* back side*/
-    return 1;			
+    return 1;
 }
 #endif
-
 
 #ifdef hallohallohallo
-int RR_PointOnSegSide
-( fixed_t	x,
-  fixed_t	y,
-  seg_t*	line )
+int RR_PointOnSegSide(fixed_t x, fixed_t y, seg_t* line)
 {
-    fixed_t	lx;
-    fixed_t	ly;
-    fixed_t	ldx;
-    fixed_t	ldy;
-    fixed_t	dx;
-    fixed_t	dy;
-    fixed_t	left;
-    fixed_t	right;
-	
+    fixed_t lx;
+    fixed_t ly;
+    fixed_t ldx;
+    fixed_t ldy;
+    fixed_t dx;
+    fixed_t dy;
+    fixed_t left;
+    fixed_t right;
+
     lx = line->v1->x;
     ly = line->v1->y;
-	
+
     ldx = line->v2->x - lx;
     ldy = line->v2->y - ly;
-	
-    if (!ldx)
-    {
-	if (x <= lx)
-	    return ldy > 0;
-	
-	return ldy < 0;
+
+    if (!ldx) {
+        if (x <= lx)
+            return ldy > 0;
+
+        return ldy < 0;
     }
-    if (!ldy)
-    {
-	if (y <= ly)
-	    return ldx < 0;
-	
-	return ldx > 0;
+    if (!ldy) {
+        if (y <= ly)
+            return ldx < 0;
+
+        return ldx > 0;
     }
-	
+
     dx = (x - lx);
     dy = (y - ly);
-	
+
     /* Try to quickly decide by looking at sign bits.*/
-    if ( (ldy ^ ldx ^ dx ^ dy)&0x80000000 )
-    {
-	if  ( (ldy ^ dx) & 0x80000000 )
-	{
-	    /* (left is negative)*/
-	    return 1;
-	}
-	return 0;
+    if ((ldy ^ ldx ^ dx ^ dy) & 0x80000000) {
+        if ((ldy ^ dx) & 0x80000000) {
+            /* (left is negative)*/
+            return 1;
+        }
+        return 0;
     }
 
-    left = FixedMul ( ldy>>FRACBITS , dx );
-    right = FixedMul ( dy , ldx>>FRACBITS );
-	
-    if (right < left)
-    {
-	/* front side*/
-	return 0;
+    left = FixedMul(ldy >> FRACBITS, dx);
+    right = FixedMul(dy, ldx >> FRACBITS);
+
+    if (right < left) {
+        /* front side*/
+        return 0;
     }
     /* back side*/
-    return 1;			
+    return 1;
 }
 #endif
-
 
 /**/
 /* R_PointToAngle*/
@@ -286,144 +257,112 @@ int RR_PointOnSegSide
 
 /**/
 
-
-
 #ifdef hallohallohallo
-angle_t R_PointToAngle( fixed_t	x,fixed_t	y )
-{	
+angle_t R_PointToAngle(fixed_t x, fixed_t y)
+{
     x -= viewx;
     y -= viewy;
-    
-    if ( (!x) && (!y) )
-	return 0;
 
-    if (x>= 0)
-    {
-	/* x >=0*/
-	if (y>= 0)
-	{
-	    /* y>= 0*/
+    if ((!x) && (!y))
+        return 0;
 
-	    if (x>y)
-	    {
-		/* octant 0*/
-		return tantoangle[ SlopeDiv(y,x)];
-	    }
-	    else
-	    {
-		/* octant 1*/
-		return ANG90-1-tantoangle[ SlopeDiv(x,y)];
-	    }
-	}
-	else
-	{
-	    /* y<0*/
-	    y = -y;
+    if (x >= 0) {
+        /* x >=0*/
+        if (y >= 0) {
+            /* y>= 0*/
 
-	    if (x>y)
-	    {
-		/* octant 8*/
-		return -tantoangle[SlopeDiv(y,x)];
-	    }
-	    else
-	    {
-		/* octant 7*/
-		return ANG270+tantoangle[ SlopeDiv(x,y)];
-	    }
-	}
-    }
-    else
-    {
-	/* x<0*/
-	x = -x;
+            if (x > y) {
+                /* octant 0*/
+                return tantoangle[SlopeDiv(y, x)];
+            } else {
+                /* octant 1*/
+                return ANG90 - 1 - tantoangle[SlopeDiv(x, y)];
+            }
+        } else {
+            /* y<0*/
+            y = -y;
 
-	if (y>= 0)
-	{
-	    /* y>= 0*/
-	    if (x>y)
-	    {
-		/* octant 3*/
-		return ANG180-1-tantoangle[ SlopeDiv(y,x)];
-	    }
-	    else
-	    {
-		/* octant 2*/
-		return ANG90+ tantoangle[ SlopeDiv(x,y)];
-	    }
-	}
-	else
-	{
-	    /* y<0*/
-	    y = -y;
+            if (x > y) {
+                /* octant 8*/
+                return -tantoangle[SlopeDiv(y, x)];
+            } else {
+                /* octant 7*/
+                return ANG270 + tantoangle[SlopeDiv(x, y)];
+            }
+        }
+    } else {
+        /* x<0*/
+        x = -x;
 
-	    if (x>y)
-	    {
-		/* octant 4*/
-		return ANG180+tantoangle[ SlopeDiv(y,x)];
-	    }
-	    else
-	    {
-		 /* octant 5*/
-		return ANG270-1-tantoangle[ SlopeDiv(x,y)];
-	    }
-	}
+        if (y >= 0) {
+            /* y>= 0*/
+            if (x > y) {
+                /* octant 3*/
+                return ANG180 - 1 - tantoangle[SlopeDiv(y, x)];
+            } else {
+                /* octant 2*/
+                return ANG90 + tantoangle[SlopeDiv(x, y)];
+            }
+        } else {
+            /* y<0*/
+            y = -y;
+
+            if (x > y) {
+                /* octant 4*/
+                return ANG180 + tantoangle[SlopeDiv(y, x)];
+            } else {
+                /* octant 5*/
+                return ANG270 - 1 - tantoangle[SlopeDiv(x, y)];
+            }
+        }
     }
     return 0;
 }
 #endif
 
 #ifdef hallohallohallo
-R_PointToAngle2
-( fixed_t	x1,
-  fixed_t	y1,
-  fixed_t	x2,
-  fixed_t	y2 )
-{	
+R_PointToAngle2(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
+{
     viewx = x1;
     viewy = y1;
-    
-    return R_PointToAngle (x2, y2);
+
+    return R_PointToAngle(x2, y2);
 }
 #endif
 
 #ifdef hallohallohallo
-fixed_t R_PointToDist
-( fixed_t	x,
-  fixed_t	y )
+fixed_t R_PointToDist(fixed_t x, fixed_t y)
 {
-    int		angle;
-    fixed_t	dx;
-    fixed_t	dy;
-    fixed_t	temp;
-    fixed_t	dist;
-	
+    int angle;
+    fixed_t dx;
+    fixed_t dy;
+    fixed_t temp;
+    fixed_t dist;
+
     dx = abs(x - viewx);
     dy = abs(y - viewy);
-	
-    if (dy>dx)
-    {
-	temp = dx;
-	dx = dy;
-	dy = temp;
+
+    if (dy > dx) {
+        temp = dx;
+        dx = dy;
+        dy = temp;
     }
-	
-    angle = (tantoangle[ FixedDiv(dy,dx)>>DBITS ]+ANG90) >> ANGLETOFINESHIFT;
+
+    angle = (tantoangle[FixedDiv(dy, dx) >> DBITS] + ANG90) >> ANGLETOFINESHIFT;
 
     /* use as cosine*/
-    dist = FixedDiv2 (dx, finesine[angle] );	
-	
+    dist = FixedDiv2(dx, finesine[angle]);
+
     return dist;
 }
 #endif
 
-
-
 /**/
 /* R_InitPointToAngle*/
 /**/
-void R_InitPointToAngle (void)
+void R_InitPointToAngle(void)
 {
-    /* UNUSED - now getting from tables.c*/
+/* UNUSED - now getting from tables.c*/
 #if 0
     int	i;
     long	t;
@@ -440,7 +379,6 @@ void R_InitPointToAngle (void)
 #endif
 }
 
-
 /**/
 /* R_ScaleFromGlobalAngle*/
 /* Returns the texture mapping scale*/
@@ -450,17 +388,17 @@ void R_InitPointToAngle (void)
 /**/
 
 #ifdef hallohallohallo
-fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
+fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 {
-    fixed_t		scale;
-    int			anglea;
-    int			angleb;
-    int			sinea;
-    int			sineb;
-    fixed_t		num;
-    int			den;
+    fixed_t scale;
+    int anglea;
+    int angleb;
+    int sinea;
+    int sineb;
+    fixed_t num;
+    int den;
 
-    /* UNUSED*/
+/* UNUSED*/
 #if 0
 {
     fixed_t		dist;
@@ -477,38 +415,35 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 }
 #endif
 
-    anglea = ANG90 + (visangle-viewangle);
-    angleb = ANG90 + (visangle-rw_normalangle);
+    anglea = ANG90 + (visangle - viewangle);
+    angleb = ANG90 + (visangle - rw_normalangle);
 
     /* both sines are allways positive*/
-    sinea = finesine[anglea>>ANGLETOFINESHIFT];	
-    sineb = finesine[angleb>>ANGLETOFINESHIFT];
-    num = FixedMul(projection,sineb)<<detailshift;
-    den = FixedMul(rw_distance,sinea);
+    sinea = finesine[anglea >> ANGLETOFINESHIFT];
+    sineb = finesine[angleb >> ANGLETOFINESHIFT];
+    num = FixedMul(projection, sineb) << detailshift;
+    den = FixedMul(rw_distance, sinea);
 
-    if (den > num>>16)
-    {
-	scale = FixedDiv (num, den);
+    if (den > num >> 16) {
+        scale = FixedDiv(num, den);
 
-	if (scale > 64*FRACUNIT)
-	    scale = 64*FRACUNIT;
-	else if (scale < 256)
-	    scale = 256;
-    }
-    else
-	scale = 64*FRACUNIT;
-	
+        if (scale > 64 * FRACUNIT)
+            scale = 64 * FRACUNIT;
+        else if (scale < 256)
+            scale = 256;
+    } else
+        scale = 64 * FRACUNIT;
+
     return scale;
 }
 #endif
 
-
 /**/
 /* R_InitTables*/
 /**/
-void R_InitTables (void)
+void R_InitTables(void)
 {
-    /* UNUSED: now getting from tables.c*/
+/* UNUSED: now getting from tables.c*/
 #if 0
     int		i;
     float	a;
@@ -533,116 +468,102 @@ void R_InitTables (void)
 	finesine[i] = t;
     }
 #endif
-
 }
-
-
 
 /**/
 /* R_InitTextureMapping*/
 /**/
-void R_InitTextureMapping (void)
+void R_InitTextureMapping(void)
 {
-    int			i;
-    int			x;
-    int			t;
-    fixed_t		focallength;
-    
+    int i;
+    int x;
+    int t;
+    fixed_t focallength;
+
     /* Use tangent table to generate viewangletox:*/
     /*  viewangletox will give the next greatest x*/
     /*  after the view angle.*/
     /**/
     /* Calc focallength*/
     /*  so FIELDOFVIEW angles covers SCREENWIDTH.*/
-    focallength = FixedDiv2Fast (centerxfrac,
-			    finetangent[FINEANGLES/4+FIELDOFVIEW/2] );
-	
-    for (i=0 ; i<FINEANGLES/2 ; i++)
-    {
-	if (finetangent[i] > FRACUNIT*2)
-	    t = -1;
-	else if (finetangent[i] < -FRACUNIT*2)
-	    t = viewwidth+1;
-	else
-	{
-	    t = FixedMulFast (finetangent[i], focallength);
-	    t = (centerxfrac - t+FRACUNIT-1)>>FRACBITS;
+    focallength = FixedDiv2Fast(centerxfrac, finetangent[FINEANGLES / 4 + FIELDOFVIEW / 2]);
 
-	    if (t < -1)
-		t = -1;
-	    else if (t>viewwidth+1)
-		t = viewwidth+1;
-	}
-	viewangletox[i] = t;
+    for (i = 0; i < FINEANGLES / 2; i++) {
+        if (finetangent[i] > FRACUNIT * 2)
+            t = -1;
+        else if (finetangent[i] < -FRACUNIT * 2)
+            t = viewwidth + 1;
+        else {
+            t = FixedMulFast(finetangent[i], focallength);
+            t = (centerxfrac - t + FRACUNIT - 1) >> FRACBITS;
+
+            if (t < -1)
+                t = -1;
+            else if (t > viewwidth + 1)
+                t = viewwidth + 1;
+        }
+        viewangletox[i] = t;
     }
-    
+
     /* Scan viewangletox[] to generate xtoviewangle[]:*/
     /*  xtoviewangle will give the smallest view angle*/
     /*  that maps to x.	*/
-    for (x=0;x<=viewwidth;x++)
-    {
-	i = 0;
-	while (viewangletox[i]>x)
-	    i++;
-	xtoviewangle[x] = (i<<ANGLETOFINESHIFT)-ANG90;
+    for (x = 0; x <= viewwidth; x++) {
+        i = 0;
+        while (viewangletox[i] > x)
+            i++;
+        xtoviewangle[x] = (i << ANGLETOFINESHIFT) - ANG90;
     }
-    
+
     /* Take out the fencepost cases from viewangletox.*/
-    for (i=0 ; i<FINEANGLES/2 ; i++)
-    {
-	t = FixedMulFast (finetangent[i], focallength);
-	t = centerx - t;
-	
-	if (viewangletox[i] == -1)
-	    viewangletox[i] = 0;
-	else if (viewangletox[i] == viewwidth+1)
-	    viewangletox[i]  = viewwidth;
+    for (i = 0; i < FINEANGLES / 2; i++) {
+        t = FixedMulFast(finetangent[i], focallength);
+        t = centerx - t;
+
+        if (viewangletox[i] == -1)
+            viewangletox[i] = 0;
+        else if (viewangletox[i] == viewwidth + 1)
+            viewangletox[i] = viewwidth;
     }
-	
+
     clipangle = xtoviewangle[0];
     doubleclipangle = 2 * clipangle;
 }
-
-
 
 /**/
 /* R_InitLightTables*/
 /* Only inits the zlight table,*/
 /*  because the scalelight table changes with view size.*/
 /**/
-#define DISTMAP		2
+#define DISTMAP 2
 
-void R_InitLightTables (void)
+void R_InitLightTables(void)
 {
-    int		i;
-    int		j;
-    int		level;
-    int		startmap; 	
-    int		scale;
-    
+    int i;
+    int j;
+    int level;
+    int startmap;
+    int scale;
+
     /* Calculate the light levels to use*/
     /*  for each level / distance combination.*/
-    for (i=0 ; i< LIGHTLEVELS ; i++)
-    {
-	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
-	for (j=0 ; j<MAXLIGHTZ ; j++)
-	{
-	    scale = FixedDiv2Fast ((SCREENWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
-	    scale >>= LIGHTSCALESHIFT;
-	    level = startmap - scale/DISTMAP;
-	    
-	    if (level < 0)
-		level = 0;
+    for (i = 0; i < LIGHTLEVELS; i++) {
+        startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
+        for (j = 0; j < MAXLIGHTZ; j++) {
+            scale = FixedDiv2Fast((SCREENWIDTH / 2 * FRACUNIT), (j + 1) << LIGHTZSHIFT);
+            scale >>= LIGHTSCALESHIFT;
+            level = startmap - scale / DISTMAP;
 
-	    if (level >= NUMCOLORMAPS)
-		level = NUMCOLORMAPS-1;
+            if (level < 0)
+                level = 0;
 
-	    zlight[i][j] = colormaps + level*256;
-	}
+            if (level >= NUMCOLORMAPS)
+                level = NUMCOLORMAPS - 1;
+
+            zlight[i][j] = colormaps + level * 256;
+        }
     }
 }
-
-
 
 /**/
 /* R_SetViewSize*/
@@ -650,14 +571,11 @@ void R_InitLightTables (void)
 /*  because it might be in the middle of a refresh.*/
 /* The change will take effect next refresh.*/
 /**/
-boolean		setsizeneeded;
-int		setblocks;
-int		setdetail;
+boolean setsizeneeded;
+int setblocks;
+int setdetail;
 
-
-void R_SetViewSize
-( int		blocks,
-  int		detail )
+void R_SetViewSize(int blocks, int detail)
 {
     setsizeneeded = true;
     setblocks = blocks;
@@ -668,20 +586,19 @@ extern int viewwindowy;
 
 static void R_InitYSlope(void)
 {
-	fixed_t dy;
-	int i,n;
+    fixed_t dy;
+    int i, n;
 
-	n=viewheight*3;
+    n = viewheight * 3;
 
     /* planes*/
-    for (i=0 ; i<n ; i++)
-    {
-		dy = ((i-(n/2))<<FRACBITS) +FRACUNIT/2;
-		dy = abs(dy);
-		realyslope[i] = FixedDivFast ( (viewwidth<<detailshift)/2*FRACUNIT, dy);
+    for (i = 0; i < n; i++) {
+        dy = ((i - (n / 2)) << FRACBITS) + FRACUNIT / 2;
+        dy = abs(dy);
+        realyslope[i] = FixedDivFast((viewwidth << detailshift) / 2 * FRACUNIT, dy);
     }
 
-	yslope=realyslope+viewheight;
+    yslope = realyslope + viewheight;
 }
 
 /**/
@@ -693,178 +610,160 @@ extern int cputype;
 
 int skystretch;
 
-void R_ExecuteSetViewSize (void)
+void R_ExecuteSetViewSize(void)
 {
-    fixed_t	cosadj;
-    fixed_t	dy;
-    int		i;
-    int		j;
-    int		level;
-    int		startmap,oldviewheight=viewheight; 	
+    fixed_t cosadj;
+    fixed_t dy;
+    int i;
+    int j;
+    int level;
+    int startmap, oldviewheight = viewheight;
 
     setsizeneeded = false;
 
-    if (setblocks == 11)
-    {
-		scaledviewwidth = REALSCREENWIDTH;
-		viewheight = REALSCREENHEIGHT;
-    }
-    else
-    {
-		scaledviewwidth = setblocks*32*(REALSCREENWIDTH/SCREENWIDTH);
-	
-		#ifndef mc68060
-		/*	viewheight = (setblocks*168/10)&~7;*/
-		viewheight = (setblocks * (REALSCREENHEIGHT - (medres ? ST_HEIGHT * 2 : ST_HEIGHT)) / 10) & (~7);
-		#else
-		/*	viewheight = (LongDiv(setblocks*168,10))&~7;*/
-		viewheight = (setblocks * (REALSCREENHEIGHT - (medres ? ST_HEIGHT * 2 : ST_HEIGHT)) / 10) & (~7);
-		#endif
-	
-    }
-    
-    detailshift = setdetail;
-    if (medres) detailshift=1;
+    if (setblocks == 11) {
+        scaledviewwidth = REALSCREENWIDTH;
+        viewheight = REALSCREENHEIGHT;
+    } else {
+        scaledviewwidth = setblocks * 32 * (REALSCREENWIDTH / SCREENWIDTH);
 
-    viewwidth = medres ? scaledviewwidth : scaledviewwidth>>detailshift;
-	
-	
-	if (updownangle)
-	{
-		updownangle=updownangle/oldviewheight*viewheight;
-	}
-	/* hallohallohallo */
-    centery = viewheight/2;
-    centerx = viewwidth/2;
-    centerxfrac = centerx<<FRACBITS;
-    centeryfrac = centery<<FRACBITS;
+#ifndef mc68060
+        /*	viewheight = (setblocks*168/10)&~7;*/
+        viewheight = (setblocks * (REALSCREENHEIGHT - (medres ? ST_HEIGHT * 2 : ST_HEIGHT)) / 10) & (~7);
+#else
+        /*	viewheight = (LongDiv(setblocks*168,10))&~7;*/
+        viewheight = (setblocks * (REALSCREENHEIGHT - (medres ? ST_HEIGHT * 2 : ST_HEIGHT)) / 10) & (~7);
+#endif
+    }
+
+    detailshift = setdetail;
+    if (medres)
+        detailshift = 1;
+
+    viewwidth = medres ? scaledviewwidth : scaledviewwidth >> detailshift;
+
+    if (updownangle) {
+        updownangle = updownangle / oldviewheight * viewheight;
+    }
+    /* hallohallohallo */
+    centery = viewheight / 2;
+    centerx = viewwidth / 2;
+    centerxfrac = centerx << FRACBITS;
+    centeryfrac = centery << FRACBITS;
     projection = centerxfrac;
 
-    if (!detailshift || medres)
-    {
-    	if (NoRangeCheck)
-    	{
-			colfunc = basecolfunc = (cputype != 68060 ? R_DrawColumn : R_DrawColumn_060);
-			fuzzcolfunc = R_DrawFuzzColumn;
-			transcolfunc = R_DrawTranslatedColumn;
-			spanfunc = (cputype != 68060 ? R_DrawSpan : R_DrawSpan_060);
-		} else {
-			colfunc = basecolfunc = (cputype != 68060 ? R_DrawColumn_Check : R_DrawColumn_060_Check);
-			fuzzcolfunc = R_DrawFuzzColumn_Check;
-			transcolfunc = R_DrawTranslatedColumn_Check;
-			spanfunc = (cputype != 68060 ? R_DrawSpan_Check : R_DrawSpan_060_Check);
-		}
-    }
-    else
-    {
-    	if (NoRangeCheck)
-    	{
-			colfunc = basecolfunc = R_DrawColumnLow;
-			fuzzcolfunc = R_DrawFuzzColumnLow;
-			transcolfunc = R_DrawTranslatedColumnLow;
-			spanfunc = R_DrawSpanLow;
-		} else {
-			colfunc = basecolfunc = R_DrawColumnLow_Check;
-			fuzzcolfunc = R_DrawFuzzColumnLow_Check;
-			transcolfunc = R_DrawTranslatedColumnLow_Check;
-			spanfunc = R_DrawSpanLow_Check;
-		}
+    if (!detailshift || medres) {
+        if (NoRangeCheck) {
+            colfunc = basecolfunc = (cputype != 68060 ? R_DrawColumn : R_DrawColumn_060);
+            fuzzcolfunc = R_DrawFuzzColumn;
+            transcolfunc = R_DrawTranslatedColumn;
+            spanfunc = (cputype != 68060 ? R_DrawSpan : R_DrawSpan_060);
+        } else {
+            colfunc = basecolfunc = (cputype != 68060 ? R_DrawColumn_Check : R_DrawColumn_060_Check);
+            fuzzcolfunc = R_DrawFuzzColumn_Check;
+            transcolfunc = R_DrawTranslatedColumn_Check;
+            spanfunc = (cputype != 68060 ? R_DrawSpan_Check : R_DrawSpan_060_Check);
+        }
+    } else {
+        if (NoRangeCheck) {
+            colfunc = basecolfunc = R_DrawColumnLow;
+            fuzzcolfunc = R_DrawFuzzColumnLow;
+            transcolfunc = R_DrawTranslatedColumnLow;
+            spanfunc = R_DrawSpanLow;
+        } else {
+            colfunc = basecolfunc = R_DrawColumnLow_Check;
+            fuzzcolfunc = R_DrawFuzzColumnLow_Check;
+            transcolfunc = R_DrawTranslatedColumnLow_Check;
+            spanfunc = R_DrawSpanLow_Check;
+        }
     }
 
-    R_InitBuffer (scaledviewwidth, viewheight);
-	
-    R_InitTextureMapping ();
-    
-    /* psprite scales*/
+    R_InitBuffer(scaledviewwidth, viewheight);
+
+    R_InitTextureMapping();
+
+/* psprite scales*/
 #ifndef mc68060
-    pspritescale = FRACUNIT*viewwidth/SCREENWIDTH;
-    pspriteiscale = FRACUNIT*SCREENWIDTH/viewwidth;
-    
-/*    pspriteiscale2 = FRACUNIT*200/viewheight;*/
-	 skyspriteiscale = (pspriteiscale/skystretch)>>detailshift;
+    pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
+    pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
+
+    /*    pspriteiscale2 = FRACUNIT*200/viewheight;*/
+    skyspriteiscale = (pspriteiscale / skystretch) >> detailshift;
 
 #else
-    pspritescale = LongDiv(FRACUNIT*viewwidth,SCREENWIDTH);
-    pspriteiscale = LongDiv(FRACUNIT*SCREENWIDTH,viewwidth);
-    
-    pspriteiscale2= FRACUNIT*200/viewheight;
+    pspritescale = LongDiv(FRACUNIT * viewwidth, SCREENWIDTH);
+    pspriteiscale = LongDiv(FRACUNIT * SCREENWIDTH, viewwidth);
+
+    pspriteiscale2 = FRACUNIT * 200 / viewheight;
 #endif
 
     /* thing clipping*/
-    for (i=0 ; i<viewwidth ; i++)
-	screenheightarray[i] = viewheight;
-    
-	R_InitYSlope();
-		
-    for (i=0 ; i<viewwidth ; i++)
-    {
-	cosadj = abs(finecosine[xtoviewangle[i]>>ANGLETOFINESHIFT]);
-	distscale[i] = FixedDiv2Fast (FRACUNIT,cosadj);
+    for (i = 0; i < viewwidth; i++)
+        screenheightarray[i] = viewheight;
+
+    R_InitYSlope();
+
+    for (i = 0; i < viewwidth; i++) {
+        cosadj = abs(finecosine[xtoviewangle[i] >> ANGLETOFINESHIFT]);
+        distscale[i] = FixedDiv2Fast(FRACUNIT, cosadj);
     }
-     
+
     /* Calculate the light levels to use*/
     /*  for each level / scale combination.*/
-    for (i=0 ; i< LIGHTLEVELS ; i++)
-    {
-		startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
-		for (j=0 ; j<MAXLIGHTSCALE ; j++)
-		{
-			#ifndef kiste68060
-		    level = startmap - j*SCREENWIDTH/(viewwidth<<detailshift)/DISTMAP;
-			#else
-		    level = startmap - LongDiv(LongDiv(j*SCREENWIDTH,(viewwidth<<detailshift)),DISTMAP);
-			#endif	    
-		    if (level < 0)
-			level = 0;
-	
-		    if (level >= NUMCOLORMAPS)
-			level = NUMCOLORMAPS-1;
-	
-		    scalelight[i][j] = colormaps + level*256;
-		}
+    for (i = 0; i < LIGHTLEVELS; i++) {
+        startmap = ((LIGHTLEVELS - 1 - i) * 2) * NUMCOLORMAPS / LIGHTLEVELS;
+        for (j = 0; j < MAXLIGHTSCALE; j++) {
+#ifndef kiste68060
+            level = startmap - j * SCREENWIDTH / (viewwidth << detailshift) / DISTMAP;
+#else
+            level = startmap - LongDiv(LongDiv(j * SCREENWIDTH, (viewwidth << detailshift)), DISTMAP);
+#endif
+            if (level < 0)
+                level = 0;
+
+            if (level >= NUMCOLORMAPS)
+                level = NUMCOLORMAPS - 1;
+
+            scalelight[i][j] = colormaps + level * 256;
+        }
     }
 }
-
-
 
 /**/
 /* R_Init*/
 /**/
-extern int	detailLevel;
-extern int	screenblocks;
+extern int detailLevel;
+extern int screenblocks;
 
-
-
-void R_Init (void)
+void R_Init(void)
 {
-	 medres=MEDRES;
+    medres = MEDRES;
 
-	 R_PatchEngine();
+    R_PatchEngine();
 
-    R_InitData ();
-    printf ("\nR_InitData");
-    R_InitPointToAngle ();
-    printf ("\nR_InitPointToAngle");
-    R_InitTables ();
+    R_InitData();
+    printf("\nR_InitData");
+    R_InitPointToAngle();
+    printf("\nR_InitPointToAngle");
+    R_InitTables();
     /* viewwidth / viewheight / detailLevel are set by the defaults*/
-    printf ("\nR_InitTables");
+    printf("\nR_InitTables");
 
-    R_SetViewSize (screenblocks, detailLevel);
+    R_SetViewSize(screenblocks, detailLevel);
     R_SetupPlanes();
     R_InitPlanes();
-    printf ("\nR_InitPlanes");
-    R_InitLightTables ();
-    printf ("\nR_InitLightTables");
-    R_InitSkyMap ();
-    printf ("\nR_InitSkyMap");
-    R_InitTranslationTables ();
-    printf ("\nR_InitTranslationsTables");
+    printf("\nR_InitPlanes");
+    R_InitLightTables();
+    printf("\nR_InitLightTables");
+    R_InitSkyMap();
+    printf("\nR_InitSkyMap");
+    R_InitTranslationTables();
+    printf("\nR_InitTranslationsTables");
     R_InitBSP();
     printf("\nR_InitBSP");
-	
+
     framecount = 0;
 }
-
 
 /**/
 /* R_PointInSubsector*/
@@ -893,16 +792,15 @@ subsector_t* R_PointInSubsector
 	
     return &subsectors[nodenum & ~NF_SUBSECTOR];
 }
-#endif 
-
+#endif
 
 /**/
 /* R_SetupFrame*/
 /**/
-void R_SetupFrame (player_t* player)
-{		
-    int		i;
-    
+void R_SetupFrame(player_t* player)
+{
+    int i;
+
     viewplayer = player;
     viewx = player->mo->x;
     viewy = player->mo->y;
@@ -910,70 +808,63 @@ void R_SetupFrame (player_t* player)
     extralight = player->extralight;
 
     viewz = player->viewz;
-    
-    viewsin = finesine[viewangle>>ANGLETOFINESHIFT];
-    viewcos = finecosine[viewangle>>ANGLETOFINESHIFT];
-	
-    sscount = 0;
-	
-    if (player->fixedcolormap)
-    {
-	fixedcolormap =
-	    colormaps
-	    + player->fixedcolormap*256*sizeof(lighttable_t);
-	
-	walllights = scalelightfixed;
 
-	for (i=0 ; i<MAXLIGHTSCALE ; i++)
-	    scalelightfixed[i] = fixedcolormap;
-    }
-    else
-	fixedcolormap = 0;
-		
+    viewsin = finesine[viewangle >> ANGLETOFINESHIFT];
+    viewcos = finecosine[viewangle >> ANGLETOFINESHIFT];
+
+    sscount = 0;
+
+    if (player->fixedcolormap) {
+        fixedcolormap = colormaps + player->fixedcolormap * 256 * sizeof(lighttable_t);
+
+        walllights = scalelightfixed;
+
+        for (i = 0; i < MAXLIGHTSCALE; i++)
+            scalelightfixed[i] = fixedcolormap;
+    } else
+        fixedcolormap = 0;
+
     framecount++;
     validcount++;
 }
-
-
 
 /**/
 /* R_RenderView*/
 /**/
 
-extern byte *screens[];
+extern byte* screens[];
 
-void R_RenderPlayerView (player_t* player)
-{	
-	centery=viewheight/2+(updownangle>>16);
-	centeryfrac=((viewheight/2)<<16)+updownangle;
-	yslope=realyslope+(viewheight)-(updownangle>>16);
-	
-    R_SetupFrame (player);
+void R_RenderPlayerView(player_t* player)
+{
+    centery = viewheight / 2 + (updownangle >> 16);
+    centeryfrac = ((viewheight / 2) << 16) + updownangle;
+    yslope = realyslope + (viewheight) - (updownangle >> 16);
+
+    R_SetupFrame(player);
 
     /* Clear buffers.*/
-    R_ClearClipSegs ();
-    R_ClearDrawSegs ();
-    R_ClearPlanes ();
-    R_ClearSprites ();
-    
+    R_ClearClipSegs();
+    R_ClearDrawSegs();
+    R_ClearPlanes();
+    R_ClearSprites();
+
     /* check for new console commands.*/
-    NetUpdate ();
-	 
+    NetUpdate();
+
     /* The head node is the last node output.*/
-    R_RenderBSPNode (numnodes-1);
-    
-    /* Check for new console commands.*/
-    NetUpdate ();
-    
-    R_DrawPlanes ();
-    
-    /* Check for new console commands.*/
-    NetUpdate ();
-    
-    R_DrawMasked ();
+    R_RenderBSPNode(numnodes - 1);
 
-	 R_DrawCrossHair();
     /* Check for new console commands.*/
-    NetUpdate ();				
+    NetUpdate();
+
+    R_DrawPlanes();
+
+    /* Check for new console commands.*/
+    NetUpdate();
+
+    R_DrawMasked();
+
+    R_DrawCrossHair();
+    /* Check for new console commands.*/
+    NetUpdate();
 }
-

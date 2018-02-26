@@ -32,11 +32,8 @@
 /*    */
 /*-----------------------------------------------------------------------------*/
 
-
 #ifndef __TABLES__
 #define __TABLES__
-
-
 
 #ifdef LINUX
 #include <math.h>
@@ -46,49 +43,43 @@
 #undef PI
 #endif
 
-#define PI				3.141592657
+#define PI 3.141592657
 
 #endif
 
-
 #include "m_fixed.h"
-	
-#define FINEANGLES		8192
-#define FINEMASK		(FINEANGLES-1)
 
+#define FINEANGLES 8192
+#define FINEMASK (FINEANGLES - 1)
 
 /* 0x100000000 to 0x2000*/
-#define ANGLETOFINESHIFT	19		
+#define ANGLETOFINESHIFT 19
 
 /* Effective size is 10240.*/
-extern  fixed_t		finesine[5*FINEANGLES/4];
+extern fixed_t finesine[5 * FINEANGLES / 4];
 
 /* Re-use data, is just PI/2 pahse shift.*/
-extern  fixed_t*	finecosine;
-
+extern fixed_t* finecosine;
 
 /* Effective size is 4096.*/
-extern fixed_t		finetangent[FINEANGLES/2];
+extern fixed_t finetangent[FINEANGLES / 2];
 
 /* Binary Angle Measument, BAM.*/
-#define ANG45			0x20000000
-#define ANG90			0x40000000
-#define ANG180		0x80000000
-#define ANG270		0xc0000000
+#define ANG45 0x20000000
+#define ANG90 0x40000000
+#define ANG180 0x80000000
+#define ANG270 0xc0000000
 
-
-#define SLOPERANGE		2048
-#define SLOPEBITS		11
-#define DBITS			(FRACBITS-SLOPEBITS)
+#define SLOPERANGE 2048
+#define SLOPEBITS 11
+#define DBITS (FRACBITS - SLOPEBITS)
 
 typedef unsigned angle_t;
-
 
 /* Effective size is 2049;*/
 /* The +1 size is to handle the case when x==y*/
 /*  without additional checking.*/
-extern angle_t		tantoangle[SLOPERANGE+1];
-
+extern angle_t tantoangle[SLOPERANGE + 1];
 
 /* Utility function,*/
 /*  called by R_PointToAngle.*/
@@ -97,27 +88,24 @@ SlopeDiv
 ( unsigned	num,
   unsigned	den);*/
 
-extern __inline int SlopeDiv(int num,int den)
+extern __inline int SlopeDiv(int num, int den)
 {
-	__asm __volatile
-	(
-		"cmp.l	#512,%1\n\t"
-		"jcs	1f\n\t"
-		"lsr.l	#8,%1\n\t"
-		"lsl.l	#3,%0\n\t"
-		"divul.l %1,%0:%0\n\t"
-		"cmp.l	#2048,%0\n\t"
-		"jls	2f\n"
-		"1: move.l #2048,%0\n"
-		"2:\n"
-	
-		: "=d" (num), "=d" (den)
-		: "0" (num), "1" (den)
-	);
+    __asm __volatile(
+        "cmp.l	#512,%1\n\t"
+        "jcs	1f\n\t"
+        "lsr.l	#8,%1\n\t"
+        "lsl.l	#3,%0\n\t"
+        "divul.l %1,%0:%0\n\t"
+        "cmp.l	#2048,%0\n\t"
+        "jls	2f\n"
+        "1: move.l #2048,%0\n"
+        "2:\n"
 
-	return num;
+        : "=d"(num), "=d"(den)
+        : "0"(num), "1"(den));
+
+    return num;
 }
-
 
 #endif
 /*-----------------------------------------------------------------------------*/

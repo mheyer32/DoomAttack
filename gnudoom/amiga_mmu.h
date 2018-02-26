@@ -11,12 +11,11 @@
  * cachemodes
  */
 
-#define CM_IMPRECISE ((1<<6)|(1<<5))
-#define CM_PRECISE   (1<<6)
-#define CM_COPYBACK  (1<<5)
+#define CM_IMPRECISE ((1 << 6) | (1 << 5))
+#define CM_PRECISE (1 << 6)
+#define CM_COPYBACK (1 << 5)
 #define CM_WRITETHROUGH 0
-#define CM_MASK      ((1<<6)|(1<<5))
-
+#define CM_MASK ((1 << 6) | (1 << 5))
 
 /*
  * functions
@@ -28,4 +27,4 @@
                                REG(a6, struct ExecBase *SysBase));
 */
 
-extern UBYTE mmu_mark(void *start,ULONG length,ULONG cm,struct ExecBase *SysBase);
+extern UBYTE mmu_mark(void *start, ULONG length, ULONG cm, struct ExecBase *SysBase);

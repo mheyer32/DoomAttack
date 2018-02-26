@@ -21,9 +21,7 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-
-static const char
-rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
+static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 
 #include "stdlib.h"
 
@@ -35,71 +33,51 @@ rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #endif
 #include "m_fixed.h"
 
-
-
-
 /* Fixme. __USE_C_FIXED__ or something. */
-
 
 #ifdef hallohallohallo
 
-fixed_t
-FixedMul
-( fixed_t	a,
-  fixed_t	b )
+fixed_t FixedMul(fixed_t a, fixed_t b)
 {
-	double c;
-	
-	c=(((double)a) * ((double)b)) / FRACUNIT;
-	
-	return (fixed_t) c;
-   return ((long long) a * (long long) b) >> FRACBITS;
+    double c;
+
+    c = (((double)a) * ((double)b)) / FRACUNIT;
+
+    return (fixed_t)c;
+    return ((long long)a * (long long)b) >> FRACBITS;
 }
 
 #endif
-
 
 #ifdef hallo
 /**/
 /* FixedDiv, C version.*/
 /**/
 
-fixed_t
-FixedDiv
-( fixed_t	a,
-  fixed_t	b )
+fixed_t FixedDiv(fixed_t a, fixed_t b)
 {
-
-    if ( (abs(a)>>14) >= abs(b))
-    {
-		return (a^b)<0 ? MININT : MAXINT;
-	}
+    if ((abs(a) >> 14) >= abs(b)) {
+        return (a ^ b) < 0 ? MININT : MAXINT;
+    }
 
     return ((double)a) / ((double)b) * FRACUNIT;
-
 }
 #endif
 
-
 #ifdef 0
-fixed_t
-FixedDiv2
-( fixed_t	a,
-  fixed_t	b )
+fixed_t FixedDiv2(fixed_t a, fixed_t b)
 {
-/*    long long c;
-    
-      c = ((long long)a<<16) / ((long long)b);
-      return (fixed_t) c;*/
+    /*    long long c;
+
+          c = ((long long)a<<16) / ((long long)b);
+          return (fixed_t) c;*/
 
     double c;
 
     c = ((double)a) / ((double)b) * FRACUNIT;
 
-/*    if (c >= 2147483648.0 || c < -2147483648.0)
-	I_Error("FixedDiv: divide by zero");*/
-    return (fixed_t) c;
-    
-
+    /*    if (c >= 2147483648.0 || c < -2147483648.0)
+        I_Error("FixedDiv: divide by zero");*/
+    return (fixed_t)c;
 }
 #endif

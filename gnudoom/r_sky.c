@@ -25,16 +25,13 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-static const char
-rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
-
+static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 
 /* Needed for FRACUNIT.*/
 #include "m_fixed.h"
 
 /* Needed for Flat retrieval.*/
 #include "r_data.h"
-
 
 #ifdef __GNUG__
 #pragma implementation "r_sky.h"
@@ -44,19 +41,16 @@ rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 /**/
 /* sky mapping*/
 /**/
-extern int			skyflatnum;
-extern int			skytexture;
-extern int			skytexturemid;
-
-
+extern int skyflatnum;
+extern int skytexture;
+extern int skytexturemid;
 
 /**/
 /* R_InitSkyMap*/
 /* Called whenever the view size changes.*/
 /**/
-void R_InitSkyMap (void)
+void R_InitSkyMap(void)
 {
-  /* skyflatnum = R_FlatNumForName ( SKYFLATNAME );*/
-    skytexturemid = 100*FRACUNIT;
+    /* skyflatnum = R_FlatNumForName ( SKYFLATNAME );*/
+    skytexturemid = 100 * FRACUNIT;
 }
-

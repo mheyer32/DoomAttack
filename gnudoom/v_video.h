@@ -21,7 +21,6 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-
 #ifndef __V_VIDEO__
 #define __V_VIDEO__
 
@@ -36,70 +35,37 @@
 /* VIDEO*/
 /**/
 
-#define CENTERY			(REALSCREENHEIGHT/2)
-
+#define CENTERY (REALSCREENHEIGHT / 2)
 
 /* Screen 0 is the screen updated by I_Update screen.*/
 /* Screen 1 is an extra buffer.*/
 
+extern byte* screens[5];
 
+extern int dirtybox[4];
 
-extern	byte*		screens[5];
+extern byte gammatable[5][256];
+extern int usegamma;
+extern int REALSCREENWIDTH;
+extern int REALSCREENHEIGHT;
+extern int HALFREALSCREENHEIGHT;
+extern int MEDRES;
+extern int HIGHRES;
 
-extern  int	dirtybox[4];
-
-extern	byte	gammatable[5][256];
-extern	int	usegamma;
-extern	int	REALSCREENWIDTH;
-extern	int	REALSCREENHEIGHT;
-extern	int	HALFREALSCREENHEIGHT;
-extern	int	MEDRES;
-extern	int	HIGHRES;
-
-extern	int	yoffsettable[MAXSCREENHEIGHT];
+extern int yoffsettable[MAXSCREENHEIGHT];
 
 /* Allocates buffer screens, call before R_Init.*/
-void V_Init (void);
+void V_Init(void);
 
+void V_CopyRect(int srcx, int srcy, int srcscrn, int width, int height, int destx, int desty, int destscrn);
 
-void
-V_CopyRect
-( int		srcx,
-  int		srcy,
-  int		srcscrn,
-  int		width,
-  int		height,
-  int		destx,
-  int		desty,
-  int		destscrn );
+void V_DrawPatch(int x, int y, int scrn, patch_t* patch);
 
-void
-V_DrawPatch
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch);
+void V_DrawPatchFlipped(int x, int y, int scrn, patch_t* patch);
 
-void
-V_DrawPatchFlipped
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch);
+void V_DrawPatchFlipped2(int x, int y, int scrn, patch_t* patch);
 
-void
-V_DrawPatchFlipped2
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch);
-
-void
-V_DrawPatchFlipped3
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch);
+void V_DrawPatchFlipped3(int x, int y, int scrn, patch_t* patch);
 
 /*
 void
@@ -110,53 +76,23 @@ V_DrawPatchDirect
   patch_t*	patch );
 */
 
-#define V_DrawPatchDirect(a,b,c,d) V_DrawPatch(a,b,c,d)
+#define V_DrawPatchDirect(a, b, c, d) V_DrawPatch(a, b, c, d)
 
-void
-V_DrawPatch2
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch);
+void V_DrawPatch2(int x, int y, int scrn, patch_t* patch);
 
-#define V_DrawPatchDirect2(a,b,c,d) V_DrawPatch2(a,b,c,d)
+#define V_DrawPatchDirect2(a, b, c, d) V_DrawPatch2(a, b, c, d)
 
-void
-V_DrawPatch3
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch);
+void V_DrawPatch3(int x, int y, int scrn, patch_t* patch);
 
-#define V_DrawPatchDirect3(a,b,c,d) V_DrawPatch3(a,b,c,d)
+#define V_DrawPatchDirect3(a, b, c, d) V_DrawPatch3(a, b, c, d)
 
 /* Draw a linear block of pixels into the view buffer.*/
-void
-V_DrawBlock
-( int		x,
-  int		y,
-  int		scrn,
-  int		width,
-  int		height,
-  byte*		src );
+void V_DrawBlock(int x, int y, int scrn, int width, int height, byte* src);
 
 /* Reads a linear block of pixels into the view buffer.*/
-void
-V_GetBlock
-( int		x,
-  int		y,
-  int		scrn,
-  int		width,
-  int		height,
-  byte*		dest );
+void V_GetBlock(int x, int y, int scrn, int width, int height, byte* dest);
 
-
-void
-V_MarkRect
-( int		x,
-  int		y,
-  int		width,
-  int		height );
+void V_MarkRect(int x, int y, int width, int height);
 
 #endif
 /*-----------------------------------------------------------------------------*/

@@ -19,46 +19,37 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-
 #ifndef __M_SWAP__
 #define __M_SWAP__
-
 
 #ifdef __GNUG__
 #pragma interface
 #endif
 
-
 /* Endianess handling.*/
 /* WAD files are stored little endian.*/
 
-
 extern __inline short SwapSHORT(short val)
 {
-	__asm __volatile
-	(
-		"ror.w	#8,%0"
+    __asm __volatile("ror.w	#8,%0"
 
-		: "=d" (val)
-		: "0" (val)
-	);
-	
-	return val;
+                     : "=d"(val)
+                     : "0"(val));
+
+    return val;
 }
 
 extern __inline long SwapLONG(long val)
 {
-	__asm __volatile
-	(
-		"ror.w	#8,%0 \n\t"
-		"swap	%0 \n\t"
-		"ror.w	#8,%0"
-		
-		: "=d" (val)
-		: "0" (val)
-	);
-	
-	return val;
+    __asm __volatile(
+        "ror.w	#8,%0 \n\t"
+        "swap	%0 \n\t"
+        "ror.w	#8,%0"
+
+        : "=d"(val)
+        : "0"(val));
+
+    return val;
 }
 
 #define SHORT(x) SwapSHORT(x)
@@ -69,8 +60,8 @@ extern __inline long SwapLONG(long val)
 unsigned short	SwapSHORT(unsigned short);
 unsigned long	SwapLONG(unsigned long);
 
-#define SHORT(x)	((short)SwapSHORT((unsigned short) (x)))
-#define LONG(x)         ((long)SwapLONG((unsigned long) (x)))
+#define SHORT(x) ((short)SwapSHORT((unsigned short)(x)))
+#define LONG(x) ((long)SwapLONG((unsigned long)(x)))
 #endif
 
 #endif

@@ -21,10 +21,7 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-
-static const char
-rcsid[] = "$Id: r_bsp.c,v 1.4 1997/02/03 22:45:12 b1 Exp $";
-
+static const char rcsid[] = "$Id: r_bsp.c,v 1.4 1997/02/03 22:45:12 b1 Exp $";
 
 #include "doomdef.h"
 
@@ -38,62 +35,47 @@ rcsid[] = "$Id: r_bsp.c,v 1.4 1997/02/03 22:45:12 b1 Exp $";
 
 /* State.*/
 #include "doomstat.h"
-#include "r_state.h"
 #include "r_bsp.h"
+#include "r_state.h"
 
 /*#include "r_local.h"*/
 
-
-
-extern seg_t*		curline;
-extern side_t*		sidedef;
-extern line_t*		linedef;
-extern sector_t*	frontsector;
-extern sector_t*	backsector;
-
+extern seg_t* curline;
+extern side_t* sidedef;
+extern line_t* linedef;
+extern sector_t* frontsector;
+extern sector_t* backsector;
 
 /*drawseg_t	drawsegs[MAXDRAWSEGS];*/
-extern drawseg_t*	ds_p;
+extern drawseg_t* ds_p;
 
-void
-R_StoreWallRange
-( int	start,
-  int	stop );
-
-
-
+void R_StoreWallRange(int start, int stop);
 
 /**/
 /* R_ClearDrawSegs*/
 /**/
-void R_ClearDrawSegs (void)
+void R_ClearDrawSegs(void)
 {
     ds_p = drawsegs;
 }
-
-
 
 /**/
 /* ClipWallSegment*/
 /* Clips the given range of columns*/
 /* and includes it in the new clip list.*/
 /**/
-typedef	struct
+typedef struct
 {
-    int	first;
+    int first;
     int last;
-    
+
 } cliprange_t;
 
-
-#define MAXSEGS		32
+#define MAXSEGS 32
 
 /* newend is one past the last valid seg*/
-extern cliprange_t*	newend;
-cliprange_t	solidsegs[MAXSEGS];
-
-
-
+extern cliprange_t* newend;
+cliprange_t solidsegs[MAXSEGS];
 
 /**/
 /* R_ClipSolidWallSegment*/
@@ -187,7 +169,6 @@ void R_ClipSolidWallSegment
 }
 #endif
 
-
 /**/
 /* R_ClipPassWallSegment*/
 /* Clips the given range of columns,*/
@@ -241,19 +222,17 @@ void R_ClipPassWallSegment
 }
 #endif
 
-
 /**/
 /* R_ClearClipSegs*/
 /**/
-void R_ClearClipSegs (void)
+void R_ClearClipSegs(void)
 {
     solidsegs[0].first = -0x7fffffff;
     solidsegs[0].last = -1;
     solidsegs[1].first = viewwidth;
     solidsegs[1].last = 0x7fffffff;
-    newend = solidsegs+2;
+    newend = solidsegs + 2;
 }
-
 
 /**/
 /* R_AddLine*/
@@ -495,7 +474,6 @@ boolean R_CheckBBox (fixed_t*	bspcoord)
 }
 #endif
 
-
 /**/
 /* R_Subsector*/
 /* Determine floor/ceiling planes.*/
@@ -509,7 +487,7 @@ void R_Subsector (int num)
     int			count;
     seg_t*		line;
     subsector_t*	sub;
-	
+
 #ifdef RANGECHECK
     if (num>=numsubsectors)
 	I_Error ("R_Subsector: ss %i with numss = %i",
@@ -552,8 +530,6 @@ void R_Subsector (int num)
 }
 #endif
 
-
-
 /**/
 /* RenderBSPNode*/
 /* Renders all subsectors below a given node,*/
@@ -590,12 +566,11 @@ void R_RenderBSPNode (int bspnum)
 }
 #endif
 
-void *mymalloc(unsigned long size);
+void* mymalloc(unsigned long size);
 
 void R_InitBSP(void)
 {
-	drawsegs = (drawseg_t *)mymalloc(maxdrawsegs*sizeof(drawseg_t));
-	memset(drawsegs,0,maxdrawsegs*sizeof(drawseg_t));
-	maxdrawseg = &drawsegs[maxdrawsegs];
+    drawsegs = (drawseg_t*)mymalloc(maxdrawsegs * sizeof(drawseg_t));
+    memset(drawsegs, 0, maxdrawsegs * sizeof(drawseg_t));
+    maxdrawseg = &drawsegs[maxdrawsegs];
 }
-

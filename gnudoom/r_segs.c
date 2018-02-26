@@ -21,13 +21,7 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-
-static const char
-rcsid[] = "$Id: r_segs.c,v 1.3 1997/01/29 20:10:19 b1 Exp $";
-
-
-
-
+static const char rcsid[] = "$Id: r_segs.c,v 1.3 1997/01/29 20:10:19 b1 Exp $";
 
 #include <stdlib.h>
 
@@ -36,72 +30,66 @@ rcsid[] = "$Id: r_segs.c,v 1.3 1997/01/29 20:10:19 b1 Exp $";
 #include "doomdef.h"
 #include "doomstat.h"
 
+#include "m_fixed.h"
 #include "r_local.h"
 #include "r_sky.h"
-#include "m_fixed.h"
 #include "v_video.h"
 
 /* OPTIMIZE: closed two sided lines as single sided*/
 
 /* True if any of the segs textures might be visible.*/
-extern boolean		segtextured;	
+extern boolean segtextured;
 
 /* False if the back side is the same plane.*/
-extern boolean		markfloor;	
-extern boolean		markceiling;
+extern boolean markfloor;
+extern boolean markceiling;
 
-extern boolean		maskedtexture;
-extern int		toptexture;
-extern int		bottomtexture;
-extern int		midtexture;
+extern boolean maskedtexture;
+extern int toptexture;
+extern int bottomtexture;
+extern int midtexture;
 
-
-extern angle_t		rw_normalangle;
+extern angle_t rw_normalangle;
 /* angle to line origin*/
-extern int		rw_angle1;	
+extern int rw_angle1;
 
 /**/
 /* regular wall*/
 /**/
-extern int		rw_x;
-extern int		rw_stopx;
-extern angle_t		rw_centerangle;
-extern fixed_t		rw_offset;
-extern fixed_t		rw_distance;
-extern fixed_t		rw_scale;
-extern fixed_t		rw_scalestep;
-extern fixed_t		rw_midtexturemid;
-extern fixed_t		rw_toptexturemid;
-extern fixed_t		rw_bottomtexturemid;
+extern int rw_x;
+extern int rw_stopx;
+extern angle_t rw_centerangle;
+extern fixed_t rw_offset;
+extern fixed_t rw_distance;
+extern fixed_t rw_scale;
+extern fixed_t rw_scalestep;
+extern fixed_t rw_midtexturemid;
+extern fixed_t rw_toptexturemid;
+extern fixed_t rw_bottomtexturemid;
 
-extern int		worldtop;
-extern int		worldbottom;
-extern int		worldhigh;
-extern int		worldlow;
+extern int worldtop;
+extern int worldbottom;
+extern int worldhigh;
+extern int worldlow;
 
-extern fixed_t		pixhigh;
-extern fixed_t		pixlow;
-extern fixed_t		pixhighstep;
-extern fixed_t		pixlowstep;
+extern fixed_t pixhigh;
+extern fixed_t pixlow;
+extern fixed_t pixhighstep;
+extern fixed_t pixlowstep;
 
-extern fixed_t		topfrac;
-extern fixed_t		topstep;
+extern fixed_t topfrac;
+extern fixed_t topstep;
 
-extern fixed_t		bottomfrac;
-extern fixed_t		bottomstep;
+extern fixed_t bottomfrac;
+extern fixed_t bottomstep;
 
+extern lighttable_t** walllights;
 
-extern lighttable_t**	walllights;
-
-extern short*		maskedtexturecol;
-
-
+extern short* maskedtexturecol;
 
 /**/
 /* R_RenderMaskedSegRange*/
 /**/
-
-
 
 #if 0
 void R_RenderMaskedSegRange (drawseg_t* ds,int x1,int x2)
@@ -176,11 +164,11 @@ void R_RenderMaskedSegRange (drawseg_t* ds,int x1,int x2)
 		    }
 				
 		    sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
-	#ifndef kiste68060
+#ifndef kiste68060
 		    dc_iscale = 0xffffffffu / (unsigned)spryscale;
-	#else
+#else
 		    dc_iscale = ULongDiv(0xffffffffu,(unsigned)spryscale);
-	#endif
+#endif
 	
 		    /* draw the texture*/
 		    col = (column_t *)( 
@@ -196,7 +184,6 @@ void R_RenderMaskedSegRange (drawseg_t* ds,int x1,int x2)
 
 #endif
 
-
 /**/
 /* R_RenderSegLoop*/
 /* Draws zero, one, or two textures (and possibly a masked*/
@@ -205,9 +192,8 @@ void R_RenderMaskedSegRange (drawseg_t* ds,int x1,int x2)
 /*  textures.*/
 /* CALLED: CORE LOOPING ROUTINE.*/
 /**/
-#define HEIGHTBITS		12
-#define HEIGHTUNIT		(1<<HEIGHTBITS)
-
+#define HEIGHTBITS 12
+#define HEIGHTUNIT (1 << HEIGHTBITS)
 
 #if 0
 
@@ -383,7 +369,6 @@ void R_RenderSegLoop (void)
 
 #endif
 
-
 /**/
 /* R_StoreWallRange*/
 /* A wall segment will be drawn*/
@@ -404,8 +389,8 @@ void R_StoreWallRange
 
     /* don't overflow and crash*/
     if (ds_p == &drawsegs[MAXDRAWSEGS])
-	return;		
-		
+	return;
+
 #ifdef RANGECHECK
     if (start >=viewwidth || start > stop)
 	I_Error ("Bad R_RenderWallRange: %i to %i", start , stop);
@@ -770,4 +755,3 @@ void R_StoreWallRange
 }
 
 #endif
-
