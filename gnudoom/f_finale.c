@@ -132,7 +132,7 @@ void F_StartFinale(void)
         break;
     }
 
-    /* DOOM II and missions packs with E1, M34*/
+        /* DOOM II and missions packs with E1, M34*/
     case commercial: {
         S_ChangeMusic(mus_read_m, true);
 
@@ -336,7 +336,7 @@ castinfo_t castorder[] = {{CC_ZOMBIE, MT_POSSESSED},
 
 int castnum;
 int casttics;
-state_t* caststate;
+const state_t* caststate;
 boolean castdeath;
 int castframes;
 int castonmelee;

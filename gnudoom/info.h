@@ -26,6 +26,7 @@
 
 /* Needed for action function pointer handling.*/
 #include "d_think.h"
+#include "doomdef.h"
 
 typedef enum
 {
@@ -1154,8 +1155,8 @@ typedef struct
     long misc1, misc2;
 } state_t;
 
-extern state_t states[NUMSTATES];
-extern char *sprnames[NUMSPRITES + 1];
+extern FAR const state_t states[NUMSTATES];
+extern FAR char const* const sprnames[NUMSPRITES + 1];
 
 typedef enum
 {
@@ -1328,7 +1329,7 @@ typedef struct
 
 } mobjinfo_t;
 
-extern mobjinfo_t mobjinfo[NUMMOBJTYPES];
+extern FAR const mobjinfo_t mobjinfo[NUMMOBJTYPES];
 
 #endif
 /*-----------------------------------------------------------------------------*/

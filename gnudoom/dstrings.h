@@ -53,43 +53,43 @@
 /* QuitDOOM messages*/
 #define NUM_QUITMESSAGES 22
 
-extern char *endmsg[];
+extern FAR char *endmsg[];
 
-extern char *YESKEY;
-extern char *NOKEY;
-extern char *D_DEVSTR;
-extern char *D_CDROM;
+extern FAR char *YESKEY;
+extern FAR char *NOKEY;
+extern FAR char *D_DEVSTR;
+extern FAR char *D_CDROM;
 
 /**/
 /*	M_Menu.C*/
 /**/
-extern char *PRESSKEY;
-extern char *PRESSYN;
-extern char *QUITMSG;
-extern char *LOADNET;
-extern char *QLOADNET;
-extern char *QSAVESPOT;
-extern char *SAVEDEAD;
-extern char *QSPROMPT;
-extern char *QLPROMPT;
+extern FAR char *PRESSKEY;
+extern FAR char *PRESSYN;
+extern FAR char *QUITMSG;
+extern FAR char *LOADNET;
+extern FAR char *QLOADNET;
+extern FAR char *QSAVESPOT;
+extern FAR char *SAVEDEAD;
+extern FAR char *QSPROMPT;
+extern FAR char *QLPROMPT;
 
-extern char *NEWGAME;
+extern FAR char *NEWGAME;
 
-extern char *NIGHTMARE;
+extern FAR char *NIGHTMARE;
 
-extern char *SWSTRING;
+extern FAR char *SWSTRING;
 
-extern char *MSGOFF;
-extern char *MSGON;
-extern char *NETEND;
-extern char *ENDGAME;
+extern FAR char *MSGOFF;
+extern FAR char *MSGON;
+extern FAR char *NETEND;
+extern FAR char *ENDGAME;
 
-extern char *DOSY;
+extern FAR char *DOSY;
 
-extern char *DETAILHI;
-extern char *DETAILLO;
-extern char *ALWAYSRUNON;
-extern char *ALWAYSRUNOFF;
+extern FAR char *DETAILHI;
+extern FAR char *DETAILLO;
+extern FAR char *ALWAYSRUNON;
+extern FAR char *ALWAYSRUNOFF;
 
 #define GAMMALVL0 "Gamma correction OFF"
 #define GAMMALVL1 "Gamma correction level 1"
@@ -97,72 +97,72 @@ extern char *ALWAYSRUNOFF;
 #define GAMMALVL3 "Gamma correction level 3"
 #define GAMMALVL4 "Gamma correction level 4"
 
-extern char *EMPTYSTRING;
+extern FAR char *EMPTYSTRING;
 
 /**/
 /*	P_inter.C*/
 /**/
-extern char *GOTARMOR;
-extern char *GOTMEGA;
-extern char *GOTHTHBONUS;
-extern char *GOTARMBONUS;
-extern char *GOTSTIM;
-extern char *GOTMEDINEED;
-extern char *GOTMEDIKIT;
-extern char *GOTSUPER;
+extern FAR char *GOTARMOR;
+extern FAR char *GOTMEGA;
+extern FAR char *GOTHTHBONUS;
+extern FAR char *GOTARMBONUS;
+extern FAR char *GOTSTIM;
+extern FAR char *GOTMEDINEED;
+extern FAR char *GOTMEDIKIT;
+extern FAR char *GOTSUPER;
 
-extern char *GOTBLUECARD;
-extern char *GOTYELWCARD;
-extern char *GOTREDCARD;
-extern char *GOTBLUESKUL;
-extern char *GOTYELWSKUL;
-extern char *GOTREDSKULL;
+extern FAR char *GOTBLUECARD;
+extern FAR char *GOTYELWCARD;
+extern FAR char *GOTREDCARD;
+extern FAR char *GOTBLUESKUL;
+extern FAR char *GOTYELWSKUL;
+extern FAR char *GOTREDSKULL;
 
-extern char *GOTINVUL;
-extern char *GOTBERSERK;
-extern char *GOTINVIS;
-extern char *GOTSUIT;
-extern char *GOTMAP;
-extern char *GOTVISOR;
-extern char *GOTMSPHERE;
+extern FAR char *GOTINVUL;
+extern FAR char *GOTBERSERK;
+extern FAR char *GOTINVIS;
+extern FAR char *GOTSUIT;
+extern FAR char *GOTMAP;
+extern FAR char *GOTVISOR;
+extern FAR char *GOTMSPHERE;
 
-extern char *GOTCLIP;
-extern char *GOTCLIPBOX;
-extern char *GOTROCKET;
-extern char *GOTROCKBOX;
-extern char *GOTCELL;
-extern char *GOTCELLBOX;
-extern char *GOTSHELLS;
-extern char *GOTSHELLBOX;
-extern char *GOTBACKPACK;
+extern FAR char *GOTCLIP;
+extern FAR char *GOTCLIPBOX;
+extern FAR char *GOTROCKET;
+extern FAR char *GOTROCKBOX;
+extern FAR char *GOTCELL;
+extern FAR char *GOTCELLBOX;
+extern FAR char *GOTSHELLS;
+extern FAR char *GOTSHELLBOX;
+extern FAR char *GOTBACKPACK;
 
-extern char *GOTBFG9000;
-extern char *GOTCHAINGUN;
-extern char *GOTCHAINSAW;
-extern char *GOTLAUNCHER;
-extern char *GOTPLASMA;
-extern char *GOTSHOTGUN;
-extern char *GOTSHOTGUN2;
+extern FAR char *GOTBFG9000;
+extern FAR char *GOTCHAINGUN;
+extern FAR char *GOTCHAINSAW;
+extern FAR char *GOTLAUNCHER;
+extern FAR char *GOTPLASMA;
+extern FAR char *GOTSHOTGUN;
+extern FAR char *GOTSHOTGUN2;
 
 /**/
 /* P_Doors.C*/
 /**/
-extern char *PD_BLUEO;
-extern char *PD_REDO;
-extern char *PD_YELLOWO;
-extern char *PD_BLUEK;
-extern char *PD_REDK;
-extern char *PD_YELLOWK;
+extern FAR char *PD_BLUEO;
+extern FAR char *PD_REDO;
+extern FAR char *PD_YELLOWO;
+extern FAR char *PD_BLUEK;
+extern FAR char *PD_REDK;
+extern FAR char *PD_YELLOWK;
 
 /**/
 /*	G_game.C*/
 /**/
-extern char *GGSAVED;
+extern FAR char *GGSAVED;
 
 /**/
 /*	HU_stuff.C*/
 /**/
-extern char *HUSTR_MSGU;
+extern FAR char *HUSTR_MSGU;
 
 #define HUSTR_E1M1 "E1M1: Hangar"
 #define HUSTR_E1M2 "E1M2: Nuclear Plant"
@@ -323,13 +323,13 @@ extern char *HUSTR_MSGU;
 #define HUSTR_CHATMACRO9 "Yes"
 #define HUSTR_CHATMACRO0 "No"
 
-extern char *HUSTR_TALKTOSELF1;
-extern char *HUSTR_TALKTOSELF2;
-extern char *HUSTR_TALKTOSELF3;
-extern char *HUSTR_TALKTOSELF4;
-extern char *HUSTR_TALKTOSELF5;
+extern FAR char *HUSTR_TALKTOSELF1;
+extern FAR char *HUSTR_TALKTOSELF2;
+extern FAR char *HUSTR_TALKTOSELF3;
+extern FAR char *HUSTR_TALKTOSELF4;
+extern FAR char *HUSTR_TALKTOSELF5;
 
-extern char *HUSTR_MESSAGESENT;
+extern FAR char *HUSTR_MESSAGESENT;
 
 /* The following should NOT be changed unless it seems*/
 /* just AWFULLY necessary*/
@@ -348,109 +348,109 @@ extern char *HUSTR_MESSAGESENT;
 /*	AM_map.C*/
 /**/
 
-extern char *AMSTR_FOLLOWON;
-extern char *AMSTR_FOLLOWOFF;
+extern FAR char *AMSTR_FOLLOWON;
+extern FAR char *AMSTR_FOLLOWOFF;
 
-extern char *AMSTR_GRIDON;
-extern char *AMSTR_GRIDOFF;
+extern FAR char *AMSTR_GRIDON;
+extern FAR char *AMSTR_GRIDOFF;
 
-extern char *AMSTR_MARKEDSPOT;
-extern char *AMSTR_MARKSCLEARED;
+extern FAR char *AMSTR_MARKEDSPOT;
+extern FAR char *AMSTR_MARKSCLEARED;
 
 /**/
 /*	ST_stuff.C*/
 /**/
 
-extern char *STSTR_MUS;
-extern char *STSTR_NOMUS;
-extern char *STSTR_DQDON;
-extern char *STSTR_DQDOFF;
+extern FAR char *STSTR_MUS;
+extern FAR char *STSTR_NOMUS;
+extern FAR char *STSTR_DQDON;
+extern FAR char *STSTR_DQDOFF;
 
-extern char *STSTR_KFAADDED;
-extern char *STSTR_FAADDED;
+extern FAR char *STSTR_KFAADDED;
+extern FAR char *STSTR_FAADDED;
 
-extern char *STSTR_NCON;
-extern char *STSTR_NCOFF;
+extern FAR char *STSTR_NCON;
+extern FAR char *STSTR_NCOFF;
 
-extern char *STSTR_BEHOLD;
-extern char *STSTR_BEHOLDX;
+extern FAR char *STSTR_BEHOLD;
+extern FAR char *STSTR_BEHOLDX;
 
-extern char *STSTR_CHOPPERS;
-extern char *STSTR_CLEV;
+extern FAR char *STSTR_CHOPPERS;
+extern FAR char *STSTR_CLEV;
 
 /**/
 /*	F_Finale.C*/
 /**/
-extern char *E1TEXT;
+extern FAR char *E1TEXT;
 
-extern char *E2TEXT;
+extern FAR char *E2TEXT;
 
-extern char *E3TEXT;
+extern FAR char *E3TEXT;
 
-extern char *E4TEXT;
+extern FAR char *E4TEXT;
 
 /* after level 6, put this:*/
 
-extern char *C1TEXT;
+extern FAR char *C1TEXT;
 
 /* After level 11, put this:*/
 
-extern char *C2TEXT;
+extern FAR char *C2TEXT;
 
 /* After level 20, put this:*/
 
-extern char *C3TEXT;
+extern FAR char *C3TEXT;
 
 /* After level 29, put this:*/
 
-extern char *C4TEXT;
+extern FAR char *C4TEXT;
 
 /* Before level 31, put this:*/
 
-extern char *C5TEXT;
+extern FAR char *C5TEXT;
 
 /* Before level 32, put this:*/
 
-extern char *C6TEXT;
+extern FAR char *C6TEXT;
 
 /* after map 06	*/
 
-extern char *P1TEXT;
+extern FAR char *P1TEXT;
 
 /* after map 11*/
 
-extern char *P2TEXT;
+extern FAR char *P2TEXT;
 
 /* after map 20*/
 
-extern char *P3TEXT;
+extern FAR char *P3TEXT;
 
 /* after map 30*/
 
-extern char *P4TEXT;
+extern FAR char *P4TEXT;
 
 /* before map 31*/
 
-extern char *P5TEXT;
+extern FAR char *P5TEXT;
 
 /* before map 32*/
 
-extern char *P6TEXT;
+extern FAR char *P6TEXT;
 
-extern char *T1TEXT;
+extern FAR char *T1TEXT;
 
-extern char *T2TEXT;
+extern FAR char *T2TEXT;
 
-extern char *T3TEXT;
+extern FAR char *T3TEXT;
 
-extern char *T4TEXT;
+extern FAR char *T4TEXT;
 
-extern char *T5TEXT;
+extern FAR char *T5TEXT;
 
-extern char *T6TEXT;
+extern FAR char *T6TEXT;
 
 /**/
-/* extern character cast strings F_FINALE.C*/
+/* extern FAR character cast strings F_FINALE.C*/
 /**/
 
 #define CC_ZOMBIE "ZOMBIEMAN"

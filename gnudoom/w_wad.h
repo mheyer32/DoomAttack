@@ -74,7 +74,7 @@ void W_ReadLump(int lump, void* dest);
 void* W_CacheLumpNum(int lump, int tag);
 #endif
 
-extern __inline void* W_CacheLumpNum(int lump, int tag)
+static __inline void* W_CacheLumpNum(int lump, int tag)
 {
     // FIXME: return value in a0?
     register void* _res __asm("a0");

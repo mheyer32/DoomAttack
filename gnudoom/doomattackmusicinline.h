@@ -1,4 +1,4 @@
-extern __inline void DAMCall_Init(struct DAMInitialization *daminit)
+static __inline void DAMCall_Init(struct DAMInitialization *daminit)
 {
     register struct DAMInitialization *a0 __asm("a0") = daminit;
     register void *a1 __asm("a1") = DAM->DAM_Init;

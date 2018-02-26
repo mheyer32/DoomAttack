@@ -9,7 +9,7 @@
 	include	dos/dos.i
 	include	hardware/custom.i
 	include devices/input.i
-	include devices/InputEvent.i
+	include devices/inputevent.i
 	include devices/gameport.i
 	include resources/potgo.i
 	include	lvo/exec_lib.i

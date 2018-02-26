@@ -58,7 +58,7 @@ R_MapPlane
 */
 
 #if 0
-extern __inline void R_MapPlane(int y, int x1, int x2)
+static __inline void R_MapPlane(int y,int x1,int x2)
 {
 /*    angle_t	angle;
     fixed_t	distance;
@@ -87,12 +87,12 @@ extern __inline void R_MapPlane(int y, int x1, int x2)
 #ifndef version060
 		"muls.l	d1,d3:d0 \n\t"
 		"move		d3,d0 \n\t"
-        "swap		d0 \n\t" /* d0 = distance */
+		"swap		d0 \n\t"				/* d0 = distance */
 #else
 		"fmove.l	d0,fp0 \n\t"
 		"fmul.l	d1,fp0 \n\t"
 		"fmul.x	fp7,fp0 \n\t"
-        "fmove.l	fp0,d0 \n\t" /* d0 = distance */
+		"fmove.l	fp0,d0 \n\t"		/* d0 = distance */
 #endif
 		
 		"lea		_cacheddistance,a0 \n\t"
@@ -104,12 +104,12 @@ extern __inline void R_MapPlane(int y, int x1, int x2)
 		"move.l	_basexscale,d1 \n\t"
 		"muls.l	d0,d3:d1 \n\t"
 		"move		d3,d1 \n\t"
-        "swap		d1 \n\t" /* d1 = ds_xstep */
+		"swap		d1 \n\t"				/* d1 = ds_xstep */
 #else
 		"fmove.l	_basexscale,fp0 \n\t"
 		"fmul.l	d0,fp0 \n\t"
 		"fmul.x	fp7,fp0 \n\t"
-        "fmove.l	fp0,d1 \n\t" /* d1 = ds_xstep */
+		"fmove.l	fp0,d1 \n\t"		/* d1 = ds_xstep */
 #endif
 
 		"lea		_cachedxstep,a0 \n\t"
@@ -122,12 +122,12 @@ extern __inline void R_MapPlane(int y, int x1, int x2)
 		"move.l	_baseyscale,d1 \n\t"
 		"muls.l	d0,d3:d1 \n\t"
 		"move		d3,d1 \n\t"
-        "swap		d1 \n\t" /* d1 = ds_ystep */
+		"swap		d1 \n\t"				/* d1 = ds_ystep */
 #else
 		"fmove.l	_baseyscale,fp0 \n\t"
 		"fmul.l	d0,fp0 \n\t"
 		"fmul.x	fp7,fp0 \n\t"
-        "fmove.l	fp0,d1 \n\t" /* d1 = ds_ystep */
+		"fmove.l	fp0,d1 \n\t"		/* d1 = ds_ystep */
 #endif
 
 		"lea		_cachedystep,a0 \n\t"
@@ -140,13 +140,13 @@ extern __inline void R_MapPlane(int y, int x1, int x2)
 
 		"1: \n\t"
 		"lea		_cacheddistance,a0 \n\t"
-        "move.l	(a0,%0.w*4),d0 \n\t" /* d0 = distance */
+		"move.l	(a0,%0.w*4),d0 \n\t"		/* d0 = distance */
 
 		"lea		_cachedxstep,a0 \n\t"
-        "move.l	(a0,%0.w*4),_ds_xstep \n\t" /* ds_xstep */
+		"move.l	(a0,%0.w*4),_ds_xstep \n\t"		/* ds_xstep */
 		
 		"lea		_cachedystep,a0 \n\t"
-        "move.l	(a0,%0.w*4),_ds_ystep \n\t" /* ds_ystep */
+		"move.l	(a0,%0.w*4),_ds_ystep \n\t"		/* ds_ystep */
 		
 		/* ============== */
 		
@@ -159,12 +159,12 @@ extern __inline void R_MapPlane(int y, int x1, int x2)
 #ifndef version060
 		"muls.l	d0,d3:d1 \n\t"
 		"move		d3,d1 \n\t"
-        "swap		d1 \n\t" /* d1 = length */
+		"swap		d1 \n\t"			/* d1 = length */
 #else
 		"fmove.l	d1,fp0 \n\t"
 		"fmul.l	d0,fp0 \n\t"
 		"fmul.x	fp7,fp0 \n\t"
-        "fmove.l	fp0,d1 \n\t" /* d1 = length */
+		"fmove.l	fp0,d1 \n\t"	/* d1 = length */
 #endif
 		
 	   /* angle = (viewangle + xtoviewangle[x1])>>19; */
@@ -173,7 +173,7 @@ extern __inline void R_MapPlane(int y, int x1, int x2)
 		"move.l	(a0,%1.w*4),d2 \n\t"
 		"add.l	_viewangle,d2 \n\t"
 		"moveq	#19,d3 \n\t"
-        "lsr.l	d3,d2 \n\t" /* d2 = angle */
+		"lsr.l	d3,d2 \n\t"		/* d2 = angle */
 
 	   /* ds_xfrac = viewx + FixedMul(finecosine[angle], length); */
 
@@ -196,7 +196,7 @@ extern __inline void R_MapPlane(int y, int x1, int x2)
 
     	/* ds_yfrac = -viewy - FixedMul(finesine[angle], length); */
 
-        "lea		_finesine,a0 \n\t" /* lea!!! */
+		"lea		_finesine,a0 \n\t"		/* lea!!! */
 		"move.l	(a0,d2.w*4),d4 \n\t"
 
 #ifndef version060
@@ -238,8 +238,8 @@ extern __inline void R_MapPlane(int y, int x1, int x2)
 		"move.l	_spanfunc,a0 \n\t"
 		"jsr		(a0) \n"
 
-        : "=d"(y), "=d"(x1)
-        : "0"(y), "1"(x1)
+		: "=d" (y), "=d" (x1)
+		: "0" (y), "1" (x1)
         : "d0", "d1", "d2", "d3", "d4", "a0", "a1", "memory");
 }
 #endif

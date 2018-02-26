@@ -38,7 +38,7 @@ typedef int fixed_t;
 
 /*	fixed_t FixedMul	(fixed_t a,fixed_t b); */
 
-extern __inline fixed_t FixedMul(fixed_t eins, fixed_t zwei)
+static __inline fixed_t FixedMul(fixed_t eins, fixed_t zwei)
 {
 #ifndef version060
 
@@ -78,7 +78,7 @@ extern __inline fixed_t FixedMul(fixed_t eins, fixed_t zwei)
 int LEFTSHIFT(int a, int b);
 int RIGHTSHIFT(int a, int b);
 
-extern __inline fixed_t FixedDiv(fixed_t eins, fixed_t zwei)
+static __inline fixed_t FixedDiv(fixed_t eins, fixed_t zwei)
 {
     __asm __volatile
 
@@ -135,7 +135,7 @@ extern __inline fixed_t FixedDiv(fixed_t eins, fixed_t zwei)
 
 /* testet nicht auf 0 Divisor !!! */
 
-extern __inline fixed_t FixedDiv2(fixed_t eins, fixed_t zwei)
+static __inline fixed_t FixedDiv2(fixed_t eins, fixed_t zwei)
 {
     __asm __volatile
 
@@ -166,7 +166,7 @@ extern __inline fixed_t FixedDiv2(fixed_t eins, fixed_t zwei)
 
 #define FixedDiv2Fast(a, b) FixedDiv2(a, b)
 
-extern __inline int LongDiv(int eins, int zwei)
+static __inline int LongDiv(int eins, int zwei)
 {
     __asm __volatile("divsl.l %2,%0:%0\n\t"
 
@@ -176,7 +176,7 @@ extern __inline int LongDiv(int eins, int zwei)
     return eins;
 }
 
-extern __inline int ULongDiv(int eins, int zwei)
+static __inline int ULongDiv(int eins, int zwei)
 {
     __asm __volatile("divul.l %2,%0:%0\n\t"
 
@@ -186,7 +186,7 @@ extern __inline int ULongDiv(int eins, int zwei)
     return eins;
 }
 
-extern __inline int LongRest(int eins, int zwei)
+static __inline int LongRest(int eins, int zwei)
 {
     __asm __volatile(
         "divsl.l	%2,d2:%0\n\t"
@@ -199,7 +199,7 @@ extern __inline int LongRest(int eins, int zwei)
     return eins;
 }
 
-extern __inline int ULongRest(int eins, int zwei)
+static __inline int ULongRest(int eins, int zwei)
 {
     __asm __volatile(
         "divul.l %2,d2:%0\n\t"

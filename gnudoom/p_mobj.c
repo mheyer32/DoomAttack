@@ -52,7 +52,7 @@ int GRAVITY;
 
 boolean P_SetMobjState(mobj_t* mobj, statenum_t state)
 {
-    state_t* st;
+    const state_t* st;
 
     do {
         if (state == S_NULL) {
@@ -407,8 +407,8 @@ void P_MobjThinker(mobj_t* mobj)
 mobj_t* P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
 {
     mobj_t* mobj;
-    state_t* st;
-    mobjinfo_t* info;
+    const state_t* st;
+    const mobjinfo_t* info;
 
     mobj = Z_Malloc(sizeof(*mobj), PU_LEVEL, NULL);
     memset(mobj, 0, sizeof(*mobj));

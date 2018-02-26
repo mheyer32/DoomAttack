@@ -1472,18 +1472,20 @@ void G_InitNew(skill_t skill, int episode, int map)
     else
         respawnmonsters = false;
 
+    mobjinfo_t* mutable_mobjinfo = (mobjinfo_t*)mobjinfo;
+    state_t* mutable_states = (state_t*)states;
     if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare)) {
         for (i = S_SARG_RUN1; i <= S_SARG_PAIN2; i++)
-            states[i].tics >>= 1;
-        mobjinfo[MT_BRUISERSHOT].speed = 20 * FRACUNIT;
-        mobjinfo[MT_HEADSHOT].speed = 20 * FRACUNIT;
-        mobjinfo[MT_TROOPSHOT].speed = 20 * FRACUNIT;
+            mutable_states[i].tics >>= 1;
+        mutable_mobjinfo[MT_BRUISERSHOT].speed = 20 * FRACUNIT;
+        mutable_mobjinfo[MT_HEADSHOT].speed = 20 * FRACUNIT;
+        mutable_mobjinfo[MT_TROOPSHOT].speed = 20 * FRACUNIT;
     } else if (skill != sk_nightmare && gameskill == sk_nightmare) {
         for (i = S_SARG_RUN1; i <= S_SARG_PAIN2; i++)
-            states[i].tics <<= 1;
-        mobjinfo[MT_BRUISERSHOT].speed = 15 * FRACUNIT;
-        mobjinfo[MT_HEADSHOT].speed = 10 * FRACUNIT;
-        mobjinfo[MT_TROOPSHOT].speed = 10 * FRACUNIT;
+            mutable_states[i].tics <<= 1;
+        mutable_mobjinfo[MT_BRUISERSHOT].speed = 15 * FRACUNIT;
+        mutable_mobjinfo[MT_HEADSHOT].speed = 10 * FRACUNIT;
+        mutable_mobjinfo[MT_TROOPSHOT].speed = 10 * FRACUNIT;
     }
 
     /* force players to be initialized upon first level load         */

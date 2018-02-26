@@ -106,7 +106,7 @@ angle_t xtoviewangle[MAXSCREENWIDTH + 1];
 
 /* fixed_t		finesine[5*FINEANGLES/4];*/
 /*fixed_t*		finecosine = &finesine[FINEANGLES/4];*/
-extern fixed_t* finecosine;
+extern fixed_t const* const finecosine;
 
 lighttable_t* scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t* scalelightfixed[MAXLIGHTSCALE];

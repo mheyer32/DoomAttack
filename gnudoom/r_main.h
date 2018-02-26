@@ -99,7 +99,7 @@ extern void (*spanfunc)(void);
 /* Utility functions.*/
 
 /* !!! not used: now in r_engine.asm */
-extern __inline int R_PointOnSide(fixed_t x, fixed_t y, node_t* node)
+static __inline int R_PointOnSide(fixed_t x, fixed_t y, node_t* node)
 {
     register int _res __asm("d0");
     register fixed_t d0 __asm("d0") = x;
@@ -224,7 +224,7 @@ extern __inline int R_PointOnSide(fixed_t x, fixed_t y, node_t* node)
     return _res;
 }
 
-extern __inline int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t* line)
+static __inline int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t* line)
 
 {
     register int _res __asm("d0");
@@ -367,7 +367,7 @@ extern __inline int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t* line)
 
 angle_t R_PointToAngle(fixed_t x, fixed_t y);
 
-extern __inline angle_t R_PointToAngle2(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
+static __inline angle_t R_PointToAngle2(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
 {
     viewx = x1;
     viewy = y1;
@@ -375,7 +375,7 @@ extern __inline angle_t R_PointToAngle2(fixed_t x1, fixed_t y1, fixed_t x2, fixe
     return R_PointToAngle(x2, y2);
 }
 
-extern __inline fixed_t R_PointToDist(fixed_t x, fixed_t y)
+static __inline fixed_t R_PointToDist(fixed_t x, fixed_t y)
 {
     register fixed_t _res __asm("d0");
     register fixed_t d0 __asm("d0") = x;
@@ -458,7 +458,7 @@ extern __inline fixed_t R_PointToDist(fixed_t x, fixed_t y)
     return _res;
 }
 
-extern __inline fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
+static __inline fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 {
     register fixed_t _res __asm("d0");
     register angle_t d0 __asm("d0") = visangle;

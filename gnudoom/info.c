@@ -36,7 +36,7 @@ static const char rcsid[] = "$Id: info.c,v 1.3 1997/01/26 07:45:00 b1 Exp $";
 
 #include "p_mobj.h"
 
-char *sprnames[NUMSPRITES + 1] = {
+FAR char const* const sprnames[NUMSPRITES + 1] = {
     "TROO", "SHTG", "PUNG", "PISG", "PISF", "SHTF", "SHT2", "CHGG", "CHGF", "MISG", "MISF", "SAWG", "PLSG", "PLSF",
     "BFGG", "BFGF", "BLUD", "PUFF", "BAL1", "BAL2", "PLSS", "PLSE", "MISL", "BFS1", "BFE1", "BFE2", "TFOG", "IFOG",
     "PLAY", "POSS", "SPOS", "VILE", "FIRE", "FATB", "FBXP", "SKEL", "MANF", "FATT", "CPOS", "SARG", "HEAD", "BAL7",
@@ -124,7 +124,7 @@ void A_SpawnSound(void);
 void A_SpawnFly(void);
 void A_BrainExplode(void);
 
-state_t states[NUMSTATES] = {
+FAR const state_t states[NUMSTATES] = {
     {SPR_TROO, 0, -1, NULL, S_NULL, 0, 0},                   /* S_NULL*/
     {SPR_SHTG, 4, 0, A_Light0, S_NULL, 0, 0},                /* S_LIGHTDONE*/
     {SPR_PUNG, 0, 1, A_WeaponReady, S_PUNCH, 0, 0},          /* S_PUNCH*/
@@ -1094,7 +1094,7 @@ state_t states[NUMSTATES] = {
     {SPR_TLP2, 32771, 4, NULL, S_TECH2LAMP, 0, 0}            /* S_TECH2LAMP4*/
 };
 
-mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
+FAR const mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 
     {
         /* MT_PLAYER*/

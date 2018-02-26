@@ -29,7 +29,7 @@
 /* Endianess handling.*/
 /* WAD files are stored little endian.*/
 
-extern __inline short SwapSHORT(short val)
+static __inline short SwapSHORT(short val)
 {
     __asm __volatile("ror.w	#8,%0"
 
@@ -39,7 +39,7 @@ extern __inline short SwapSHORT(short val)
     return val;
 }
 
-extern __inline long SwapLONG(long val)
+static __inline long SwapLONG(long val)
 {
     __asm __volatile(
         "ror.w	#8,%0 \n\t"

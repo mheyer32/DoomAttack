@@ -37,7 +37,7 @@ R_GetColumn
   int		col );
 */
 
-extern __inline byte *R_GetColumn(int tex, int col)
+static __inline byte *R_GetColumn(int tex, int col)
 {
     register int _res __asm("d0");
 

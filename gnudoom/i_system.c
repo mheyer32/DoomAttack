@@ -208,10 +208,14 @@ void GetC2P(void)
                         getchar();
                     }
                 }
-            } /* if (!strcmp(id,"C2P")) */
+            } else {
+                fprintf(stderr, "I_Init: The selected C2P file is not compatible.");
+            }
 
             if (!DoC2P)
                 C2P = NULL;
+        } else {
+            fprintf(stderr, "I_Init: The selected C2P file is not compatible.");
         }
     }
 }

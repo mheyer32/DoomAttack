@@ -89,7 +89,7 @@ int numsprites;
 
 spriteframe_t sprtemp[29];
 int maxframe;
-char* spritename;
+const char* spritename;
 
 static int BASEYCENTER;
 
@@ -168,9 +168,9 @@ void R_InstallSpriteLump(int lump, unsigned frame, unsigned rotation, boolean fl
 /*  letter/number appended.*/
 /* The rotation character can be 0 to signify no rotations.*/
 /**/
-void R_InitSpriteDefs(char** namelist)
+void R_InitSpriteDefs(char const* const* namelist)
 {
-    char** check;
+    char const* const* check;
     int i;
     int l;
     int intname;
@@ -287,7 +287,7 @@ int maxvissprites;
 
 void* mymalloc(unsigned long size);
 
-void R_InitSprites(char** namelist)
+void R_InitSprites(char const* const* namelist)
 {
     int i;
 
@@ -663,7 +663,7 @@ void R_DrawPSprite(pspdef_t* psp)
     vissprite_t* vis;
     vissprite_t avis;
 
-/* decide which patch to use*/
+    /* decide which patch to use*/
 #ifdef RANGECHECK
     if ((unsigned)psp->state->sprite >= numsprites)
         I_Error("R_ProjectSprite: invalid sprite number %i ", psp->state->sprite);

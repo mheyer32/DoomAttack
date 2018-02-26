@@ -2526,7 +2526,7 @@ R_RenderBSPNode:
 	
 .notminus1:
 	move		d2,d0
-	and		#~NF_SUBSECTOR,d0
+	and		#(~NF_SUBSECTOR)&$FFFF,d0
 	bsr.s		_R_Subsector
 	rts
 

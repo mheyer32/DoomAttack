@@ -50,8 +50,9 @@ endif
 
 #-v -fbbb=Vabcefimprs
 
+#-fbaserel
 CFLAGS = $(RUNTIME_CFLAGS)
-CFLAGS += -fbaserel -m68030 -m68881
+CFLAGS += -m68030 -m68881
 CFLAGS += -Ofast -fstrength-reduce -fomit-frame-pointer
 CFLAGS += -Werror -Wimplicit -Wstrict-prototypes
 CFLAGS += -include "doomdef.h"
@@ -61,16 +62,19 @@ CFLAGS += -DNDEBUG -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA -Diabs=abs
 
 LDFLAGS = $(RUNTIME_LDFLAGS)
 
-PFLAGS = -Fhunk -phxass -nosym -ldots -spaces -m68030 -m68882
-PFLAGS += -I$(TOOLCHAIN)/m68k-amigaos/sys-include
-PFLAGS += -I$(TOOLCHAIN)/m68k-amigaos/ndk/include
+PINCLUDES = -I$(TOOLCHAIN)/m68k-amigaos/sys-include \
+	    -I$(TOOLCHAIN)/m68k-amigaos/ndk/include
+
+PFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces -m68030 -m68882 $(PINCLUDES)
 
 INTERMEDIATE =$(CURDIR)/build/
 OUT = $(CURDIR)/bin/
 
-# not too sophisticated dependency
 OBJS = \
 	am_map.o \
+	am_mapamiga.o \
+	analogjoy.o \
+	clip.o \
 	d_items.o \
 	d_locale.o \
 	d_main.o \
@@ -94,7 +98,7 @@ OBJS = \
 	m_bbox.o \
 	m_cheat.o \
 	m_fixed.o \
-	m_fixed.o \
+	m_fixedamiga.o \
 	m_menu.o \
 	m_misc.o \
 	m_random.o \
@@ -121,9 +125,9 @@ OBJS = \
 	r_bsp.o \
 	r_data.o \
 	r_draw.o \
+	r_engine.o \
 	r_main.o \
 	r_plane.o \
-	r_segs.o \
 	r_segs.o \
 	r_sky.o \
 	r_things.o \
@@ -140,20 +144,46 @@ OBJS = \
 OUTOBJS = $(addprefix $(INTERMEDIATE), $(OBJS))
 
 
-all:	 DoomAttack
+all:  DoomAttack c2p
+
 
 clean:
-	rm -f *.o
+	rm -f *.o ;
+	rm -f $(OUT)/DoomAttack ;
+	rm -f $(OUT)/DoomAttackSupport/c2p/c2p*
 
 DoomAttack: $(OBJS) Makefile
 	$(CC) $(CFLAGS) $(OBJS) \
 	$(LDFLAGS) -o $(OUT)DoomAttack
 
+am_mapamiga.o: amigaasm/am_mapamiga.asm Makefile
+	$(PHXASS) $(PFLAGS) amigaasm/am_mapamiga.asm -o am_mapamiga.o
+
+m_fixedamiga.o: amigaasm/m_fixedamiga.asm Makefile
+	$(PHXASS) $(PFLAGS) amigaasm/m_fixedamiga.asm -o m_fixedamiga.o
+
+r_engine.o: amigaasm/r_engine.asm amigaasm/r_engine.i amigaasm/doom.i Makefile
+	$(PHXASS) $(PFLAGS) amigaasm/r_engine.asm -o r_engine.o
+
+analogjoy.o: amigaasm/analogjoy.asm Makefile
+	$(PHXASS) $(PFLAGS) amigaasm/analogjoy.asm -o analogjoy.o
+
+clip.o: amigaasm/clip.asm Makefile
+	$(PHXASS) $(PFLAGS) amigaasm/clip.asm -o clip.o
+
+C2PFILES = $(notdir $(basename $(wildcard amigaasm/c2p_*.s)))
+
+c2p: $(C2PFILES) Makefile
+
+c2p_%:  amigaasm/c2p_%.s Makefile
+	$(PHXASS) $(PINCLUDES) -Fhunk -phxass -nosym -warncomm -ldots $< -o $(OUT)DoomAttackSupport/c2p/$(notdir $(basename $<))
+
+
 %.o:	%.c  Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.s:	%.o  Makefile
-	$(CC) $(CFLAGS) -Wa,-adhln -g -c $<  > $@
+#%.s:	%.o  Makefile
+#	$(CC) $(CFLAGS) -Wa,-adhln -g -c $<  > $@
 
 #############################################################
 #

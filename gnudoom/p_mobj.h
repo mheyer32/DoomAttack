@@ -241,10 +241,10 @@ typedef struct mobj_s
     int validcount;
 
     mobjtype_t type;
-    mobjinfo_t* info; /* &mobjinfo[mobj->type]*/
+    const mobjinfo_t* info; /* &mobjinfo[mobj->type]*/
 
     int tics; /* state tic counter*/
-    state_t* state;
+    const state_t* state;
     int flags;
     int health;
 

@@ -11,16 +11,16 @@ typedef struct
     mobjtype_t type;
 } castinfo_t;
 
-extern char *gammamsg[];
-extern char *mapnames[];
-extern char *mapnames2[];
-extern char *mapnamesp[];
-extern char *mapnamest[];
-extern char *player_names[];
+extern FAR char *gammamsg[];
+extern FAR char *mapnames[];
+extern FAR char *mapnames2[];
+extern FAR char *mapnamesp[];
+extern FAR char *mapnamest[];
+extern FAR char *player_names[];
 
 extern castinfo_t castorder[];
 
-static char **stringarray[] = {
+static FAR char **stringarray[] = {
     &YESKEY, &NOKEY, &D_DEVSTR, &D_CDROM,
 
     &PRESSKEY, &PRESSYN, &QUITMSG, &LOADNET, &QLOADNET, &QSAVESPOT, &SAVEDEAD, &QSPROMPT, &QLPROMPT,

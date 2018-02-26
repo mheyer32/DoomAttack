@@ -1,5 +1,5 @@
 	MACHINE 68040
-	PMMU
+	;PMMU
 
 	incdir AINCLUDE:
 	

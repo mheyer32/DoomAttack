@@ -527,7 +527,7 @@ void A_Look(mobj_t* actor)
     if (!P_LookForPlayers(actor, false))
         return;
 
-/* go into chase state*/
+    /* go into chase state*/
 seeyou:
     if (actor->info->seesound) {
         int sound;
@@ -638,7 +638,7 @@ void A_Chase(mobj_t* actor)
         return;
     }
 
-/* ?*/
+    /* ?*/
 nomissile:
     /* possibly choose another target*/
     if (netgame && !actor->threshold && !P_CheckSight(actor, actor->target)) {
@@ -1067,7 +1067,7 @@ void A_VileChase(mobj_t* actor)
     int bx;
     int by;
 
-    mobjinfo_t* info;
+    const mobjinfo_t* info;
     mobj_t* temp;
 
     if (actor->movedir != DI_NODIR) {
