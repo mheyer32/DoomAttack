@@ -28,26 +28,15 @@ static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #include <devices/timer.h>
 #include <dos/dos.h>
 #include <exec/execbase.h>
-#include <exec/memory.h>
-#include <exec/tasks.h>
-#include <graphics/gfx.h>
 #include <graphics/gfxbase.h>
-#include <graphics/modeid.h>
-#include <inline/asl.h>
-#include <inline/dos.h>
-#include <inline/exec.h>
-#include <inline/graphics.h>
-#include <inline/icon.h>
-#include <inline/iffparse.h>
-#include <inline/input.h>
-#include <inline/intuition.h>
-#include <inline/keymap.h>
-#include <inline/lowlevel.h>
-#include <inline/timer.h>
-#include <intuition/intuition.h>
-#include <libraries/asl.h>
-#include <libraries/iffparse.h>
-#include <workbench/icon.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/graphics.h>
+#include <proto/icon.h>
+#include <proto/input.h>
+#include <proto/intuition.h>
+#include <proto/timer.h>
+#include <proto/wb.h>
 #include <workbench/startup.h>
 #include <workbench/workbench.h>
 
@@ -94,6 +83,7 @@ BOOL InputHandlerON;
 /*#include <unistd.h>*/
 
 #include "doomdef.h"
+#include "i_net.h"
 #include "i_sound.h"
 #include "i_video.h"
 #include "m_misc.h"
@@ -484,6 +474,7 @@ void I_QuitAmiga(void)
 /**/
 void I_Quit(void)
 {
+    // FIXME: bug in noixemul SIG_IGN not declared with __stdargs in front
     signal(SIGINT, SIG_IGN);
 
     D_QuitNetGame();
@@ -600,7 +591,7 @@ void I_InitWBArgs(void)
     if (M_CheckParm("-68060"))
         cputype = 68060;
 
-    signal(SIGINT, (void (*)(int))I_Quit);
+    signal(SIGINT, (STDARGS void (*)(int))I_Quit);
 
     MainTask = FindTask(0);
 
@@ -724,12 +715,12 @@ void I_InitConfigArgs(void)
     if (StartOptions) {
         if (StartOptions[0]) {
             if (!(sp = malloc(strlen(StartOptions) + 2)))
-                goto raus;
+                return;
             strcpy(sp, StartOptions);
 
             if (!ArgsAlloced) {
                 if (!(newargv = malloc(100 * sizeof(void *))))
-                    goto raus;
+                    return;
 
                 memset(newargv, 0, 100 * sizeof(void *));
                 memcpy(newargv, myargv, myargc * sizeof(void *));
@@ -767,6 +758,4 @@ void I_InitConfigArgs(void)
             }
         }
     }
-
-raus:
 }

@@ -219,7 +219,7 @@ extern __inline int R_PointOnSide(fixed_t x, fixed_t y, node_t* node)
 
         : "=r"(_res)
         : "r"(d0), "r"(d1), "r"(a0)
-        : "d0", "d1");
+        : "d1");
 
     return _res;
 }
@@ -360,7 +360,7 @@ extern __inline int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t* line)
 
         : "=r"(_res)
         : "r"(d0), "r"(d1), "r"(a0)
-        : "d0", "d1", "d4", "d5", "d6", "d7", "a1");
+        : "d1", "d4", "d5", "d6", "d7", "a1");
 
     return _res;
 }
@@ -450,9 +450,9 @@ extern __inline fixed_t R_PointToDist(fixed_t x, fixed_t y)
         : "=r"(_res)
         : "r"(d0), "r"(d1)
 #ifndef version060
-        : "d0", "d1", "d2", "a0");
+        : "d1", "d2", "a0");
 #else
-        : "d0", "d1", "d2", "a0", "fp0");
+        : "d1", "d2", "a0", "fp0");
 #endif
 
     return _res;
@@ -565,7 +565,7 @@ extern __inline fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 
         : "=r"(_res)
         : "r"(d0)
-        : "d0", "d1", "d2", "a0"
+        : "d1", "d2", "a0"
 
     );
 
@@ -591,6 +591,7 @@ void R_PatchEngine(void);
 /* Called by M_Responder.*/
 void R_SetViewSize(int blocks, int detail);
 
+void R_DrawCrossHair(void);
 #endif
 /*-----------------------------------------------------------------------------*/
 /**/

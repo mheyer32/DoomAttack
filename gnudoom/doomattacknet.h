@@ -8,7 +8,7 @@ struct DANInitialization
     /* Vars */
 
     struct ExecBase *SysBase;
-    struct Library *DOSBase;
+    struct DosLibrary *DOSBase;
     struct Library *IntuitionBase;
     struct Library *GfxBase;
     struct Library *KeymapBase;

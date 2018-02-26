@@ -26,6 +26,7 @@
 static const char rcsid[] = "$Id: r_main.c,v 1.5 1997/02/03 22:45:12 b1 Exp $";
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "d_net.h"
@@ -362,7 +363,7 @@ fixed_t R_PointToDist(fixed_t x, fixed_t y)
 /**/
 void R_InitPointToAngle(void)
 {
-/* UNUSED - now getting from tables.c*/
+    /* UNUSED - now getting from tables.c*/
 #if 0
     int	i;
     long	t;
@@ -398,7 +399,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
     fixed_t num;
     int den;
 
-/* UNUSED*/
+    /* UNUSED*/
 #if 0
 {
     fixed_t		dist;
@@ -443,7 +444,7 @@ fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
 /**/
 void R_InitTables(void)
 {
-/* UNUSED: now getting from tables.c*/
+    /* UNUSED: now getting from tables.c*/
 #if 0
     int		i;
     float	a;
@@ -682,7 +683,7 @@ void R_ExecuteSetViewSize(void)
 
     R_InitTextureMapping();
 
-/* psprite scales*/
+    /* psprite scales*/
 #ifndef mc68060
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;

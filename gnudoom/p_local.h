@@ -182,7 +182,7 @@ static __inline fixed_t P_AproxDistance(fixed_t dx, fixed_t dy)
 
         : "=r"(_res)
         : "r"(d0), "r"(d1)
-        : "d0", "d1");
+        : "d1");
 
     return _res;
 };
@@ -297,7 +297,7 @@ static __inline int P_PointOnLineSide(fixed_t x, fixed_t y, line_t* line)
 
         : "=r"(_res)
         : "r"(a0), "r"(d0), "r"(d1)
-        : "a1", "d0", "d1", "d2", "d3", "d4", "d5");
+        : "a1", "d1", "d2", "d3", "d4", "d5");
 
     return _res;
 }

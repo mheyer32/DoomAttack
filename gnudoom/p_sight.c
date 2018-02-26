@@ -164,12 +164,12 @@ static __inline int P_DivlineSide(fixed_t x, fixed_t y, divline_t* node)
 
         : "=r"(_res), "=d"(x), "=d"(y)
         : "1"(x), "2"(y), "a"(node)
-        : "d0", "d1");
+        : "d1");
 
     return _res;
 }
 
-#ifdef 0
+#if 0
 int P_DivlineSide(fixed_t x, fixed_t y, divline_t* node)
 {
     fixed_t dx;
@@ -179,40 +179,40 @@ int P_DivlineSide(fixed_t x, fixed_t y, divline_t* node)
 
     if (!node->dx) {
         if (x == node->x)
-            return 2;
+	    return 2;
+	
+	if (x <= node->x)
+	    return node->dy > 0;
 
-        if (x <= node->x)
-            return node->dy > 0;
-
-        return node->dy < 0;
+	return node->dy < 0;
     }
-
+    
     if (!node->dy) {
-        /* Georg Steger: FIX */
-
-        /*	if (x==node->y)
-                return 2;*/
+    	/* Georg Steger: FIX */
+    	
+/*	if (x==node->y)
+	    return 2;*/
 
         if (y == node->y)
             return 2;
 
-        if (y <= node->y)
-            return node->dx < 0;
+	if (y <= node->y)
+	    return node->dx < 0;
 
-        return node->dx > 0;
+	return node->dx > 0;
     }
-
+	
     dx = (x - node->x);
     dy = (y - node->y);
 
     left = (node->dy >> FRACBITS) * (dx >> FRACBITS);
     right = (dy >> FRACBITS) * (node->dx >> FRACBITS);
-
+	
     if (right < left)
         return 0; /* front side*/
-
+    
     if (left == right)
-        return 2;
+	return 2;
     return 1; /* back side*/
 }
 #endif

@@ -34,6 +34,7 @@ static const char rcsid[] = "$Id: r_things.c,v 1.5 1997/02/03 16:47:56 b1 Exp $"
 #include "z_zone.h"
 
 #include "r_local.h"
+#include "r_things.h"
 
 #include "doomstat.h"
 #include "v_video.h"
@@ -943,6 +944,8 @@ void R_DrawSprite (vissprite_t* spr)
     mceilingclip = cliptop;
     R_DrawVisSprite (spr, spr->x1, spr->x2);
 }
+#else
+void R_DrawSprite(REGA0(vissprite_t* spr));
 #endif
 
 /**/

@@ -1,7 +1,6 @@
 
-#include <inline/exec.h>
-#include <inline/locale.h>
-#include <libraries/locale.h>
+#include <proto/exec.h>
+#include <proto/locale.h>
 
 #include "dstrings.h"
 #include "info.h"

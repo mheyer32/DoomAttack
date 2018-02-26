@@ -23,9 +23,6 @@
 
 static const char rcsid[] = "$Id: am_map.c,v 1.4 1997/02/03 21:24:33 b1 Exp $";
 
-/* hallohallohallo*/
-#define register
-
 #include <stdio.h>
 
 #include "doomdef.h"
@@ -909,7 +906,7 @@ static void AM_doFollowPlayer(void)
 /**/
 static void AM_updateLightLev(void)
 {
-    static nexttic = 0;
+    static int nexttic = 0;
     /*static int litelevels[] = { 0, 3, 5, 6, 6, 7, 7, 7 };*/
     static int litelevels[] = {0, 4, 7, 10, 12, 14, 15, 15};
     static int litelevelscnt = 0;

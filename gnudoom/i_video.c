@@ -29,21 +29,19 @@ static const char *authstring = "$AUTH: Georg Steger";
 #include <clib/alib_protos.h>
 #include <devices/gameport.h>
 #include <devices/inputevent.h>
-#include <exec/memory.h>
 #include <graphics/gfx.h>
 #include <graphics/modeid.h>
-#include <intuition/intuition.h>
 #include <intuition/intuitionbase.h>
 #include <intuition/pointerclass.h>
 #include <libraries/lowlevel.h>
-
-#include <inline/cybergraphics.h>
-#include <inline/dos.h>
-#include <inline/exec.h>
-#include <inline/graphics.h>
-#include <inline/input.h>
-#include <inline/intuition.h>
-#include <inline/timer.h>
+#include <proto/cybergraphics.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/graphics.h>
+#include <proto/intuition.h>
+#include <proto/keymap.h>
+#include <proto/lowlevel.h>
+#include <proto/timer.h>
 
 #ifdef MAXINT
 #undef MAXINT
@@ -53,13 +51,12 @@ static const char *authstring = "$AUTH: Georg Steger";
 #undef MININT
 #endif
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define strcasecmp strcmp
-
-#include <stdarg.h>
 
 #include "d_main.h"
 #include "doomstat.h"
@@ -74,8 +71,8 @@ static const char *authstring = "$AUTH: Georg Steger";
 #include "amiga_mmu.h"
 #include "doomdef.h"
 
-#define AllocRaster(width, height) AllocMem(RASSIZE(width, height + 16) + 8192, MEMF_CHIP | MEMF_CLEAR | MEMF_PUBLIC)
-#define FreeRaster(plane, width, height) FreeMem(plane, RASSIZE(width, height + 16) + 8192)
+//#define AllocRaster(width,height) AllocMem(RASSIZE(width,height+16)+8192,MEMF_CHIP|MEMF_CLEAR|MEMF_PUBLIC)
+//#define FreeRaster(plane,width,height) FreeMem(plane,RASSIZE(width,height+16)+8192)
 
 #define POINTER_WARP_COUNTDOWN 1
 
@@ -246,12 +243,12 @@ static int xlatekey(int taste)
         rc = KEY_F10;
         break;
 
-    /* "~" */
+        /* "~" */
     case 0:
         rc = KEY_F12;
         break;
 
-    /* NUMERICPAD * */
+        /* NUMERICPAD * */
     case 93:
         rc = KEY_F11;
         break;
@@ -290,13 +287,13 @@ static int xlatekey(int taste)
         rc = KEY_HELP;
         break;
 
-    /* HELP*/
+        /* HELP*/
     case 92:
         rc = KEY_PAUSE;
         break;
 
-    /*      case XK_KP_Equal:*/
-    /* =*/
+        /*      case XK_KP_Equal:*/
+        /* =*/
     case 12:
         rc = KEY_EQUALS;
         break;

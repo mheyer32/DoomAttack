@@ -22,8 +22,8 @@
 
 static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 
-#include <exec/exec.h>
-#include <inline/exec.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
 
 #include <exec/devices.h>
 #include <graphics/gfxbase.h>
@@ -60,7 +60,6 @@ struct danfile
     ULONG reserved[8];
 };
 
-extern struct Library *DOSBase;
 extern struct Library *IntuitionBase;
 extern struct Library *GfxBase;
 extern struct Library *KeymapBase;

@@ -70,12 +70,13 @@ int W_GetNumForName(char* name);
 int W_LumpLength(int lump);
 void W_ReadLump(int lump, void* dest);
 
-#ifdef 0
+#if 0
 void* W_CacheLumpNum(int lump, int tag);
 #endif
 
 extern __inline void* W_CacheLumpNum(int lump, int tag)
 {
+    // FIXME: return value in a0?
     register void* _res __asm("a0");
 
     __asm __volatile(
@@ -122,7 +123,7 @@ extern __inline void* W_CacheLumpNum(int lump, int tag)
 
         : "=r"(_res), "=d"(lump), "=d"(tag)
         : "1"(lump), "2"(tag)
-        : "d0", "d1", "a0", "a1", "a2", "memory");
+        : "d0", "d1", "a1", "a2", "memory");
 
     return _res;
 }

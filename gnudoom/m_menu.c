@@ -145,7 +145,7 @@ typedef struct menu_s
     short numitems;          /* # of menu items*/
     struct menu_s* prevMenu; /* previous menu*/
     menuitem_t* menuitems;   /* menu items*/
-    void (*routine)();       /* draw routine*/
+    void (*routine)(void);   /* draw routine*/
     short x;
     short y;      /* x,y of menu*/
     short lastOn; /* last item user was on in menu*/
@@ -237,7 +237,7 @@ menuitem_t MainMenu[] = {{1, "M_NGAME", M_NewGame, 'n'},
                          {1, "M_RDTHIS", M_ReadThis, 'r'},
                          {1, "M_QUITG", M_QuitDOOM, 'q'}};
 
-menu_t MainDef = {main_end, NULL, MainMenu, (void (*)())M_DrawMainMenu, 97, 64, 0};
+menu_t MainDef = {main_end, NULL, MainMenu, M_DrawMainMenu, 97, 64, 0};
 
 /**/
 /* EPISODE SELECT*/
@@ -257,10 +257,10 @@ menuitem_t EpisodeMenu[] = {{1, "M_EPI1", M_Episode, 'k'},
                             {1, "M_EPI4", M_Episode, 't'}};
 
 menu_t EpiDef = {
-    ep_end,                    /* # of menu items*/
-    &MainDef,                  /* previous menu*/
-    EpisodeMenu,               /* menuitem_t ->*/
-    (void (*)())M_DrawEpisode, /* drawing routine ->*/
+    ep_end,        /* # of menu items*/
+    &MainDef,      /* previous menu*/
+    EpisodeMenu,   /* menuitem_t ->*/
+    M_DrawEpisode, /* drawing routine ->*/
     48,
     63, /* x,y*/
     ep1 /* lastOn*/
@@ -286,10 +286,10 @@ menuitem_t NewGameMenu[] = {{1, "M_JKILL", M_ChooseSkill, 'i'},
                             {1, "M_NMARE", M_ChooseSkill, 'n'}};
 
 menu_t NewDef = {
-    newg_end,                  /* # of menu items*/
-    &EpiDef,                   /* previous menu*/
-    NewGameMenu,               /* menuitem_t ->*/
-    (void (*)())M_DrawNewGame, /* drawing routine ->*/
+    newg_end,      /* # of menu items*/
+    &EpiDef,       /* previous menu*/
+    NewGameMenu,   /* menuitem_t ->*/
+    M_DrawNewGame, /* drawing routine ->*/
     48,
     63,    /* x,y*/
     hurtme /* lastOn*/
@@ -320,7 +320,7 @@ menuitem_t OptionsMenu[] = {{1, "M_ENDGAM", M_EndGame, 'e'},
                             {-1, "", 0},
                             {1, "M_SVOL", M_Sound, 's'}};
 
-menu_t OptionsDef = {opt_end, &MainDef, OptionsMenu, (void (*)())M_DrawOptions, 60, 37, 0};
+menu_t OptionsDef = {opt_end, &MainDef, OptionsMenu, M_DrawOptions, 60, 37, 0};
 
 /**/
 /* Read This! MENU 1 & 2*/
@@ -333,7 +333,7 @@ enum
 
 menuitem_t ReadMenu1[] = {{1, "", M_ReadThis2, 0}};
 
-menu_t ReadDef1 = {read1_end, &MainDef, ReadMenu1, (void (*)())M_DrawReadThis1, 280, 185, 0};
+menu_t ReadDef1 = {read1_end, &MainDef, ReadMenu1, M_DrawReadThis1, 280, 185, 0};
 
 enum
 {
@@ -343,7 +343,7 @@ enum
 
 menuitem_t ReadMenu2[] = {{1, "", M_FinishReadThis, 0}};
 
-menu_t ReadDef2 = {read2_end, &ReadDef1, ReadMenu2, (void (*)())M_DrawReadThis2, 330, 175, 0};
+menu_t ReadDef2 = {read2_end, &ReadDef1, ReadMenu2, M_DrawReadThis2, 330, 175, 0};
 
 /**/
 /* SOUND VOLUME MENU*/
@@ -359,7 +359,7 @@ enum
 
 menuitem_t SoundMenu[] = {{2, "M_SFXVOL", M_SfxVol, 's'}, {-1, "", 0}, {2, "M_MUSVOL", M_MusicVol, 'm'}, {-1, "", 0}};
 
-menu_t SoundDef = {sound_end, &OptionsDef, SoundMenu, (void (*)())M_DrawSound, 80, 64, 0};
+menu_t SoundDef = {sound_end, &OptionsDef, SoundMenu, M_DrawSound, 80, 64, 0};
 
 /**/
 /* LOAD GAME MENU*/
@@ -378,7 +378,7 @@ enum
 menuitem_t LoadMenu[] = {{1, "", M_LoadSelect, '1'}, {1, "", M_LoadSelect, '2'}, {1, "", M_LoadSelect, '3'},
                          {1, "", M_LoadSelect, '4'}, {1, "", M_LoadSelect, '5'}, {1, "", M_LoadSelect, '6'}};
 
-menu_t LoadDef = {load_end, &MainDef, LoadMenu, (void (*)())M_DrawLoad, 80, 54, 0};
+menu_t LoadDef = {load_end, &MainDef, LoadMenu, M_DrawLoad, 80, 54, 0};
 
 /**/
 /* SAVE GAME MENU*/
@@ -386,7 +386,7 @@ menu_t LoadDef = {load_end, &MainDef, LoadMenu, (void (*)())M_DrawLoad, 80, 54, 
 menuitem_t SaveMenu[] = {{1, "", M_SaveSelect, '1'}, {1, "", M_SaveSelect, '2'}, {1, "", M_SaveSelect, '3'},
                          {1, "", M_SaveSelect, '4'}, {1, "", M_SaveSelect, '5'}, {1, "", M_SaveSelect, '6'}};
 
-menu_t SaveDef = {load_end, &MainDef, SaveMenu, (void (*)())M_DrawSave, 80, 54, 0};
+menu_t SaveDef = {load_end, &MainDef, SaveMenu, M_DrawSave, 80, 54, 0};
 
 /**/
 /* M_ReadSaveStrings*/
@@ -1231,7 +1231,7 @@ boolean M_Responder(event_t* ev)
             S_StartSound(NULL, sfx_stnmov);
             return true;
 
-        /* hallohallohallo */
+            /* hallohallohallo */
         case '+':
         case KEY_EQUALS: /* Screen size up*/
             if (automapactive || chat_on)
@@ -1547,7 +1547,7 @@ void M_Init(void)
         MainDef.numitems--;
         MainDef.y += 8;
         NewDef.prevMenu = &MainDef;
-        ReadDef1.routine = (void (*)())M_DrawReadThis1;
+        ReadDef1.routine = M_DrawReadThis1;
         ReadDef1.x = 330;
         ReadDef1.y = 165;
         ReadMenu1[0].routine = M_FinishReadThis;

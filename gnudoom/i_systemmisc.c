@@ -1,20 +1,12 @@
 #include <datatypes/pictureclass.h>
-#include <dos/dos.h>
-#include <dos/var.h>
-#include <exec/exec.h>
-#include <graphics/displayinfo.h>
-#include <graphics/gfx.h>
 #include <graphics/videocontrol.h>
-#include <intuition/intuition.h>
-#include <libraries/asl.h>
-#include <libraries/iffparse.h>
-
-#include <inline/asl.h>
-#include <inline/dos.h>
-#include <inline/exec.h>
-#include <inline/graphics.h>
-#include <inline/iffparse.h>
-#include <inline/intuition.h>
+#include <proto/alib.h>
+#include <proto/asl.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/graphics.h>
+#include <proto/iffparse.h>
+#include <proto/intuition.h>
 
 #include <stddef.h>
 #include <stdio.h>
@@ -69,6 +61,8 @@ static struct DisplayMode mydisplaymode = {
     0
 
 };
+
+extern void Chunky2Planar(void *Quelle, void *Ziel, int bytes, int planes);
 
 void I_MakePath(char *dest, char *path, char *file, int len)
 {

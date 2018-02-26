@@ -652,9 +652,9 @@ static void WI_drawTime(int x, int y, int t)
     }
 }
 
+static void WI_unloadData(void);
 static void WI_End(void)
 {
-    static void WI_unloadData(void);
     WI_unloadData();
 }
 

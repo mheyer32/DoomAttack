@@ -62,7 +62,7 @@ static __inline int DAMCall_RegisterSong(void *data, int songnum)
 
     register void *a1 __asm("a1") = DAM->DAM_RegisterSong;
 
-    __asm __volatile("jsr (a1)" : "=r"(_res) : "r"(a0), "r"(d0), "r"(a1) : "d0", "d1", "a0", "a1", "memory");
+    __asm __volatile("jsr (a1)" : "=r"(_res) : "r"(a0), "r"(d0), "r"(a1) : "d1", "a0", "a1", "memory");
 
     return _res;
 }
@@ -98,7 +98,7 @@ static __inline int DAMCall_QrySongPlaying(int handle)
     register int d0 __asm("d0") = handle;
     register void *a1 __asm("a1") = DAM->DAM_QrySongPlaying;
 
-    __asm __volatile("jsr (a1)" : "=r"(_res) : "r"(d0), "r"(a1) : "d0", "d1", "a0", "a1", "memory");
+    __asm __volatile("jsr (a1)" : "=r"(_res) : "r"(d0), "r"(a1) : "d1", "a0", "a1", "memory");
 
     return _res;
 }
@@ -131,7 +131,7 @@ static __inline int DASCall_Start(APTR wave, int cnum, int pitch, int vol, int s
     __asm __volatile("jsr (a1)"
                      : "=r"(_res)
                      : "r"(a0), "r"(a1), "r"(d0), "r"(d1), "r"(d2), "r"(d3), "r"(d4)
-                     : "d0", "d1", "a0", "a1", "memory");
+                     : "d1", "a0", "a1", "memory");
 
     return _res;
 }
@@ -172,7 +172,7 @@ static __inline int DASCall_Done(int cnum)
 
     register void *a1 __asm("a1") = DAM->DAS_Done;
 
-    __asm __volatile("jsr (a1)" : "=r"(_res) : "r"(a1), "r"(d0) : "d0", "d1", "a0", "a1", "memory");
+    __asm __volatile("jsr (a1)" : "=r"(_res) : "r"(a1), "r"(d0) : "d1", "a0", "a1", "memory");
 
     return _res;
 }

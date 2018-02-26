@@ -28,22 +28,9 @@
 
 static const char rcsid[] = "$Id: w_wad.c,v 1.5 1997/02/03 16:47:57 b1 Exp $";
 
-/*#ifdef NORMALUNIX*/
-
-/*#include <ctype.h>*/
-/*#include <sys/types.h>*/
-/*#include <string.h>*/
-/*#include <unistd.h>*/
-/*#include <malloc.h>*/
-/*#include <fcntl.h>*/
-/*#include <sys/stat.h>*/
-/*#include <alloca.h>*/
-/*#define O_BINARY		0*/
-
-#include <dos/dos.h>
 #include <dos/dosextens.h>
 #include <exec/exec.h>
-#include <inline/dos.h>
+#include <proto/dos.h>
 
 #include <ctype.h>
 #include <stdio.h>
@@ -62,6 +49,7 @@ static const char rcsid[] = "$Id: w_wad.c,v 1.5 1997/02/03 16:47:57 b1 Exp $";
 
 #include "doomtype.h"
 #include "i_system.h"
+#include "m_argv.h"
 #include "m_swap.h"
 #include "z_zone.h"
 
@@ -85,7 +73,7 @@ BPTR filehandles[MAXWADFILES];
 
 #define strcmpi stricmp
 
-#ifndef strupr
+#if !defined(strupr) && !defined(__libnix__)
 void strupr(char* s)
 {
     while (*s) {
@@ -335,13 +323,13 @@ typedef struct
 static void W_FindAndDeleteLump(mylumpinfo_t* first,  /* first lump in list - stop when get to it */
                                 mylumpinfo_t* lump_p, /* lump just after one to start at          */
                                 mylumpinfo_t* check)  /* name of lump to remove if found          */
-                                                      /*
-                                                       Find lump by name, starting before specifed pointer.
-                                                       Overwrite name with nulls if found. This is used to remove
-                                                       the originals of sprite entries duplicated in a PWAD, the
-                                                       sprite code doesn't like two sprite lumps of the same name
-                                                       existing in the sprites list. It may also speed things up
-                                                       slightly where flats and ptches are concerned. */
+/*
+ Find lump by name, starting before specifed pointer.
+ Overwrite name with nulls if found. This is used to remove
+ the originals of sprite entries duplicated in a PWAD, the
+ sprite code doesn't like two sprite lumps of the same name
+ existing in the sprites list. It may also speed things up
+ slightly where flats and ptches are concerned. */
 
 {
     int v1 = check->name1;
@@ -391,7 +379,7 @@ static void W_Group(char* startname1, char* startname2, char* endname1, char* en
             } else {
                 dest--;                                    /* skip back to overwrite previous s_end */
                 memset(source++, 0, sizeof(mylumpinfo_t)); /* zap S_START, go to next */
-                /* copy rest of this sprite group, including the s_end */
+                                                           /* copy rest of this sprite group, including the s_end */
 
                 for (;;) {
                     /* for each sprite, remove the original if it exists */

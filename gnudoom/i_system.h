@@ -84,6 +84,8 @@ void I_ErrorMem(void);
 
 void* mymalloc(unsigned long size);
 
+void I_IFFScreenShot(char* name, byte* data, int width, int height, byte* palette);
+
 #endif
 /*-----------------------------------------------------------------------------*/
 /**/

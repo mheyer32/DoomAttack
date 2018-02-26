@@ -24,13 +24,10 @@
 static const char rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
 
 #include <devices/audio.h>
-#include <dos/dos.h>
-#include <exec/exec.h>
-#include <intuition/intuition.h>
-
-#include <inline/dos.h>
-#include <inline/exec.h>
-#include <inline/intuition.h>
+#include <proto/alib.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/intuition.h>
 
 #ifdef MAXINT
 #undef MAXINT
@@ -94,7 +91,7 @@ static struct DAMInitialization daminit;
 static struct damfile *DAM;
 static BPTR DAMFile;
 
-#include "DoomAttackMusicInline.h"
+#include "doomattackmusicinline.h"
 
 char *MusicPlugin;
 

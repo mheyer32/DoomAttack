@@ -27,9 +27,7 @@
 #define NORMALUNIX 1
 #define __BIG_ENDIAN__ 1
 
-#include <stdio.h>
-#include <string.h>
-
+#include "amiga_macros.h"
 /**/
 /* Global parameters/defines.*/
 /**/

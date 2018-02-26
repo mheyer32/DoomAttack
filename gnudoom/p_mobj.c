@@ -69,8 +69,8 @@ boolean P_SetMobjState(mobj_t* mobj, statenum_t state)
 
         /* Modified handling.*/
         /* Call action functions when the state is set*/
-        if (st->action)
-            st->action(mobj);
+        if (st->action.acp1)
+            st->action.acp1(mobj);
 
         state = st->nextstate;
     } while (!mobj->tics);
