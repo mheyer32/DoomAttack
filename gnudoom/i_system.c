@@ -165,57 +165,60 @@ void GetC2P(void)
 
         /*		if (C2P) C2P->EndChunky2Planar(); ??????:????? */
 
-        C2PFile = LoadSeg(routine);
+        C2P = NULL;
+        C2PFile = LoadSeg(routine); //FIXME: where's the UnloadSeg for that?
         if (C2PFile) {
             C2P = (struct c2pfile *)BADDR(C2PFile);
-            memcpy(id, C2P->id, 4);
-            id[4] = '\0';
-            if (!strcmp(id, "C2P")) {
-                if (C2P->Flags & C2PF_SIGNALFLIP)
-                    C2PIsFlipping = TRUE;
-                if (C2P->Flags & C2PF_GRAFFITI)
-                    DoGraffiti = TRUE;
+            while (C2P) {
+                memcpy(id, C2P->id, 4);
+                id[4] = '\0';
+                if (!strcmp(id, "C2P")) {
+                    if (C2P->Flags & C2PF_SIGNALFLIP)
+                        C2PIsFlipping = TRUE;
+                    if (C2P->Flags & C2PF_GRAFFITI)
+                        DoGraffiti = TRUE;
 
-                init.DOSBase = (struct Library *)DOSBase;
-                init.GfxBase = (struct Library *)GfxBase;
-                init.IntuitionBase = (struct Library *)IntuitionBase;
-                init.FlipTask = FlipTask;
-                init.FlipMask = FlipMask;
-                init.DoomTask = MainTask;
-                init.DoomMask = DoomMask;
-                init.DisplayID = modeid;
+                    init.DOSBase = (struct Library *)DOSBase;
+                    init.GfxBase = (struct Library *)GfxBase;
+                    init.IntuitionBase = (struct Library *)IntuitionBase;
+                    init.FlipTask = FlipTask;
+                    init.FlipMask = FlipMask;
+                    init.DoomTask = MainTask;
+                    init.DoomMask = DoomMask;
+                    init.DisplayID = modeid;
 
-                if (((REALSCREENHEIGHT != 200) && (!(C2P->Flags & C2PF_VARIABLEHEIGHT))) ||
-                    ((REALSCREENWIDTH != 320) && (!(C2P->Flags & C2PF_VARIABLEWIDTH)))) {
-                    fprintf(stderr,
-                            "I_Init: The selected C2P routine does not support %ld x %ld resolutions.\n"
-                            "        DoomAttack will work in RTG mode!\n",
-                            REALSCREENWIDTH, REALSCREENHEIGHT);
-                    getchar();
-                } else {
-                    if (C2P->InitChunky2Planar(REALSCREENWIDTH, REALSCREENHEIGHT,
-                                               REALSCREENWIDTH * REALSCREENHEIGHT / 8, &init)) {
-                        DoC2P = TRUE;
-                        if (!(C2P->Flags & C2PF_NODOUBLEBUFFER) && !M_CheckParm("-nodoublebuffer")) {
-                            DoDoubleBuffer = TRUE;
-                        }
-                    } else {
-                        DoGraffiti = FALSE;
-                        C2PIsFlipping = FALSE;
+                    if (((REALSCREENHEIGHT != 200) && (!(C2P->Flags & C2PF_VARIABLEHEIGHT))) ||
+                        ((REALSCREENWIDTH != 320) && (!(C2P->Flags & C2PF_VARIABLEWIDTH)))) {
                         fprintf(stderr,
-                                "I_Init: Initialization of Chunky2Planar routine failed!\n"
-                                "        DoomAttack will work in RTG mode!\n");
+                                "I_Init: The selected C2P routine does not support %ld x %ld resolutions.\n"
+                                "        DoomAttack will work in RTG mode!\n",
+                                REALSCREENWIDTH, REALSCREENHEIGHT);
                         getchar();
+                    } else {
+                        if (C2P->InitChunky2Planar(REALSCREENWIDTH, REALSCREENHEIGHT,
+                                                   REALSCREENWIDTH * REALSCREENHEIGHT / 8, &init)) {
+                            DoC2P = TRUE;
+                            if (!(C2P->Flags & C2PF_NODOUBLEBUFFER) && !M_CheckParm("-nodoublebuffer")) {
+                                DoDoubleBuffer = TRUE;
+                            }
+                        } else {
+                            DoGraffiti = FALSE;
+                            C2PIsFlipping = FALSE;
+                            fprintf(stderr,
+                                    "I_Init: Initialization of Chunky2Planar routine failed!\n"
+                                    "        DoomAttack will work in RTG mode!\n");
+                            getchar();
+                        }
                     }
+                    break;
                 }
-            } else {
-                fprintf(stderr, "I_Init: The selected C2P file is not compatible.");
+                C2P = C2P->NextSeg;
             }
-
-            if (!DoC2P)
-                C2P = NULL;
+            if (!C2P || !DoC2P) {
+                fprintf(stderr, "I_Init: The selected C2P file is not compatible.\n");
+            }
         } else {
-            fprintf(stderr, "I_Init: The selected C2P file is not compatible.");
+            fprintf(stderr, "I_Init: The selected C2P file could not be opened %s.\n", routine);
         }
     }
 }

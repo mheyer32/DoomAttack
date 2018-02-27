@@ -2,6 +2,7 @@ TOOLCHAIN ?= /home/matze/amigatoolchain/amiga-gcc-out
 
 CC = $(TOOLCHAIN)/bin/m68k-amigaos-gcc
 PHXASS = $(TOOLCHAIN)/bin/vasmm68k_mot
+VLINK = $(TOOLCHAIN)/bin/vlink
 
 #-noixemul
 #-fbaserel
@@ -149,6 +150,7 @@ all:  DoomAttack c2p
 
 clean:
 	rm -f *.o ;
+	rm -f amigaasm/*.o ;
 	rm -f $(OUT)/DoomAttack ;
 	rm -f $(OUT)/DoomAttackSupport/c2p/c2p*
 
@@ -176,7 +178,8 @@ C2PFILES = $(notdir $(basename $(wildcard amigaasm/c2p_*.s)))
 c2p: $(C2PFILES) Makefile
 
 c2p_%:  amigaasm/c2p_%.s Makefile
-	$(PHXASS) $(PINCLUDES) -Fhunk -phxass -nosym -warncomm -ldots $< -o $(OUT)DoomAttackSupport/c2p/$(notdir $(basename $<))
+	$(PHXASS) $(PINCLUDES) -Fhunk -phxass -nosym -warncomm -ldots $< -o $(basename $<).o
+	$(VLINK) -Bdynamic -nostdlib $(basename $<).o -o $(OUT)DoomAttackSupport/c2p/$(notdir $(basename $<))
 
 
 %.o:	%.c  Makefile
