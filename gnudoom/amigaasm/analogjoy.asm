@@ -17,6 +17,8 @@
 	include	lvo/potgo_lib.i
 	include	lvo/graphics_lib.i
 
+	section .text, code
+
 ;--------------------------------------------------------------------------
 
 	XREF	_GfxBase

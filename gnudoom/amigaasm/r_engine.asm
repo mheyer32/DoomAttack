@@ -23,7 +23,7 @@
 	XREF	_numnodes
 	XREF	_subsectors
 
-	SECTION	r_engine,CODE
+	SECTION	.text,CODE
 
 
 ;/***************************************************/
@@ -9555,7 +9555,7 @@ ERRTXT_NONETGAME:
 
 ;/*************** BSS *********************************/
 
-	SECTION r_engine_data,BSS
+	SECTION .data,BSS
 
 	XDEF	_yoffsettable
 

@@ -23,7 +23,7 @@ SCREENHEIGHT=200
 
 FUZZTABLE=50
 
-	SECTION mfixedamiga,CODE
+	SECTION .text,CODE
 
 ;/*= SWAPLONG ===================================================================*/
 

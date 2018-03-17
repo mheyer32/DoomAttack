@@ -2,7 +2,7 @@
 	
 MAXHEIGHT = 512;
 
-	SECTION	am_mapamiga,CODE
+	SECTION	.text, code
 
 	XDEF	_AM_InitMapDraw
 
@@ -424,7 +424,7 @@ _AM_DoBlack:
 ylookup: dc.l 0
 _mapf_w:	dc.l 0 
 
-	SECTION "2",BSS
+	SECTION .data,BSS
 
 ylookuptable:
 	ds.l		MAXHEIGHT

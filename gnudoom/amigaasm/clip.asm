@@ -15,7 +15,7 @@
 	xdef _CLP_xmax
 	xdef _CLP_ymax
 
-	SECTION CLIP,CODE
+	SECTION .text,CODE
 
 * Clip to x boundary
 CLIPX MACRO

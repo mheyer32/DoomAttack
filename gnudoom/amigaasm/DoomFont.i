@@ -1,6 +1,6 @@
 DOOMFONTWIDTH = 1024
 
-	SECTION data,DATA
+	SECTION .data,DATA
 
 DoomFontData:
 
