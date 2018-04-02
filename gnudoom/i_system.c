@@ -661,47 +661,53 @@ void I_InitWBArgs(void)
         CurrentDir(olddir);
 
         if (progicon) {
+            // allocate 1000 byte to hold all command line
             if ((argstring = malloc(1000))) {
                 argstringpos = argstring;
                 if ((myargv = malloc(100 * sizeof(void *)))) {
-                    ArgsAlloced = TRUE;
+                    ArgsAlloced = true;
                     memset(myargv, 0, 100 * sizeof(void *));
                     myargvpos = myargv + 1;
 
+                    // go through all tooltypes and tranlsate them into 'regular'
+                    // commandline parameters
                     myargc = 1;
                     argpos = (char **)progicon->do_ToolTypes;
                     while ((arg = *argpos++)) {
-                        if (arg[0] == '-') {
-                            myargc++;
-                            *myargvpos++ = argstringpos;
-                            splitted = FALSE;
-                            do {
-                                c = *arg++;
-                                switch (c) {
-                                case '=':
-                                case ' ':
-                                case '\t':
-                                    if (!splitted) {
-                                        while (*arg && ((*arg == ' ') || (*arg == '\t'))) {
-                                            arg++;
-                                        }
-                                        if (*arg) {
-                                            splitted = TRUE;
-                                            myargc++;
-                                            *argstringpos++ = '\0';
-                                            *argstringpos++ = *arg;
-                                            *myargvpos++ = argstringpos;
-                                        }
+                        myargc++;
+                        *myargvpos++ = argstringpos;
+                        // skip leading '-'
+                        while(*arg == '-') {
+                            arg++;
+                         }
+                        //  start a new parameter
+                        *argstringpos++ = '-';
+                        splitted = FALSE;
+                        do {
+                            c = *arg++;
+                            switch (c) {
+                            case '=':
+                            case ' ':
+                            case '\t':
+                                if (!splitted) {
+                                    while (*arg && ((*arg == ' ') || (*arg == '\t'))) {
+                                        arg++;
                                     }
-                                    break;
-
-                                default:
-                                    *argstringpos++ = c;
-                                    break;
+                                    if (*arg) {
+                                        splitted = TRUE;
+                                        myargc++;
+                                        *argstringpos++ = '\0';
+                                        *argstringpos++ = *arg;
+                                        *myargvpos++ = argstringpos;
+                                    }
                                 }
-                            } while (c);
-                        } /* if (*arg == '-') */
+                                break;
 
+                            default:
+                                *argstringpos++ = c;
+                                break;
+                            }
+                        } while (c);
                     } /* while ((arg = *argpos++)) */
 
                 } else
