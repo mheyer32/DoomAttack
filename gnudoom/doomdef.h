@@ -332,6 +332,29 @@ typedef enum
 
 #define SPECIALF_NOENDMSG 1
 
+#if 1
+
+#include <stdio.h>
+
+#define DEBUGPRINT(x)   \
+    do {                \
+        printf x;       \
+        fflush(stdout); \
+    } while (0)
+
+
+extern int debugStep;
+
+#define DEBUGSTEP()                                                         \
+    do {                                                                    \
+        printf(">>>> %d, %s : %d \n", debugStep++, __FUNCTION__, __LINE__); \
+        fflush(stdout);                                                     \
+    } while (0);
+#else
+    #define DEBUGPRINT(x)
+    #define DEBUGSTEP()
+#endif
+
 #endif
 /*-----------------------------------------------------------------------------*/
 /**/
