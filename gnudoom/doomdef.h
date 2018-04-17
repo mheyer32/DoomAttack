@@ -335,6 +335,7 @@ typedef enum
 #if 1
 
 #include <stdio.h>
+#include <proto/exec.h>
 
 #define DEBUGPRINT(x)   \
     do {                \
@@ -349,6 +350,7 @@ extern int debugStep;
     do {                                                                    \
         printf(">>>> %d, %s : %d \n", debugStep++, __FUNCTION__, __LINE__); \
         fflush(stdout);                                                     \
+        AvailMem(MEMF_FAST|MEMF_CHIP); \
     } while (0);
 #else
     #define DEBUGPRINT(x)

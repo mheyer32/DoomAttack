@@ -24,13 +24,10 @@
 
 static const char rcsid[] = "$Id: m_menu.c,v 1.7 1997/02/03 22:45:10 b1 Exp $";
 
-/*#include <unistd.h>*/
-/*#include <sys/types.h>*/
-/*#include <sys/stat.h>*/
-/*#include <fcntl.h>*/
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "doomdef.h"
 #include "dstrings.h"

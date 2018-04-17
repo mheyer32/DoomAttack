@@ -24,20 +24,17 @@
 static const char rcsid[] = "$Id: r_things.c,v 1.5 1997/02/03 16:47:56 b1 Exp $";
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
 #include "doomdef.h"
-#include "m_swap.h"
-
+#include "doomstat.h"
 #include "i_system.h"
-#include "w_wad.h"
-#include "z_zone.h"
-
+#include "m_swap.h"
 #include "r_local.h"
 #include "r_things.h"
-
-#include "doomstat.h"
 #include "v_video.h"
+#include "w_wad.h"
+#include "z_zone.h"
 
 #define MINZ (FRACUNIT * 4)
 /*#define BASEYCENTER			100 */
@@ -945,7 +942,7 @@ void R_DrawSprite (vissprite_t* spr)
     R_DrawVisSprite (spr, spr->x1, spr->x2);
 }
 #else
-void R_DrawSprite(REGA0(vissprite_t* spr));
+void R_DrawSprite(vissprite_t* spr);
 #endif
 
 /**/
@@ -956,8 +953,11 @@ void R_DrawMasked(void)
     vissprite_t* spr;
     drawseg_t* ds;
 
+//    DEBUGSTEP();
+
     R_SortVisSprites();
 
+//    DEBUGSTEP();
     if (vissprite_p > vissprites) {
         /* draw all vissprites back to front*/
         for (spr = vsprsortedhead.next;
@@ -967,13 +967,17 @@ void R_DrawMasked(void)
         }
     }
 
+//    DEBUGSTEP();
     /* render any remaining masked mid textures*/
     for (ds = ds_p - 1; ds >= drawsegs; ds--)
         if (ds->maskedtexturecol)
             R_RenderMaskedSegRange(ds, ds->x1, ds->x2);
 
+//    DEBUGSTEP();
     /* draw the psprites on top of everything*/
     /*  but does not draw on side views*/
     if (!viewangleoffset)
         R_DrawPlayerSprites();
+
+//    DEBUGSTEP();
 }

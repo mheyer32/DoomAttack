@@ -23,8 +23,12 @@
 
 #define MAXWADFILES 20
 
-#define alloca(x) mymalloc(x)
-#define freea(x) free(x)
+#ifdef __libnix__
+    #define alloca(x) mymalloc(x)
+    #define freea(x) free(x)
+#else
+    #define freea(x)
+#endif
 
 static const char rcsid[] = "$Id: w_wad.c,v 1.5 1997/02/03 16:47:57 b1 Exp $";
 
@@ -63,13 +67,13 @@ static const char rcsid[] = "$Id: w_wad.c,v 1.5 1997/02/03 16:47:57 b1 Exp $";
 /**/
 
 /* Location of each lump on disk.*/
-lumpinfo_t* lumpinfo;
-int numlumps;
+lumpinfo_t* lumpinfo = NULL;
+int numlumps = 0;
 
-void** lumpcache;
+void** lumpcache = NULL;
 
-static int numopenfiles;
-BPTR filehandles[MAXWADFILES];
+static int numopenfiles = 0;
+BPTR filehandles[MAXWADFILES] = {0};
 
 #define strcmpi stricmp
 
@@ -151,8 +155,8 @@ static void ExtractFileBase(char* path, char* dest)
 /*  specially to allow map reloads.*/
 /* But: the reload feature is a fragile hack...*/
 
-int reloadlump;
-char* reloadname;
+int reloadlump = -1;
+char* reloadname = NULL;
 
 void W_AddFile(char* filename)
 {
@@ -166,6 +170,7 @@ void W_AddFile(char* filename)
     filelump_t singleinfo;
     BPTR storehandle;
 
+    DEBUGSTEP();
     /* open the file and add to directory*/
 
     /* handle reload indicator.*/
@@ -180,12 +185,18 @@ void W_AddFile(char* filename)
         return;
     }
 
+    DEBUGSTEP();
+
     filehandles[numopenfiles++] = handle;
 
     printf(" adding %s\n", filename);
     startlump = numlumps;
 
+    DEBUGSTEP();
+
     if (stricmp(filename + strlen(filename) - 3, "wad")) {
+        DEBUGSTEP();
+
         /* single lump file*/
         fileinfo = &singleinfo;
         singleinfo.filepos = 0;
@@ -193,6 +204,7 @@ void W_AddFile(char* filename)
         ExtractFileBase(filename, singleinfo.name);
         numlumps++;
     } else {
+        DEBUGSTEP();
         /* WAD file*/
         Read(handle, &header, sizeof(header));
         if (strncmp(header.identification, "IWAD", 4)) {
@@ -217,11 +229,15 @@ void W_AddFile(char* filename)
         numlumps += header.numlumps;
     }
 
+    DEBUGSTEP();
+
     /* Fill in lumpinfo*/
     lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t));
 
     if (!lumpinfo)
         I_Error("Couldn't realloc lumpinfo");
+
+    DEBUGSTEP();
 
     lump_p = &lumpinfo[startlump];
 
@@ -245,8 +261,12 @@ void W_AddFile(char* filename)
         /*		printf("Lump %ld (%s) at offset %ld and size %ld\n",i,lump_p->name,lump_p->position,lump_p->size);*/
     }
 
+    DEBUGSTEP();
+
     if (reloadname)
         Close(handle);
+
+    DEBUGSTEP();
 
     if (fileinfomem)
         freea(fileinfomem);

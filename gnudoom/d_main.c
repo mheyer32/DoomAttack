@@ -40,6 +40,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 
 /*#include <stdio.h>*/
 /*#include <stdlib.h>*/
+#include <string.h>
 
 #include "doomdef.h"
 #include "doomstat.h"
@@ -108,7 +109,7 @@ int startepisode;
 int startmap;
 boolean autostart;
 
-FILE *debugfile;
+FILE *debugfile = NULL;
 
 boolean advancedemo;
 
@@ -804,7 +805,7 @@ void D_DoomMain(void)
 
     /*	hallohallohallo*/
 
-    setbuf(stdout, NULL);
+//    setbuf(stdout, NULL);
     modifiedgame = false;
 
     nomonsters = M_CheckParm("-nomonsters");

@@ -28,29 +28,22 @@
 static const char rcsid[] = "$Id: p_spec.c,v 1.6 1997/02/03 22:45:12 b1 Exp $";
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "doomdef.h"
 #include "doomstat.h"
-
+#include "g_game.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_fixed.h"
 #include "m_random.h"
-#include "w_wad.h"
-#include "z_zone.h"
-
 #include "p_local.h"
 #include "r_local.h"
-
-#include "g_game.h"
-
-#include "m_fixed.h"
-#include "s_sound.h"
-
-/* State.*/
 #include "r_state.h"
-
-/* Data.*/
+#include "s_sound.h"
 #include "sounds.h"
+#include "w_wad.h"
+#include "z_zone.h"
 
 /**/
 /* Animating textures and planes*/

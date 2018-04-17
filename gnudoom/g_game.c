@@ -99,32 +99,32 @@ boolean sendpause; /* send a pause event next tic */
 boolean sendsave;  /* send a save event next tic */
 boolean usergame;  /* ok to save / end game */
 
-boolean timingdemo; /* if true, exit with report on completion */
+boolean timingdemo = false; /* if true, exit with report on completion */
 boolean nodrawers;  /* for comparative timing purposes */
 boolean noblit;     /* for comparative timing purposes */
 int starttime;      /* for comparative timing purposes  	 */
 
 boolean viewactive;
 
-boolean deathmatch; /* only if started as net death */
-boolean netgame;    /* only true if packets are broadcast */
+boolean deathmatch = false; /* only if started as net death */
+boolean netgame = false;    /* only true if packets are broadcast */
 boolean playeringame[MAXPLAYERS];
 player_t players[MAXPLAYERS];
 
-int consoleplayer; /* player taking events and displaying */
-int displayplayer; /* view being displayed */
+int consoleplayer = -1; /* player taking events and displaying */
+int displayplayer = -1; /* view being displayed */
 int gametic;
 int levelstarttic;                       /* gametic at level start */
 int totalkills, totalitems, totalsecret; /* for intermission */
 
 char demoname[32];
-boolean demorecording;
-boolean demoplayback;
-boolean netdemo;
-byte* demobuffer;
-byte* demo_p;
-byte* demoend;
-boolean singledemo; /* quit after playing a demo from cmdline */
+boolean demorecording = false;
+boolean demoplayback = false;
+boolean netdemo = false;
+byte* demobuffer = NULL;
+byte* demo_p = NULL;
+byte* demoend = NULL;
+boolean singledemo = false; /* quit after playing a demo from cmdline */
 
 boolean precache = true; /* if true, load all graphics at start */
 
@@ -132,9 +132,9 @@ wbstartstruct_t wminfo; /* parms for world map / intermission */
 
 short consistancy[MAXPLAYERS][BACKUPTICS];
 
-byte* savebuffer;
+byte* savebuffer = NULL;
 
-player_t* theconsoleplayer;
+player_t* theconsoleplayer = NULL;
 
 /* */
 /* controls (have defaults) */

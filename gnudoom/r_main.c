@@ -841,31 +841,43 @@ void R_RenderPlayerView(player_t* player)
     centeryfrac = ((viewheight / 2) << 16) + updownangle;
     yslope = realyslope + (viewheight) - (updownangle >> 16);
 
+//    DEBUGSTEP();
     R_SetupFrame(player);
 
+//    DEBUGSTEP();
     /* Clear buffers.*/
     R_ClearClipSegs();
     R_ClearDrawSegs();
     R_ClearPlanes();
     R_ClearSprites();
 
+//    DEBUGSTEP();
     /* check for new console commands.*/
     NetUpdate();
 
+//    DEBUGSTEP();
     /* The head node is the last node output.*/
     R_RenderBSPNode(numnodes - 1);
 
+//    DEBUGSTEP();
     /* Check for new console commands.*/
     NetUpdate();
+
+//    DEBUGSTEP();
 
     R_DrawPlanes();
 
+//    DEBUGSTEP();
     /* Check for new console commands.*/
     NetUpdate();
 
+//    DEBUGSTEP();
     R_DrawMasked();
 
+//    DEBUGSTEP();
     R_DrawCrossHair();
     /* Check for new console commands.*/
     NetUpdate();
+
+//    DEBUGSTEP();
 }

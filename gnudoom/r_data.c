@@ -27,18 +27,15 @@ static const char rcsid[] = "$Id: r_data.c,v 1.4 1997/02/03 16:47:55 b1 Exp $";
 
 #include "i_system.h"
 #include "z_zone.h"
-
 #include "m_swap.h"
-
 #include "w_wad.h"
-
 #include "doomdef.h"
 #include "p_local.h"
 #include "r_local.h"
-
 #include "doomstat.h"
 #include "r_data.h"
 #include "r_sky.h"
+#include "r_data.h"
 
 #ifdef LINUX
 /*#include  <alloca.h>*/
@@ -46,6 +43,7 @@ static const char rcsid[] = "$Id: r_data.c,v 1.4 1997/02/03 16:47:55 b1 Exp $";
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Stub-out freea helper function
 #define freea(x)

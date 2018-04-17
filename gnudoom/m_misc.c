@@ -26,37 +26,23 @@
 
 static const char rcsid[] = "$Id: m_misc.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
-/*#include <sys/stat.h>*/
-/*#include <sys/types.h>*/
-/*#include <fcntl.h>*/
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-/*#include <unistd.h>*/
-
-#include <ctype.h>
+#include <string.h>
 
 #include "doomdef.h"
-
-#include "z_zone.h"
-
-#include "m_argv.h"
-#include "m_swap.h"
-
-#include "w_wad.h"
-
+#include "doomstat.h"
+#include "dstrings.h"
+#include "hu_stuff.h"
 #include "i_system.h"
 #include "i_video.h"
-#include "v_video.h"
-
-#include "hu_stuff.h"
-
-/* State.*/
-#include "doomstat.h"
-
-/* Data.*/
-#include "dstrings.h"
-
+#include "m_argv.h"
 #include "m_misc.h"
+#include "m_swap.h"
+#include "v_video.h"
+#include "w_wad.h"
+#include "z_zone.h"
 
 /**/
 /* M_DrawText*/

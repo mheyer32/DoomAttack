@@ -32,6 +32,8 @@ extern void I_InitWBArgs(void);
 
 int main(int argc, char** argv)
 {
+    fprintf(stderr, "Test");
+
     myargc = argc;
     myargv = argv;
 

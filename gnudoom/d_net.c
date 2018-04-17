@@ -33,7 +33,8 @@ static const char rcsid[] = "$Id: d_net.c,v 1.3 1997/02/03 22:01:47 b1 Exp $";
 #include "m_argv.h"
 #include "m_menu.h"
 
-#include "stdlib.h"
+#include <stdlib.h>
+#include <string.h>
 
 #define NCMD_EXIT 0x80000000
 #define NCMD_RETRANSMIT 0x40000000
@@ -41,8 +42,8 @@ static const char rcsid[] = "$Id: d_net.c,v 1.3 1997/02/03 22:01:47 b1 Exp $";
 #define NCMD_KILL 0x10000000 /* kill game*/
 #define NCMD_CHECKSUM 0x0fffffff
 
-doomcom_t *doomcom;
-doomdata_t *netbuffer; /* points inside doomcom*/
+doomcom_t *doomcom = NULL;
+doomdata_t *netbuffer = NULL; /* points inside doomcom*/
 
 /**/
 /* NETWORKING*/

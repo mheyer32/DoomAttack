@@ -29,6 +29,7 @@ static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #include <dos/dos.h>
 #include <exec/execbase.h>
 #include <graphics/gfxbase.h>
+#include <hardware/cia.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/graphics.h>
@@ -41,6 +42,13 @@ static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #include <workbench/workbench.h>
 
 #include <signal.h>
+#include <assert.h>
+
+#ifndef __libnix__
+#include <dos.h>
+#define _WBenchMsg __WBenchMsg
+struct CIA volatile *ciaa = (struct CIA volatile *)0xbfe001;
+#endif
 
 #ifdef MININT
 #undef MININT
@@ -50,10 +58,9 @@ static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #undef MAXINT
 #endif
 
-/* Libraries nicht automatisch öffnen! */
-
+/* Libraries nicht automatisch ?ffnen! */
 extern struct WBStartup *_WBenchMsg;
-struct IntuitionBase *IntuitionBase;
+struct IntuitionBase *IntuitionBase = NULL;
 
 struct GfxBase *GfxBase = NULL;
 struct Library *KeymapBase = NULL;
@@ -65,14 +72,14 @@ struct Library *LowLevelBase = NULL;
 struct Device *TimerBase = NULL;
 struct Device *InputBase = NULL;
 
-struct timerequest *TimerIO;
-struct IOStdReq *InputIO;
-struct MsgPort *TimerMP, *InputMP;
+struct timerequest *TimerIO = NULL;
+struct IOStdReq *InputIO = NULL;
+struct MsgPort *TimerMP = NULL, *InputMP = NULL;
 struct RastPort TempRP;
 
 UWORD StartQualifier;
 
-BOOL InputHandlerON;
+BOOL InputHandlerON = FALSE;
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,7 +109,6 @@ BOOL InputHandlerON;
 #endif
 #include "i_system.h"
 
-char s[501];
 char *StartOptions;
 
 /*int	mb_used = 6;*/
@@ -125,7 +131,8 @@ BOOL OS31 = FALSE;
 BOOL DoJoyPad = FALSE;
 BOOL DoAnalogJoy = FALSE;
 
-struct Task *MainTask, *AnalogJoyTask;
+struct Task *MainTask = NULL;
+struct Task *AnalogJoyTask = NULL;
 
 extern BOOL C2PIsFlipping;
 
@@ -141,7 +148,7 @@ extern void AnalogDriver(void);
 
 static struct Interrupt InputINT;
 
-char *c2p_routine;
+char *c2p_routine = NULL;
 
 void GetC2P(void)
 {
@@ -166,7 +173,7 @@ void GetC2P(void)
         /*		if (C2P) C2P->EndChunky2Planar(); ??????:????? */
 
         C2P = NULL;
-        C2PFile = LoadSeg(routine);  // FIXME: where's the UnloadSeg for that?
+        C2PFile = LoadSeg(routine); //FIXME: where's the UnloadSeg for that?
         if (C2PFile) {
             C2P = (struct c2pfile *)BADDR(C2PFile);
             while (C2P) {
@@ -181,11 +188,15 @@ void GetC2P(void)
                     init.DOSBase = (struct Library *)DOSBase;
                     init.GfxBase = (struct Library *)GfxBase;
                     init.IntuitionBase = (struct Library *)IntuitionBase;
+
+                    assert(FlipTask && FlipMask && DoomMask && MainTask);
+
                     init.FlipTask = FlipTask;
                     init.FlipMask = FlipMask;
                     init.DoomTask = MainTask;
                     init.DoomMask = DoomMask;
                     init.DisplayID = modeid;
+
 
                     if (((REALSCREENHEIGHT != 200) && (!(C2P->Flags & C2PF_VARIABLEHEIGHT))) ||
                         ((REALSCREENWIDTH != 320) && (!(C2P->Flags & C2PF_VARIABLEWIDTH)))) {
@@ -314,6 +325,8 @@ void I_Init(void)
 {
     int p;
 
+    DEBUGSTEP();
+
     if (!IntuitionBase)
         IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 39);
     if (!GfxBase)
@@ -321,10 +334,14 @@ void I_Init(void)
     if (!KeymapBase)
         KeymapBase = OpenLibrary("keymap.library", 36);
 
+    DEBUGSTEP();
+
     if (!IntuitionBase || !GfxBase || !KeymapBase)
         I_Error("Can't open library!");
     if (GfxBase->LibNode.lib_Version < 39)
         I_Error("You need Amiga OS3.0!");
+
+    DEBUGSTEP();
 
     TimerMP = CreateMsgPort();
     TimerIO = (struct timerequest *)CreateIORequest(TimerMP, sizeof(struct timerequest));
@@ -333,6 +350,8 @@ void I_Init(void)
 
     if (!TimerBase)
         I_Error("Can't open timer.device!");
+
+    DEBUGSTEP();
 
     if (GfxBase->LibNode.lib_Version >= 40) {
         OS31 = TRUE;
@@ -343,11 +362,15 @@ void I_Init(void)
         }
     }
 
+    DEBUGSTEP();
+
     joyport = joy_port;
     p = M_CheckParm("-joyport");
     if (p && (p < myargc - 1)) {
         joyport = atoi(myargv[p + 1]) - 1;
     }
+
+    DEBUGSTEP();
 
     DoJoyPad = ((joy_pad == 1) && usejoystick);
 
@@ -364,18 +387,21 @@ void I_Init(void)
         }
     }
 
-    if ((joy_pad == 2) && usejoystick) {
-        AnalogJoyTask = CreateTask("DoomAttack Analog Joystick driver", 20, AnalogDriver, 4096);
-        Wait(SIGBREAKF_CTRL_F);
+    DEBUGSTEP();
+//    if ((joy_pad == 2) && usejoystick) {
+//        AnalogJoyTask = CreateTask("DoomAttack Analog Joystick driver", 20, AnalogDriver, 4096);
+//        Wait(SIGBREAKF_CTRL_F);
 
-        if (!analog_ERROR) {
-            DoAnalogJoy = TRUE;
-        } else {
-            DeleteTask(AnalogJoyTask);
-            AnalogJoyTask = 0;
-            fprintf(stderr, analog_ERROR);
-        }
-    }
+//        if (!analog_ERROR) {
+//            DoAnalogJoy = TRUE;
+//        } else {
+//            DeleteTask(AnalogJoyTask);
+//            AnalogJoyTask = 0;
+//            fprintf(stderr, analog_ERROR);
+//        }
+//    }
+
+    DEBUGSTEP();
 
     if ((!M_CheckParm("-noinputhack")) && (full_keys || full_mouse)) {
         if (!(InputMP = CreateMsgPort())) {
@@ -410,7 +436,7 @@ void I_Init(void)
 
 void I_QuitAmiga(void)
 {
-    if (DoAnalogJoy) {
+    if (DoAnalogJoy) {       
         SetSignal(0, SIGBREAKF_CTRL_F);
         Signal(AnalogJoyTask, SIGBREAKF_CTRL_C);
         Wait(SIGBREAKF_CTRL_F);
@@ -484,14 +510,21 @@ void I_QuitAmiga(void)
 void I_Quit(void)
 {
     // FIXME: bug in noixemul SIG_IGN not declared with __stdargs in front
-    signal(SIGINT, SIG_IGN);
+//    signal(SIGINT, SIG_IGN);
 
+    DEBUGSTEP();
     D_QuitNetGame();
+    DEBUGSTEP();
     I_ShutdownSound();
+    DEBUGSTEP();
     I_ShutdownMusic();
+    DEBUGSTEP();
     M_SaveDefaults();
+    DEBUGSTEP();
     I_ShutdownGraphics();
+    DEBUGSTEP();
     W_Cleanup();
+    DEBUGSTEP();
     I_QuitAmiga();
 
     exit(0);
@@ -527,17 +560,20 @@ void I_Error(char *error, ...)
 {
     struct EasyStruct es = {sizeof(struct EasyStruct), 0, "DoomAttack", NULL, "OK"};
 
+    DEBUGSTEP();
+
     va_list argptr;
 
-    if (!_WBenchMsg || !IntuitionBase) {
+    if (1 || !_WBenchMsg || !IntuitionBase) {
         /* Message first.*/
         va_start(argptr, error);
-        fprintf(stderr, "Error: ");
-        vfprintf(stderr, error, argptr);
-        fprintf(stderr, "\n");
+        fprintf(stdout, "Error: ");
+        vfprintf(stdout, error, argptr);
+        fprintf(stdout, "\n");
         va_end(argptr);
-        fflush(stderr);
+        fflush(stdout);
     } else {
+        char s[501];
         va_start(argptr, error);
         vsprintf(s, error, argptr);
         va_end(argptr);
@@ -545,18 +581,27 @@ void I_Error(char *error, ...)
         EasyRequestArgs(NULL, &es, NULL, NULL);
     }
 
+    DEBUGSTEP();
+
     /* Shutdown. Here might be other errors.*/
     if (demorecording)
         G_CheckDemoStatus();
 
+    DEBUGSTEP();
     D_QuitNetGame();
+    DEBUGSTEP();
     I_ShutdownGraphics();
+    DEBUGSTEP();
     I_ShutdownSound();
+    DEBUGSTEP();
     I_ShutdownMusic();
+    DEBUGSTEP();
     W_Cleanup();
+    DEBUGSTEP();
     I_QuitAmiga();
-
+    DEBUGSTEP();
     exit(RETURN_WARN);
+    DEBUGSTEP();
 }
 
 void I_ErrorMem(void)
@@ -569,7 +614,7 @@ extern struct ViewPort *viewport;
 extern struct Screen *screen;
 extern struct Window *window;
 
-static boolean ArgsAlloced;
+static boolean ArgsAlloced = false;
 
 void I_InitWBArgs(void)
 {
@@ -600,7 +645,7 @@ void I_InitWBArgs(void)
     if (M_CheckParm("-68060"))
         cputype = 68060;
 
-    signal(SIGINT, (STDARGS void (*)(int))I_Quit);
+//    signal(SIGINT, (STDARGS void (*)(int))I_Quit);
 
     MainTask = FindTask(0);
 
@@ -676,6 +721,7 @@ void I_InitWBArgs(void)
                     myargc = 1;
                     argpos = (char **)progicon->do_ToolTypes;
                     while ((arg = *argpos++)) {
+                        DEBUGPRINT(("Found tooltype '%s'\n", arg));
                         myargc++;
                         *myargvpos++ = argstringpos;
                         // skip leading '-'

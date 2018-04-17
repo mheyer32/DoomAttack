@@ -31,7 +31,9 @@ static const char rcsid[] = "$Id: p_tick.c,v 1.4 1997/02/03 16:47:55 b1 Exp $";
 #include "doomstat.h"
 #include "r_state.h"
 
-byte* save_p;
+#include <string.h>
+
+byte* save_p = NULL;
 
 /* Pads save_p to a 4-byte boundary*/
 /*  so that the load/save works on SGI&Gecko.*/

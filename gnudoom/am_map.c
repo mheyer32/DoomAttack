@@ -1133,7 +1133,7 @@ static int AM_clipMline(mline_t* ml, fline_t* fl)
 
 extern void AM_drawFline(fline_t* fl, int color);
 
-#ifdef hallohallohallo
+#if 0
 
 static void AM_drawFline(fline_t* fl, int color)
 {
@@ -1147,14 +1147,14 @@ static void AM_drawFline(fline_t* fl, int color)
     register int ay;
     register int d;
 
-    static fuck = 0;
+//    static fuck = 0;
 
-    /* For debugging only*/
-    if (fl->a.x < 0 || fl->a.x >= f_w || fl->a.y < 0 || fl->a.y >= f_h || fl->b.x < 0 || fl->b.x >= f_w ||
-        fl->b.y < 0 || fl->b.y >= f_h) {
-        fprintf(stderr, "fuck %d \r", fuck++);
-        return;
-    }
+//    /* For debugging only*/
+//    if (fl->a.x < 0 || fl->a.x >= f_w || fl->a.y < 0 || fl->a.y >= f_h || fl->b.x < 0 || fl->b.x >= f_w ||
+//        fl->b.y < 0 || fl->b.y >= f_h) {
+//        fprintf(stderr, "fuck %d \r", fuck++);
+//        return;
+//    }
 
 #define PUTDOT(xx, yy, cc) fb[(yy)*f_w + (xx)] = (cc)
 

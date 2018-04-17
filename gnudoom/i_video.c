@@ -29,6 +29,7 @@ static const char *authstring = "$AUTH: Georg Steger";
 #include <clib/alib_protos.h>
 #include <devices/gameport.h>
 #include <devices/inputevent.h>
+#include <dos/dostags.h>
 #include <graphics/gfx.h>
 #include <graphics/modeid.h>
 #include <intuition/intuitionbase.h>
@@ -60,6 +61,7 @@ static const char *authstring = "$AUTH: Georg Steger";
 #define strcasecmp strcmp
 
 #include "d_main.h"
+#include "doomdef.h"
 #include "doomstat.h"
 #include "i_system.h"
 #include "m_argv.h"
@@ -82,22 +84,24 @@ extern struct GfxBase *GfxBase;
 extern struct Library *KeymapBase;
 extern struct Device *TimerBase;
 extern struct Task *MainTask;
-struct Library *CyberGfxBase = 0;
+struct Library *CyberGfxBase = NULL;
 
-struct Screen *screen;
-struct ViewPort *viewport;
-struct ColorMap *colormap;
-struct Window *window;
+struct Screen *screen = NULL;
+struct ViewPort *viewport = NULL;
+struct ColorMap *colormap = NULL;
+struct Window *window = NULL;
 struct RastPort viewrastport, renderrastport;
-struct BitMap bitmap1, bitmap2, *MausBM;
-struct IntuiMessage *intuimessage;
-struct ScreenBuffer *screenbuffer1, *screenbuffer2;
-struct MsgPort *JoyMP, *SafePort, *DisplayPort;
-struct IOStdReq *JoyIO;
+struct BitMap bitmap1, bitmap2, *MausBM = NULL;
+struct IntuiMessage *intuimessage = NULL;
+struct ScreenBuffer *screenbuffer1 = NULL, *screenbuffer2 = NULL;
+struct MsgPort *JoyMP = NULL, *SafePort = NULL, *DisplayPort = NULL;
+struct IOStdReq *JoyIO = NULL;
 
-struct Task *FlipTask;
-ULONG FlipMask, DoomMask;
+struct Task *FlipTask = NULL;
+ULONG FlipMask = 0;
+ULONG DoomMask = 0;
 LONG DoomSig = -1;
+UWORD numFlips = 0;
 
 event_t joyevent;
 
@@ -109,30 +113,30 @@ struct GamePortTrigger Joy_gpt = {
 };
 struct InputEvent Joy_ie;
 
-Object *MausObj;
+Object *MausObj = NULL;
 
 int configmodeid = INVALID_ID;
 
-WORD joyport;
-ULONG modeid;
-UWORD ActQualifier;
+WORD joyport = 0;
+ULONG modeid = 0;
+UWORD ActQualifier = 0;
 
-void *Planes, *Planes1, *Planes2;
-UBYTE *Planes1Mem, *Planes2Mem;
+void *Planes = NULL, *Planes1 = NULL, *Planes2 = NULL;
+UBYTE *Planes1Mem = NULL, *Planes2Mem = NULL;
 
 BOOL DoNumericPad;
 
-BOOL DoFPS;
-BOOL NoRender;
-BOOL JoyOK;
-BOOL JoyInAction;
-BOOL DoBlitToScreen;
-BOOL GfxBoard;
-BOOL C2PIsFlipping;
-BOOL Video_Display, Video_Safe, Blitting;
-BOOL InWindow, DoGraffiti, WantGraffiti;
-BYTE JoyType;
-BYTE ActBuffer, ActScreen;
+BOOL DoFPS = FALSE;
+BOOL NoRender = FALSE;
+BOOL JoyOK = FALSE;
+BOOL JoyInAction = FALSE;
+BOOL DoBlitToScreen = FALSE;
+BOOL GfxBoard = FALSE;
+BOOL C2PIsFlipping = TRUE;
+BOOL Video_Display = FALSE, Video_Safe = FALSE, Blitting = FALSE;
+BOOL InWindow = FALSE, DoGraffiti = FALSE, WantGraffiti = FALSE;
+BYTE JoyType = 0;
+BYTE ActBuffer = 0, ActScreen = 1;
 
 int ConfigNoRangeCheck;
 int DoFastRemap;
@@ -153,9 +157,9 @@ static struct InputEvent xie;
 static WORD BlitX;
 static WORD BlitY;
 static WORD Depth = 8;
-static BOOL PensAlloced, ReadyForAction;
-static BOOL DoMMU1, DoMMU2;
-static BOOL ChunkyMMUed, MMU2ed;
+static BOOL PensAlloced = FALSE, ReadyForAction = FALSE;
+static BOOL DoMMU1 = FALSE, DoMMU2 = FALSE;
+static BOOL ChunkyMMUed = FALSE, MMU2ed = FALSE;
 
 static int oldmmu_planes1, oldmmu_planes2, oldmmu_chunky;
 
@@ -165,10 +169,10 @@ int french_keymap;
 int usemmu;
 int hidemouse;
 
-UBYTE *RemapTable;
-UBYTE *RemapTablePTR[14];
-LONG *ObtainTable;
-UBYTE *RemapBuffer;
+UBYTE *RemapTable = NULL;
+UBYTE *RemapTablePTR[14] = {NULL};
+LONG *ObtainTable = NULL;
+UBYTE *RemapBuffer = NULL;
 
 /**/
 /* D_PostEvent*/
@@ -531,6 +535,7 @@ void I_ShutdownGraphics(void)
 {
     WORD i, i2;
 
+    DEBUGSTEP();
     if (RemapTable)
         FreeVec(RemapTable);
     if (RemapBuffer)
@@ -539,9 +544,11 @@ void I_ShutdownGraphics(void)
         I_FreeAllocedPens();
         FreeVec(ObtainTable);
     }
-
-    if (Blitting && DoDoubleBuffer)
+        DEBUGSTEP();
+    if (Blitting || DoDoubleBuffer)
         Wait(SIGBREAKF_CTRL_F);
+
+    DEBUGSTEP();
 
     if (FlipTask) {
         SetSignal(0, SIGBREAKF_CTRL_E);
@@ -551,6 +558,8 @@ void I_ShutdownGraphics(void)
         DeleteTask(FlipTask);
         Permit();
     }
+
+    DEBUGSTEP();
 
     if (DoomSig != -1)
         FreeSignal(DoomSig);
@@ -1011,10 +1020,14 @@ void I_FinishUpdate(void)
     if (DoFPS && DoBlitToScreen)
         ShowFPS();
 
+//    DEBUGPRINT(("numFlips %d\n", numFlips));
+
     if (DoDoubleBuffer) {
         if (Blitting) {
             Wait(DoomMask);
             Blitting = FALSE;
+//            DEBUGPRINT(("numFlips, blitting done %d screen %d buffer %d \n", numFlips, ActScreen, ActBuffer));
+
         }
         Wait(SIGBREAKF_CTRL_F);
     }
@@ -1205,7 +1218,7 @@ extern int usejoystick;
 
 extern void GetC2P(void);
 
-static void ScreenFlipper(void);
+static void SAVEDS ScreenFlipper(void);
 
 static void MakeFlipTask(void)
 {
@@ -1575,11 +1588,10 @@ void I_InitGraphics(void)
     ReadyForAction = TRUE;
 }
 
-static void ScreenFlipper(void)
+static void SAVEDS ScreenFlipper(void)
 {
     BOOL done = FALSE, first = TRUE;
     LONG sig = -1;
-    ULONG sigs;
 
     DisplayPort = CreateMsgPort();
     SafePort = CreateMsgPort();
@@ -1603,7 +1615,7 @@ static void ScreenFlipper(void)
     Video_Safe = TRUE;
     Video_Display = TRUE;
     while (!done) {
-        sigs = Wait(FlipMask | SIGBREAKF_CTRL_C);
+        ULONG sigs = Wait(FlipMask | SIGBREAKF_CTRL_C);
 
         if (sigs & SIGBREAKF_CTRL_C) {
             done = TRUE;
@@ -1611,6 +1623,7 @@ static void ScreenFlipper(void)
 
         if (sigs & FlipMask) {
             if (first) {
+                assert(screenbuffer1 && screenbuffer2);
                 screenbuffer1->sb_DBufInfo->dbi_SafeMessage.mn_ReplyPort = SafePort;
                 screenbuffer1->sb_DBufInfo->dbi_DispMessage.mn_ReplyPort = DisplayPort;
                 screenbuffer2->sb_DBufInfo->dbi_SafeMessage.mn_ReplyPort = SafePort;
@@ -1619,21 +1632,25 @@ static void ScreenFlipper(void)
             }
 
             ActScreen = 1 - ActScreen;
+
+            volatile struct Screen* flipScreen = screen;
             if (ActScreen == 0) {
                 renderrastport.BitMap = &bitmap2;
                 viewrastport.BitMap = &bitmap1;
-                if (ChangeScreenBuffer(screen, screenbuffer1)) {
+                if (ChangeScreenBuffer((struct Screen*) flipScreen, screenbuffer1)) {
                     Video_Safe = FALSE;
                     Video_Display = FALSE;
-                };
+                }
             } else {
                 renderrastport.BitMap = &bitmap1;
                 viewrastport.BitMap = &bitmap2;
-                if (ChangeScreenBuffer(screen, screenbuffer2)) {
+                if (ChangeScreenBuffer((struct Screen*) flipScreen, screenbuffer2)) {
                     Video_Safe = FALSE;
                     Video_Display = FALSE;
                 }
             }
+
+            ++numFlips;
 
             if (!Video_Safe) {
                 WaitPort(SafePort);

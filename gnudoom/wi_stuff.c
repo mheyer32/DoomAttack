@@ -23,32 +23,21 @@
 
 static const char rcsid[] = "$Id: wi_stuff.c,v 1.7 1997/02/03 22:45:13 b1 Exp $";
 
-#include <stdio.h>
-
-#include "z_zone.h"
-
-#include "m_random.h"
-#include "m_swap.h"
-
-#include "i_system.h"
-
-#include "w_wad.h"
-
-#include "g_game.h"
-
-#include "r_local.h"
-#include "s_sound.h"
+#include <string.h>
 
 #include "doomstat.h"
+#include "g_game.h"
+#include "i_system.h"
 #include "m_fixed.h"
-
-/* Data.*/
+#include "m_random.h"
+#include "m_swap.h"
+#include "r_local.h"
+#include "s_sound.h"
 #include "sounds.h"
-
-/* Needs access to LFB.*/
 #include "v_video.h"
-
+#include "w_wad.h"
 #include "wi_stuff.h"
+#include "z_zone.h"
 
 /**/
 /* Data needed to add patches to full screen intermission pics.*/
@@ -330,7 +319,7 @@ static patch_t* items;
 static patch_t* frags;
 
 /* Time sucks.*/
-static patch_t* time;
+static patch_t* timePatch;
 static patch_t* par;
 static patch_t* sucks;
 
@@ -1350,7 +1339,7 @@ static void WI_drawStats(void)
     V_DrawPatch3(SP_STATSX, SP_STATSY + 2 * lh, FB, sp_secret);
     WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret[0]);
 
-    V_DrawPatch3(SP_TIMEX, SP_TIMEY, FB, time);
+    V_DrawPatch3(SP_TIMEX, SP_TIMEY, FB, timePatch);
     WI_drawTime(SCREENWIDTH / 2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
     if (wbs->epsd < 3) {
@@ -1539,7 +1528,7 @@ static void WI_loadData(void)
     colon = W_CacheLumpName("WICOLON", PU_STATIC);
 
     /* "time"*/
-    time = W_CacheLumpName("WITIME", PU_STATIC);
+    timePatch = W_CacheLumpName("WITIME", PU_STATIC);
 
     /* "sucks"*/
     sucks = W_CacheLumpName("WISUCKS", PU_STATIC);
@@ -1618,7 +1607,7 @@ static void WI_unloadData(void)
     Z_ChangeTag(sp_secret, PU_CACHE);
     Z_ChangeTag(items, PU_CACHE);
     Z_ChangeTag(frags, PU_CACHE);
-    Z_ChangeTag(time, PU_CACHE);
+    Z_ChangeTag(timePatch, PU_CACHE);
     Z_ChangeTag(sucks, PU_CACHE);
     Z_ChangeTag(par, PU_CACHE);
 
