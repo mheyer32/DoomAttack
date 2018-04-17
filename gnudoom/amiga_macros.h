@@ -16,7 +16,11 @@
 #define REG(xn, parm) parm __asm(#xn)
 #define REGARGS __regargs
 #define STDARGS __stdargs
+#ifndef NOFBASEREL
 #define SAVEDS __saveds
+#else
+#define SAVEDS
+#endif
 #define ALIGNED __attribute__ ((aligned(4))
 #define FAR __far
 #define CHIP __chip

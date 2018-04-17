@@ -53,18 +53,18 @@ endif
 
 #-fbaserel
 CFLAGS = $(RUNTIME_CFLAGS)
-CFLAGS += -m68030 -m68881
+CFLAGS += -m68030 -m68881 -DNOFBASEREL -msmall-code
 CFLAGS += -Ofast -fstrength-reduce -fomit-frame-pointer
 CFLAGS += -Werror -Wimplicit -Wstrict-prototypes
 CFLAGS += -include "doomdef.h"
 
 #-DRANGECHECK
-CFLAGS += -DNDEBUG -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA -Diabs=abs
+CFLAGS += -DNDEBUG -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA
 
 LDFLAGS = $(RUNTIME_LDFLAGS)
 
 PINCLUDES = -I$(TOOLCHAIN)/m68k-amigaos/sys-include \
-	    -I$(TOOLCHAIN)/m68k-amigaos/ndk/include
+			-I$(TOOLCHAIN)/m68k-amigaos/ndk/include
 
 PFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces -m68030 -m68882 $(PINCLUDES)
 
@@ -145,7 +145,7 @@ OBJS = \
 OUTOBJS = $(addprefix $(INTERMEDIATE), $(OBJS))
 
 
-all:  DoomAttack c2p
+all: c2p DoomAttack
 
 
 clean:
@@ -185,8 +185,8 @@ c2p_%:  amigaasm/c2p_%.s Makefile
 %.o:	%.c  Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
-#%.s:	%.o  Makefile
-#	$(CC) $(CFLAGS) -Wa,-adhln -g -c $<  > $@
+%.s:	%.c  Makefile
+	$(CC) $(CFLAGS) -Wa,-adhln -g -c $<  > $@
 
 #############################################################
 #
