@@ -1,8 +1,9 @@
-TOOLCHAIN ?= /home/matze/amigatoolchain/amiga-gcc-out
+CC = m68k-amigaos-gcc
+PHXASS = vasmm68k_mot
+VLINK = vlink
 
-CC = $(TOOLCHAIN)/bin/m68k-amigaos-gcc
-PHXASS = $(TOOLCHAIN)/bin/vasmm68k_mot
-VLINK = $(TOOLCHAIN)/bin/vlink
+PREFIX = $(shell ./getprefix.sh "$(CC)")
+
 
 #-noixemul
 #-fbaserel
@@ -15,10 +16,10 @@ VLINK = $(TOOLCHAIN)/bin/vlink
 #-fstrength-reduce
 
 CLIB_CFLAGS = -mcrt=clib2 -DUSECLIB2
-CLIB_LDFLAGS = -lnet
+CLIB_LDFLAGS =
 
 NOIXEMUL_CFLAGS = -noixemul -DUSENOIXEMUL
-NOIXEMUL_LDFLAGS = -lsocket
+NOIXEMUL_LDFLAGS =
 
 USEIXEMUL ?= 1
 
@@ -63,8 +64,7 @@ CFLAGS += -DNDEBUG -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA
 
 LDFLAGS = $(RUNTIME_LDFLAGS)
 
-PINCLUDES = -I$(TOOLCHAIN)/m68k-amigaos/sys-include \
-			-I$(TOOLCHAIN)/m68k-amigaos/ndk/include
+PINCLUDES = -I$(PREFIX)/m68k-amigaos/ndk-include
 
 PFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces -m68030 -m68882 $(PINCLUDES)
 

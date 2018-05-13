@@ -50,7 +50,7 @@ static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #undef MAXINT
 #endif
 
-/* Libraries nicht automatisch öffnen! */
+/* Libraries nicht automatisch Ã¶ffnen! */
 
 extern struct WBStartup *_WBenchMsg;
 struct IntuitionBase *IntuitionBase;
@@ -117,13 +117,13 @@ int joy_pad;
 int joy_port;
 int cputype;
 
-struct c2pfile *C2P;
-BPTR C2PFile;
-BOOL DoC2P;
-BOOL DoDoubleBuffer;
-BOOL OS31;
-BOOL DoJoyPad;
-BOOL DoAnalogJoy;
+struct c2pfile *C2P = NULL;
+BPTR C2PFile = 0;
+BOOL DoC2P = FALSE;
+BOOL DoDoubleBuffer = TRUE;
+BOOL OS31 = FALSE;
+BOOL DoJoyPad = FALSE;
+BOOL DoAnalogJoy = FALSE;
 
 struct Task *MainTask, *AnalogJoyTask;
 
@@ -166,7 +166,7 @@ void GetC2P(void)
         /*		if (C2P) C2P->EndChunky2Planar(); ??????:????? */
 
         C2P = NULL;
-        C2PFile = LoadSeg(routine); //FIXME: where's the UnloadSeg for that?
+        C2PFile = LoadSeg(routine);  // FIXME: where's the UnloadSeg for that?
         if (C2PFile) {
             C2P = (struct c2pfile *)BADDR(C2PFile);
             while (C2P) {

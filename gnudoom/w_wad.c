@@ -175,7 +175,7 @@ void W_AddFile(char* filename)
         reloadlump = numlumps;
     }
 
-    if ((handle = Open(filename, MODE_OLDFILE)) == NULL) {
+    if ((handle = Open(filename, MODE_OLDFILE)) == 0) {
         printf(" couldn't open %s\n", filename);
         return;
     }
@@ -270,7 +270,7 @@ void W_Reload(void)
     if (!reloadname)
         return;
 
-    if ((handle = Open(reloadname, MODE_OLDFILE)) == NULL)
+    if ((handle = Open(reloadname, MODE_OLDFILE)) == 0)
         I_Error("W_Reload: couldn't open %s", reloadname);
 
     Read(handle, &header, sizeof(header));
@@ -612,7 +612,7 @@ void W_ReadLump(int lump, void* dest)
 
     if (l->handle == (BPTR)-1) {
         /* reloadable file, so use open / read / close*/
-        if ((handle = Open(reloadname, MODE_OLDFILE)) == NULL)
+        if ((handle = Open(reloadname, MODE_OLDFILE)) == 0)
             I_Error("W_ReadLump: couldn't open %s", reloadname);
     } else
         handle = (BPTR)l->handle;
