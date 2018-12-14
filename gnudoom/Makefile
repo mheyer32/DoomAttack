@@ -1,19 +1,17 @@
+#provide these as env variables at commandline
+# i.e.  DEBUG=1 make all -j8
+DEBUG ?= 0
+BINDIR ?= bin
+USENOIXEMUL ?= 1
+VERSION060 ?= 0
+PROFILE ?= 0
+
 CC = m68k-amigaos-gcc
+STRIP = m68k-amigaos-strip
 PHXASS = vasmm68k_mot
 VLINK = vlink
 
 PREFIX = $(shell ./getprefix.sh "$(CC)")
-
-
-#-noixemul
-#-fbaserel
-#-mcrt=clib2
-#-mcrt=nix13
-#-msmall-code
-#-Wa,-adhln
-#-mregparm=4
-#-v   #verbose
-#-fstrength-reduce
 
 CLIB_CFLAGS = -mcrt=clib2 -DUSECLIB2
 CLIB_LDFLAGS =
@@ -21,9 +19,7 @@ CLIB_LDFLAGS =
 NOIXEMUL_CFLAGS = -noixemul -DUSENOIXEMUL
 NOIXEMUL_LDFLAGS =
 
-USEIXEMUL ?= 1
-
-ifeq ($(USEIXEMUL), 1)
+ifeq ($(USENOIXEMUL), 1)
 	RUNTIME_CFLAGS = $(NOIXEMUL_CFLAGS)
 	RUNTIME_LDFLAGS = $(NOIXEMUL_LDFLAGS)
 else
@@ -31,42 +27,42 @@ else
 	RUNTIME_LDFLAGS = $(CLIB_LDFLAGS)
 endif
 
-#-fbbb=abcefimprs
-#-fbbb=
-#-fbbb=Enable Bebbo's optimizations.
-# +    enable all optimizations
-# a   commute add move instructions
-# b    use register for base addresses
-# c    convert load const and compare into a sub
-# e    eliminate dead assignments + redundant loads
-# f	   shrink stack frame
-# i    use post increment on addresses
-# m    merge add and move statements
-# p    propagate move assignment pairs out of loops
-# r    register renaming to maybe save registers
-# s    a strcpy optimization
-# v    be verbose
-# V    be very verbose
-# x    dump insns
-# Default: -fbbb=+ which yields -fbbb=abcefimprs
-
-#-v -fbbb=Vabcefimprs
-
-#-fbaserel
 CFLAGS = $(RUNTIME_CFLAGS)
-CFLAGS += -m68030 -m68881 -DNOFBASEREL -msmall-code
-CFLAGS += -Ofast -fstrength-reduce -fomit-frame-pointer
+LDFLAGS = $(RUNTIME_LDFLAGS) -g -ggdb
+
+ifeq ($(VERSION060), 1)
+	CFLAGS += -m68060 -Dversion060
+else
+	CFLAGS += -m68030
+endif
+
+CFLAGS += -msmall-code -g -ggdb
+CFLAGS += -Ofast -fomit-frame-pointer
 CFLAGS += -Werror -Wimplicit -Wstrict-prototypes
 CFLAGS += -include "doomdef.h"
 
-#-DRANGECHECK
-CFLAGS += -DNDEBUG -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA
+ifeq ($(DEBUG),1))
+	CFLAGS += -DDEBUG -Og -fno-omit-frame-pointer
+else
+	CFLAGS += -DNDEBUG -Ofast -fomit-frame-pointer
+endif
 
-LDFLAGS = $(RUNTIME_LDFLAGS)
+ifeq ($(PROFILE), 1)
+	CFLAGS += -pg
+	LDFLAGS += -pg
+endif
+
+#-DRANGECHECK
+CFLAGS += -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA
 
 PINCLUDES = -I$(PREFIX)/m68k-amigaos/ndk-include
 
-PFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces -m68030 -m68882 $(PINCLUDES)
+PFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces $(PINCLUDES)
+ifeq ($(VERSION060), 1)
+	PFLAGS += -m68060 -Dversion060
+else
+	PFLAGS += -m68020up
+endif
 
 INTERMEDIATE =$(CURDIR)/build/
 OUT = $(CURDIR)/bin/
@@ -146,7 +142,7 @@ OUTOBJS = $(addprefix $(INTERMEDIATE), $(OBJS))
 
 
 all: c2p DoomAttack
-
+	cp -r $(OUT)DoomAttackSupport $(BINDIR)
 
 clean:
 	rm -f *.o ;
@@ -154,9 +150,11 @@ clean:
 	rm -f $(OUT)/DoomAttack ;
 	rm -f $(OUT)/DoomAttackSupport/c2p/c2p*
 
+
 DoomAttack: $(OBJS) Makefile
-	$(CC) $(CFLAGS) $(OBJS) \
-	$(LDFLAGS) -o $(OUT)DoomAttack
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $@
+	$(STRIP) --strip-debug --strip-unneeded $@ -o $(BINDIR)/$@
+
 
 am_mapamiga.o: amigaasm/am_mapamiga.asm Makefile
 	$(PHXASS) $(PFLAGS) amigaasm/am_mapamiga.asm -o am_mapamiga.o
