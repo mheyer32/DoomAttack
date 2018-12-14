@@ -16,7 +16,7 @@
 #define REG(xn, parm) parm __asm(#xn)
 #define REGARGS __regargs
 #define STDARGS __stdargs
-#ifndef NOFBASEREL
+#ifdef __baserel__
 #define SAVEDS __saveds
 #else
 #define SAVEDS
