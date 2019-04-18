@@ -51,6 +51,7 @@ static const char *authstring = "$AUTH: Georg Steger";
 #undef MININT
 #endif
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -574,12 +575,15 @@ void I_ShutdownGraphics(void)
     window = 0;
     screen = 0;
 
+    // Round up height so that we can place the planes page-aligned
+    const ULONG rasterheight = REALSCREENHEIGHT * Depth + (4096 * 8 + REALSCREENWIDTH - 1) / REALSCREENWIDTH;
+
     if (Planes1Mem) {
         WaitBlit();
         if (DoMMU1)
             mmu_mark(Planes1, (REALSCREENWIDTH / 8 * REALSCREENHEIGHT * Depth + 4095) & (~0xFFF), oldmmu_planes1,
                      SysBase);
-        FreeRaster(Planes1Mem, REALSCREENWIDTH, REALSCREENHEIGHT * Depth);
+        FreeRaster(Planes1Mem, REALSCREENWIDTH, rasterheight);
     }
 
     if (Planes2Mem) {
@@ -587,7 +591,7 @@ void I_ShutdownGraphics(void)
         if (DoMMU1)
             mmu_mark(Planes2, (REALSCREENWIDTH / 8 * REALSCREENHEIGHT * Depth + 4095) & (~0xFFF), oldmmu_planes2,
                      SysBase);
-        FreeRaster(Planes2Mem, REALSCREENWIDTH, REALSCREENHEIGHT * Depth);
+        FreeRaster(Planes2Mem, REALSCREENWIDTH, rasterheight);
     }
 
     if (ChunkyMMUed && screens[0]) {
@@ -1385,8 +1389,13 @@ void I_InitGraphics(void)
     InitBitMap(&bitmap1, 8, REALSCREENWIDTH, REALSCREENHEIGHT);
     InitBitMap(&bitmap2, 8, REALSCREENWIDTH, REALSCREENHEIGHT);
 
+    // Round up height so that we can place the planes page-aligned
+    // REALSCREENWIDTH must be WORD-aligned.
+    assert(!(REALSCREENWIDTH & 0xF));
+    const ULONG rasterheight = REALSCREENHEIGHT * Depth + (4096 * 8 + REALSCREENWIDTH - 1) / REALSCREENWIDTH;
+
     if (DoC2P && !DoGraffiti) {
-        Planes1Mem = AllocRaster(REALSCREENWIDTH, REALSCREENHEIGHT * Depth);
+        Planes1Mem = AllocRaster(REALSCREENWIDTH, rasterheight);
         if (!Planes1Mem)
             I_Error("I_Video: Can't alloc chip memory for BitMap");
 
@@ -1401,10 +1410,11 @@ void I_InitGraphics(void)
         }
 
         if (DoDoubleBuffer) {
-            Planes2Mem = AllocRaster(REALSCREENWIDTH, REALSCREENHEIGHT * Depth);
+            Planes2Mem = AllocRaster(REALSCREENWIDTH, rasterheight);
 
             if (!Planes2Mem) {
                 DoDoubleBuffer = FALSE;
+                fprintf(stderr, "Failed to allocate double buffered bitmap.");
             } else {
                 Planes2 = (void *)((ULONG)(Planes2Mem + 4095) & (~0xFFF));
 
