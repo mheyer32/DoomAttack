@@ -547,7 +547,9 @@ void I_ShutdownGraphics(void)
         SetSignal(0, SIGBREAKF_CTRL_E);
         Signal(FlipTask, SIGBREAKF_CTRL_C);
         Wait(SIGBREAKF_CTRL_E);
+        Forbid();
         DeleteTask(FlipTask);
+        Permit();
     }
 
     if (DoomSig != -1)

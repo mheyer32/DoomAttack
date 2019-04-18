@@ -415,7 +415,9 @@ void I_QuitAmiga(void)
         Signal(AnalogJoyTask, SIGBREAKF_CTRL_C);
         Wait(SIGBREAKF_CTRL_F);
 
+        Forbid();
         DeleteTask(AnalogJoyTask);
+        Permit();
         AnalogJoyTask = 0;
     }
 
