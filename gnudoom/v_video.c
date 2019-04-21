@@ -1024,17 +1024,15 @@ void V_Init(void)
     size_t m;
 
     /* stick these in low dos memory on PCs*/
-    /* hallohallohallo: added some security space at the beginning and at the end */
-
     if ((REALSCREENHEIGHT > MAXSCREENHEIGHT) || ((REALSCREENWIDTH != 320) && (REALSCREENWIDTH != 640)) ||
         (REALSCREENWIDTH > 320 && REALSCREENHEIGHT < 400)) {
         I_Error("Resolution %ld x %ld is not supported!", REALSCREENWIDTH, REALSCREENHEIGHT);
     }
 
-    base = I_AllocLow(REALSCREENWIDTH * REALSCREENHEIGHT * 4 + 8 * REALSCREENWIDTH);
+    base = I_AllocLow(REALSCREENWIDTH * REALSCREENHEIGHT * 4);
 
     for (i = 0; i < 4; i++)
-        screens[i] = base + i * REALSCREENWIDTH * REALSCREENHEIGHT + 4 * REALSCREENWIDTH;
+        screens[i] = base + i * REALSCREENWIDTH * REALSCREENHEIGHT;
 
     if ((REALSCREENHEIGHT >= 400) && (REALSCREENWIDTH == 320)) {
         MEDRES = medres = true;

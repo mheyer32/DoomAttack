@@ -139,7 +139,7 @@ InitChunky:
 
         lea     c2p_data(pc),a0
         andi.l  #$ffff,d0
-        andi.l  #$ffff,d2
+        andi.l  #$ffff,d1
         move.l  d5,c2p_bplsize-c2p_data(a0)
         move.w  d1,c2p_chunkyy-c2p_data(a0)
         add.w   d3,d1
@@ -159,7 +159,8 @@ InitChunky:
         movem.l (sp)+,d2-d5
 
 		move.l	4(sp),d0			; width
-		mulu	8+2(sp),d0			; x height x 8 Planes chipbuffer
+		andi.l  #$ffff,d0
+		mulu.w	8+2(sp),d0			; x height x 8 Planes chipbuffer
 		move.l	d0,chipbufsize
 		move.l	#MEMF_CHIP,d1
 
@@ -193,42 +194,6 @@ EndChunky:
 
 .exit:
 		rts
-
-;**************************************************************************
-		
-c2p_blitcleanup
-		move.l	a6,-(sp)
-		move.l	4.w,a6
-
-		move.l	doomtask(pc),a1
-		move.l	doommask(pc),d0
-		jsr		_LVOSignal(a6)
-		
-		move.l	fliptask(pc),a1
-		move.l	flipmask(pc),d0
-		jsr		_LVOSignal(a6)
-
-        move.l	(sp)+,a6
-        rts
-
-;**************************************************************************
-
-; a0    c2pscreen
-; a1    bitplanes
-
-gfxbase:	dc.l 0
-doomtask:	dc.l 0
-doommask:	dc.l 0
-qblitsig:	dc.l -1
-
-fliptask:	dc.l 0
-flipmask:	dc.l 0
-
-chipbufsize: dc.l 0
-
-first:		dc.w 1
-
-;**************************************************************************
 
 		cnop	0,8
 
@@ -583,9 +548,36 @@ c2p1x1_cpu3blit1_queue_48               ; Pass 4, subpass 8, descending
         moveq   #0,d0
         rts
 
+;**************************************************************************	
+c2p_blitcleanup
+		move.l	a6,-(sp)
+		move.l	4.w,a6
+
+		move.l	doomtask(pc),a1
+		move.l	doommask(pc),d0
+		jsr		_LVOSignal(a6)
+		move.l	fliptask(pc),a1
+		move.l	flipmask(pc),d0
+		jsr		_LVOSignal(a6)
+
+        move.l	(sp)+,a6
+        rts
 
 ;**************************************************************************
 
+; a0    c2pscreen
+; a1    bitplanes
+
+gfxbase:	dc.l 0
+doomtask:	dc.l 0
+doommask:	dc.l 0
+
+fliptask:	dc.l 0
+flipmask:	dc.l 0
+
+chipbufsize: dc.l 0
+
+;**************************************************************************
 
         cnop 0,4
 c2p_bltnode
@@ -596,6 +588,8 @@ c2p_bltroutptr
         dc.l    0
 c2p_bltroutcleanup
         dc.l    c2p_blitcleanup
+
+
 c2p_blitfin dc.b 1
 c2p_blitactive dc.b 0
 
@@ -609,12 +603,8 @@ c2p_bplsize dc.l 0
 c2p_pixels dc.l 0
 c2p_pixels16 dc.l 0
 c2p_chunkyy dc.w 0
-        ds.l    16
 
         cnop 0,4
-c2p_datanew
-        ds.l    16
-
 c2p_bufptrs
         dc.l    0
         dc.l	0
