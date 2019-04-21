@@ -945,7 +945,7 @@ void R_DrawSprite (vissprite_t* spr)
     R_DrawVisSprite (spr, spr->x1, spr->x2);
 }
 #else
-void R_DrawSprite(REGA0(vissprite_t* spr));
+void R_DrawSprite(vissprite_t* spr);
 #endif
 
 /**/
