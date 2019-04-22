@@ -11,7 +11,7 @@ STRIP = m68k-amigaos-strip
 PHXASS = vasmm68k_mot
 VLINK = vlink
 
-PREFIX = $(shell ./getprefix.sh "$(CC)")
+PREFIX := $(shell ./getprefix.sh "$(CC)")
 
 CLIB_CFLAGS = -mcrt=clib2 -DUSECLIB2
 CLIB_LDFLAGS =
@@ -71,9 +71,9 @@ OUT = $(CURDIR)/bin/
 
 OBJS = \
 	am_map.o \
-	am_mapamiga.o \
-	analogjoy.o \
-	clip.o \
+	amigaasm/am_mapamiga.o \
+	amigaasm/analogjoy.o \
+	amigaasm/clip.o \
 	d_items.o \
 	d_locale.o \
 	d_main.o \
@@ -97,7 +97,7 @@ OBJS = \
 	m_bbox.o \
 	m_cheat.o \
 	m_fixed.o \
-	m_fixedamiga.o \
+	amigaasm/m_fixedamiga.o \
 	m_menu.o \
 	m_misc.o \
 	m_random.o \
@@ -124,7 +124,7 @@ OBJS = \
 	r_bsp.o \
 	r_data.o \
 	r_draw.o \
-	r_engine.o \
+	amigaasm/r_engine.o \
 	r_main.o \
 	r_plane.o \
 	r_segs.o \
@@ -160,20 +160,12 @@ DoomAttack: $(OBJS) Makefile
 profile:
 	m68k-amigaos-gprof --brief DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf
 
-am_mapamiga.o: amigaasm/am_mapamiga.asm Makefile
-	$(PHXASS) $(PFLAGS) amigaasm/am_mapamiga.asm -o am_mapamiga.o
+%.o: %.asm Makefile
+	$(PHXASS) $(PFLAGS) $< -o $@
 
-m_fixedamiga.o: amigaasm/m_fixedamiga.asm Makefile
-	$(PHXASS) $(PFLAGS) amigaasm/m_fixedamiga.asm -o m_fixedamiga.o
+%.o: %.s Makefile
+	$(PHXASS) $(PFLAGS) $< -o $@
 
-r_engine.o: amigaasm/r_engine.asm amigaasm/r_engine.i amigaasm/doom.i Makefile
-	$(PHXASS) $(PFLAGS) amigaasm/r_engine.asm -o r_engine.o
-
-analogjoy.o: amigaasm/analogjoy.asm Makefile
-	$(PHXASS) $(PFLAGS) amigaasm/analogjoy.asm -o analogjoy.o
-
-clip.o: amigaasm/clip.asm Makefile
-	$(PHXASS) $(PFLAGS) amigaasm/clip.asm -o clip.o
 
 C2PFILES = $(notdir $(basename $(wildcard amigaasm/c2p_*.s)))
 
