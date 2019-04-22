@@ -403,9 +403,9 @@ void I_Init(void)
         }
     }
 
+    I_InitGraphics();
     I_InitSound();
     I_InitLocale();
-    /*  I_InitGraphics();*/
 }
 
 void I_QuitAmiga(void)

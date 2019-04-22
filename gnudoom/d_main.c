@@ -335,8 +335,6 @@ static void D_DoomLoop(void)
         debugfile = fopen(filename, "w");
     }
 
-    I_InitGraphics();
-
     while (1) {
         /* frame syncronous IO operations*/
         I_StartFrame();
