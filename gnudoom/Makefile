@@ -43,7 +43,10 @@ CFLAGS += -include "doomdef.h"
 ifeq ($(DEBUG),1))
 	CFLAGS += -DDEBUG -Og -fno-omit-frame-pointer
 else
-	CFLAGS += -DNDEBUG -Ofast -fomit-frame-pointer
+	CFLAGS += -DNDEBUG -Ofast
+	ifeq ($(PROFILE), 0)
+		CFLAGS += -fomit-frame-pointer
+	endif
 endif
 
 ifeq ($(PROFILE), 1)
@@ -154,6 +157,8 @@ DoomAttack: $(OBJS) Makefile
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $@
 	$(STRIP) --strip-debug --strip-unneeded $@ -o $(BINDIR)/$@
 
+profile:
+	m68k-amigaos-gprof --brief DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf
 
 am_mapamiga.o: amigaasm/am_mapamiga.asm Makefile
 	$(PHXASS) $(PFLAGS) amigaasm/am_mapamiga.asm -o am_mapamiga.o
