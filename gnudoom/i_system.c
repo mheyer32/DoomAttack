@@ -198,8 +198,8 @@ void GetC2P(void)
                         if (C2P->InitChunky2Planar(REALSCREENWIDTH, REALSCREENHEIGHT,
                                                    REALSCREENWIDTH * REALSCREENHEIGHT / 8, &init)) {
                             DoC2P = TRUE;
-                            if (!(C2P->Flags & C2PF_NODOUBLEBUFFER) && !M_CheckParm("-nodoublebuffer")) {
-                                DoDoubleBuffer = TRUE;
+                            if ((C2P->Flags & C2PF_NODOUBLEBUFFER) || M_CheckParm("-nodoublebuffer")) {
+                                DoDoubleBuffer = FALSE;
                             }
                         } else {
                             DoGraffiti = FALSE;
