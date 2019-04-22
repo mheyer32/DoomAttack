@@ -3,9 +3,13 @@
 		XDEF			P61_Music
 		XDEF			P61_End
 
-		XDEF			P61_Play
-		XDEF			P61_Master
-		XDEF			P61_FadeTo
+		XDEF			_P61_Init
+		XDEF			_P61_Music
+		XDEF			_P61_End
+
+		XDEF			_P61_Play
+		XDEF			_P61_Master
+		XDEF			_P61_FadeTo
 
 fade  = 1	;0 = Normal, NO master volume control possible
 		;1 = Use master volume (P61_Master)
@@ -72,11 +76,14 @@ P61_motuuli
 ;	rts
 ;	bra.w	P61_SetPosition
 
+_P61_Master
 P61_Master	dc	64		;Master volume (0-64)
+_P61_FadeTo
 P61_FadeTo	dc	64		;Target volume (0-64)
 P61_FadeSpeed	dc	3		;Speed for fading
 P61_FadeCount	dc	0		;Count for fading
 P61_Tempo	dc	1		;Use tempo? 0=no,non-zero=yes
+_P61_Play
 P61_Play	dc	1		;Stop flag (0=stop)
 P61_E8		dc	0		;Info nybble after command E8
 P61_VBR		dc.l	0		;If you're using non-valid execbase
@@ -166,6 +173,7 @@ P61_ohi	movem.l	(sp)+,d2-d7/a2-a6
 ;н 		Uses D0-A6			н
 ;нннннннннннннннннннннннннннннннннннннннннннннннн
 
+__P61_Init
 P61_Init
 	cmp.l	#"P61A",(a0)+
 	beq.b	.modok
@@ -634,6 +642,7 @@ P61_ciaaddr
 ;н		Uses D0/D1/A0/A1/A3		н
 ;нннннннннннннннннннннннннннннннннннннннннннннннн
 
+_P61_End
 P61_End	moveq	#0,d0
 	move	d0,$a8(a6)
 
@@ -801,6 +810,7 @@ P61_SetPosition
 ;н          	Uses A0-A5/D0-D7		н
 ;нннннннннннннннннннннннннннннннннннннннннннннннн
 
+_P61_Music
 P61_Music
 	lea	P61_cn(pc),a3
 
@@ -1165,9 +1175,9 @@ P61_arpeggio
 
 P61_periods
 	ifne	P61_ft
-	incbin	mdev:source/doomattackmusic/periods
+	incbin	periods
 	else
-	incbin	mdev:source/doomattackmusic/periods.nft
+	incbin	periods.nft
 	endc
 
 	ifne	P61_vs
@@ -2263,7 +2273,7 @@ P61_tre4
 
 	ifne	P61_vib!P61_tre
 P61_vibtab
-	incbin	"mdev:source/doomattackmusic/vibtab"
+	incbin	"vibtab"
 	endc
 
 	ifne	P61_il

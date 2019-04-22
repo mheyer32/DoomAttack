@@ -3,8 +3,13 @@
 #pragma header
 
 #include "graffiti.h"
+#include <stabs.h>
 
+static struct ExecBase *SysBase;
+
+#include <stabs.h>
 extern struct Custom custom;
+ABSDEF(custom, 0x00dff000);
 
 extern struct IntuitionBase *IntuitionBase;
 extern struct GfxBase *GfxBase;
@@ -31,7 +36,7 @@ static BOOL copliststuffdone;
 static APTR setcoloffsets[3*256];
 static ULONG colortable[3*256+2];
 
-Object *MouseObj;
+static Object *MouseObj;
 
 /* Protos */
 
@@ -45,7 +50,9 @@ extern void ConvertGraphic(UBYTE *chunky,APTR plane1);
 
 LONG Graffiti_Init(void)
 {
-	LONG i,rc=FALSE;
+   SysBase = *(struct ExecBase**)4;
+
+   LONG i,rc=FALSE;
    UWORD bplcon0 = GENLOCK_AUDIO | HIRES | 0x0201 | (4<<12) | GfxBase->system_bplcon0;
 
 	colortable[0] = 256L << 16;
@@ -83,7 +90,7 @@ LONG Graffiti_Init(void)
 					SA_Behind,TRUE,
 					SA_Type,CUSTOMSCREEN,
 					SA_DisplayID,modeid,
-					SA_Colors,Colortable_320,
+					SA_Colors,(Tag)Colortable_320,
 					TAG_DONE)))
 				{
 	
@@ -92,7 +99,7 @@ LONG Graffiti_Init(void)
 						WA_Top,0,
 						WA_Width,640,
 						WA_Height,7,
-						WA_CustomScreen,commandscreen,
+						WA_CustomScreen,(Tag)commandscreen,
 						WA_Borderless,TRUE,
 						WA_NoCareRefresh,TRUE,
 						WA_SimpleRefresh,TRUE,
@@ -112,11 +119,11 @@ LONG Graffiti_Init(void)
 							SA_Behind,TRUE,
 							SA_Quiet,TRUE,
 							SA_ShowTitle,FALSE,
-							SA_Colors,Colortable_320,
+							SA_Colors, (Tag)Colortable_320,
 							SA_MinimizeISG,TRUE,
 							SA_Draggable,FALSE,
-							SA_BitMap,&bitmap[0],
-							SA_Parent,commandscreen,
+							SA_BitMap,(Tag)&bitmap[0],
+							SA_Parent,(Tag)commandscreen,
 							TAG_DONE)))
 						{	
 							ScreenDepth(screen,SDEPTH_TOFRONT | SDEPTH_INFAMILY,0);
@@ -129,7 +136,7 @@ LONG Graffiti_Init(void)
 							}
 							
 							if ((window=OpenWindowTags(0,
-								WA_CustomScreen,screen,
+								WA_CustomScreen,(Tag)screen,
 								WA_Left,0,
 								WA_Top,0,
 								WA_Width,640,
@@ -138,7 +145,7 @@ LONG Graffiti_Init(void)
 								WA_NoCareRefresh,TRUE,
 								WA_Flags,WFLG_BORDERLESS|WFLG_ACTIVATE|WFLG_RMBTRAP|WFLG_REPORTMOUSE,
 								WA_IDCMP,0,
-								MouseObj ? WA_Pointer : TAG_IGNORE, MouseObj,
+								MouseObj ? WA_Pointer : TAG_IGNORE, (Tag)MouseObj,
 								TAG_DONE)))
 							{
 								window->UserPort=windowport;
@@ -191,6 +198,11 @@ LONG Graffiti_Init(void)
 		coplist1 = AllocMem(sizeof(struct UCopList),MEMF_PUBLIC|MEMF_CLEAR);
 		coplist2 = AllocMem(sizeof(struct UCopList),MEMF_PUBLIC|MEMF_CLEAR);
 		
+// There is a problem with the NDK. custom.h defines all custom chip registers
+// as volatile, but CMove takes a non-volatile pointer, resulting in
+// "error: initialization discards 'volatile' qualifier from pointer target type "
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 		/* COPPERLIST for command screen */
 	
 	   CINIT (coplist1, 256); /* Some space for what we need */
@@ -207,6 +219,7 @@ LONG Graffiti_Init(void)
 	   CWAIT (coplist2,-1,0);
 	   CMOVE (coplist2,custom.bplcon0, bplcon0); /* write new value for bplcon0 into register */
 		CEND (coplist2);
+#pragma GCC diagnostic pop
 	
 	   Forbid ();
 	   commandscreen->ViewPort.UCopIns = coplist1;

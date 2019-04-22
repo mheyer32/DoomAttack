@@ -1,23 +1,15 @@
 #include <OSIncludes.h>
 
-#pragma header
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <linkerfunc.h>
-
 #ifdef __MAXON__
-#include <pragma/exec_lib.h>
-#include <pragma/dos_lib.h>
-#else
-#include <proto/exec.h>
-#include <proto/dos.h>
+#include <linkerfunc.h>
 #endif
 
 #include "DoomAttackMusic.h"
 #include "funcs.h"
 #include "musicIDs.h"
+
+static struct ExecBase *SysBase;
+static struct Library *DOSBase;
 
 /*=====================*/
 
@@ -42,17 +34,15 @@ static char 	*ConfigBuffer;
 static char		*Filename[NUM_MUSIC];
 static char		*SEMNAME;
 
-extern "ASM"
-{	
-	LONG xP61_Init(register __a0 APTR module,register __a1 APTR samples,register __a2 APTR samplebuffer,register __d0 LONG flags);
-	void xP61_Music(void);
-	void xP61_End(void);
-	
-	WORD P61_Play;
-	WORD P61_Master;
-	WORD P61_FadeTo;
 
-};
+extern LONG xP61_Init(REGA0(APTR module),REGA1(APTR samples), REGA2(APTR samplebuffer), REGD0(LONG flags));
+extern void xP61_Music(void);
+extern void xP61_End(void);
+
+extern WORD P61_Play;
+extern WORD P61_Master;
+extern WORD P61_FadeTo;
+
 
 static WORD voltable[16] =
 {
@@ -80,11 +70,13 @@ void C_DAM_Init(struct DAMInitialization *daminit)
 {
 		// link function pointers to DoomAttack routines
 		
-		#ifdef __MAXON__
+#ifdef __MAXON__
 		InitModules();
-		#endif
+#endif
 		
-		
+		SysBase = *(struct ExecBase **)(4);
+		DOSBase = daminit->DOSBase;
+
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
 

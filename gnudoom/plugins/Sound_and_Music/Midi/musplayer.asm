@@ -12,7 +12,7 @@
 		include lvo/exec_lib.i
 		include lvo/dos_lib.i
 		
-		xref	_SYSBASE
+		xref	_SysBase
 		xref	_DOSBase
 		xref	_GfxBase
 
@@ -20,23 +20,23 @@
 		xref	_gametic
 		xref	_I_Error
 
-		xdef	AudioTask
-		xdef	AudioIO
-		xdef	AudioCh
-		xdef	per
-		xdef	per2
-		xdef	AudioCh2Vol
-		xdef	AudioCh3Vol
-		xdef	AudioOK
+		xdef	_AudioTask
+		xdef	_AudioIO
+		xdef	_AudioCh
+		xdef	_per
+		xdef	_per2
+		xdef	_AudioCh2Vol
+		xdef	_AudioCh3Vol
+		xdef	_AudioOK
 
-		xdef	Midi_StopSong
-		xdef	Midi_PauseSong
-		xdef	Midi_ResumeSong
-		xdef	Midi_RegisterSong
-		xdef	Midi_UnRegisterSong
-		xdef	Midi_PlaySong
-		xdef	Midi_FreeChannels
-		xdef	Midi_AllocChannels
+		xdef	_Midi_StopSong
+		xdef	_Midi_PauseSong
+		xdef	_Midi_ResumeSong
+		xdef	_Midi_RegisterSong
+		xdef	_Midi_UnRegisterSong
+		xdef	_Midi_PlaySong
+		xdef	_Midi_FreeChannels
+		xdef	_Midi_AllocChannels
 
 ;------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ CALLSYS		macro	;FunctionName
 		endm
 
 CALLEXE		macro	;FunctionName
-		movea.l	(_SYSBASE),a6
+		movea.l	(_SysBase),a6
 		jsr	_LVO\1(a6)
 		endm
 
@@ -79,9 +79,9 @@ CALLDOS		macro	;FunctionName
 ; void I_PauseSong (int handle);	// PAUSE game handling.
 ; Do code equiv to DoPause.
 
-Midi_PauseSong:
+_Midi_PauseSong:
 		movem.l	d0-d7/a0-a6,-(sp)
-		tst.b		AudioOK
+		tst.b		_AudioOK
 		beq		.done
 
 		btst		#1,Flags		; file loaded?
@@ -93,7 +93,7 @@ Midi_PauseSong:
 		btst		#0,MusFlag		; music stopped?
 		bne.b		.stop
 
-		cmpi.b	#CHANNELMASK,AudioCh		; locked?
+		cmpi.b	#CHANNELMASK,_AudioCh		; locked?
 		bne.b		.done
 		lea		_custom,a0		; kill sound
 		moveq		#0,d0
@@ -108,19 +108,19 @@ Midi_PauseSong:
 ; void I_ResumeSong (int handle);
 ; Goes to J_PlayBox equiv code.
 
-Midi_ResumeSong:
+_Midi_ResumeSong:
 		movem.l	d0-d7/a0-a6,-(sp)
-		tst.b		AudioOK
+		tst.b		_AudioOK
 		beq		.exit
 
 		btst		#1,Flags		; file loaded?
 ;		beq.b		.nofile
 		beq.b		.exit
 
-;		cmpi.b	#CHANNELMASK,AudioCh		; got all channels?
+;		cmpi.b	#CHANNELMASK,_AudioCh		; got all channels?
 ;		beq.b		.allch
 ;		bsr		AllocChannels		; try to alloc, first
-;		cmpi.b	#CHANNELMASK,AudioCh		; now?
+;		cmpi.b	#CHANNELMASK,_AudioCh		; now?
 ;		beq.b		.allch
 
 ;		move.l	#cantgetchan,-(sp)
@@ -186,15 +186,15 @@ Midi_ResumeSong:
 ; Do code equiv to LoadMUS; no need to actually load it
 ; as we are passed a pointer to it here.
 
-Midi_RegisterSong:
+_Midi_RegisterSong:
 		movem.l	d0-d7/a0-a6,-(sp)
-		tst.b		AudioOK
+		tst.b		_AudioOK
 		beq		.done2
 
 		move.l	a0,-(sp)		; save data ptr
 
-		bsr		Midi_StopSong			; stop current mus
-		bsr		Midi_UnRegisterSong	; kill old mus
+		bsr		_Midi_StopSong			; stop current mus
+		bsr		_Midi_UnRegisterSong	; kill old mus
 
 		movea.l	(sp)+,a0
 
@@ -308,7 +308,7 @@ Midi_RegisterSong:
 .done
 		btst		#1,Flags		; success?
 		bne.b		.exit
-		bsr		Midi_UnRegisterSong	; kill MUS and instruments
+		bsr		_Midi_UnRegisterSong	; kill MUS and instruments
 
 .exit
 		move.l	InstrHandle,d1
@@ -356,9 +356,9 @@ Midi_RegisterSong:
 ; void I_PlaySong (int handle, int looping);
 ; Do code equiv to J_PlayBox.
 
-Midi_PlaySong
+_Midi_PlaySong
 		movem.l	d0-d7/a0-a6,-(sp)
-		tst.b		AudioOK
+		tst.b		_AudioOK
 		beq		.exit
 
 		move.l	#TICRATE*30,d0
@@ -366,7 +366,7 @@ Midi_PlaySong
 		add.l		(a0),d0
 		move.l	d0,(musicdies)
 
-		bsr		Midi_ResumeSong
+		bsr		_Midi_ResumeSong
 
 .exit
 		movem.l	(sp)+,d0-d7/a0-a6
@@ -376,16 +376,16 @@ Midi_PlaySong
 ; void I_StopSong (int handle);		// Stops a song over 3 seconds.
 ; Do code equiv to J_StopBox.
 
-Midi_StopSong
+_Midi_StopSong
 		movem.l	d0-d7/a0-a6,-(sp)
 
 		move.l	#0,(looping)
 		move.l	#0,(musicdies)
 
-		tst.b		AudioOK
+		tst.b		_AudioOK
 		beq		.exit
 
-		bsr		Midi_PauseSong
+		bsr		_Midi_PauseSong
 		bsr		KillAllAud
 
 .exit
@@ -393,13 +393,13 @@ Midi_StopSong
 		rts
 
 ;------------------------------------------------------------------------
-; void I_SYSBASE (int handle);	// See above (register), then think backwards
+; void I_SysBase (int handle);	// See above (register), then think backwards
 ; Do code equiv to FreeUpMUS.
 
-Midi_UnRegisterSong
+_Midi_UnRegisterSong
 		movem.l	d0-d7/a0-a6,-(sp)
 
-		tst.b		AudioOK
+		tst.b		_AudioOK
 		beq		.free
 
 		bclr		#1,Flags		; still have anything?
@@ -556,16 +556,16 @@ TestMUSFile
 ; stop, clear, turn off
 
 KillAllAud
-		cmpi.b	#CHANNELMASK,AudioCh		; locked?
+		cmpi.b	#CHANNELMASK,_AudioCh		; locked?
 		bne.b	.vk
 
 		lea		_custom,a0
 		move.l	#ClearBuf,CHANNEL1(a0)	; re-init
 		move.w	#80,CHANNEL1+ac_len(a0)
-		move.w	(per,pc),CHANNEL1+ac_per(a0)
+		move.w	(_per,pc),CHANNEL1+ac_per(a0)
 		move.l	#ClearBuf,CHANNEL2(a0)
 		move.w	#80,CHANNEL2+ac_len(a0)
-		move.w	(per,pc),CHANNEL2+ac_per(a0)
+		move.w	(_per,pc),CHANNEL2+ac_per(a0)
 
 .vk
 		clr.b		Voice0+vc_Flags		; disable voices
@@ -590,11 +590,11 @@ KillAllAud
 ;------------------------------------------------------------------------
 ;------------------------------------------------------------------------
 
-Midi_AllocChannels:
+_Midi_AllocChannels:
 		move.l	a6,-(sp)
-		move.l	_SYSBASE,a6
+		move.l	_SysBase,a6
 
-		lea		AudioIO,a1
+		lea		_AudioIO,a1
 		move.w	#ADCMD_ALLOCATE,IO_COMMAND(a1)
 		move.b	#ADIOF_NOWAIT+IOF_QUICK,IO_FLAGS(a1)
 		move.l	#AudioAlloc,ioa_Data(a1)
@@ -608,12 +608,12 @@ Midi_AllocChannels:
 		bra.s		.exit
 
 .ok:
-		lea		AudioIO,a1
+		lea		_AudioIO,a1
 		move.w	#ADCMD_LOCK,IO_COMMAND(a1)
 		CALLEXE	SendIO
 
-		move.l	AudioIO+IO_UNIT,d0
-		move.b	d0,AudioCh
+		move.l	_AudioIO+IO_UNIT,d0
+		move.b	d0,_AudioCh
 		cmpi.b	#CHANNELMASK,d0			; all channels?
 		beq		.ok2
 
@@ -629,12 +629,12 @@ Midi_AllocChannels:
 
 		move.l	#ClearBuf,CHANNEL1(a0)
 		move.w	#80,CHANNEL1+ac_len(a0)
-		move.w	(per,pc),CHANNEL1+ac_per(a0)
+		move.w	(_per,pc),CHANNEL1+ac_per(a0)
 		move.w	#0,CHANNEL1+ac_vol(a0)
 
 		move.l	#ClearBuf,CHANNEL2(a0)
 		move.w	#80,CHANNEL2+ac_len(a0)
-		move.w	(per,pc),CHANNEL2+ac_per(a0)
+		move.w	(_per,pc),CHANNEL2+ac_per(a0)
 		move.w	#0,CHANNEL2+ac_vol(a0)
 
 		moveq		#AUDIOINTERRUPT,d0
@@ -650,11 +650,11 @@ Midi_AllocChannels:
 
 ;------------------------------------------------------------------------
 
-Midi_FreeChannels:
+_Midi_FreeChannels:
 		move.l	a6,-(sp)
-		move.l	_SYSBASE,a6
+		move.l	_SysBase,a6
 
-		cmpi.b	#CHANNELMASK,AudioCh
+		cmpi.b	#CHANNELMASK,_AudioCh
 		bne.b		.exit			; no channels
 
 		lea		_custom,a0
@@ -667,13 +667,13 @@ Midi_FreeChannels:
 
 		moveq		#CHANNELMASK,d0
 		move.w	d0,_custom+dmacon	; dma off
-		lea		AudioIO,a1
+		lea		_AudioIO,a1
 		move.w	#ADCMD_FREE,IO_COMMAND(a1)
 		move.b	#IOF_QUICK,IO_FLAGS(a1)
 		movea.l	IO_DEVICE(a1),a6
 		jsr		DEV_BEGINIO(a6)
-		clr.l		AudioIO+IO_UNIT
-		clr.b		AudioCh
+		clr.l		_AudioIO+IO_UNIT
+		clr.b		_AudioCh
 
 .exit:
 		move.l	(sp)+,a6
@@ -711,21 +711,21 @@ AudioINT2
 
 .gad
 		lea		Voice0,a0		; music voices
-		lea		AudioCh2Buf,a2
+		lea		_AudioCh2Buf,a2
 		bsr		FillBuffer
 
 		lea		_custom,a0
 		move.w	#INTMASK1,intreq(a0)
 
-		move.l	AudioCh2Ptr,CHANNEL1(a0)
+		move.l	_AudioCh2Ptr,CHANNEL1(a0)
 		move.w	#40,CHANNEL1+ac_len(a0)		; 80 samples
-		move.w	(per2,pc),CHANNEL1+ac_per(a0)	; 11048Hz
-		move.w	AudioCh2Vol,CHANNEL1+ac_vol(a0)
+		move.w	(_per2,pc),CHANNEL1+ac_per(a0)	; 11048Hz
+		move.w	_AudioCh2Vol,CHANNEL1+ac_vol(a0)
 
-		move.l	AudioCh2Ptr,CHANNEL2(a0)
+		move.l	_AudioCh2Ptr,CHANNEL2(a0)
 		move.w	#40,CHANNEL2+ac_len(a0)		; 80 samples
-		move.w	(per2,pc),CHANNEL2+ac_per(a0)	; 11048Hz
-		move.w	AudioCh2Vol,CHANNEL2+ac_vol(a0)
+		move.w	(_per2,pc),CHANNEL2+ac_per(a0)	; 11048Hz
+		move.w	_AudioCh2Vol,CHANNEL2+ac_vol(a0)
 
 .exit
 		movem.l	(a7)+,d2-d6/a2-a4/a6
@@ -1147,7 +1147,7 @@ EndScore
 		cnop	0,4
 
 CreatePool
-		movea.l	_SYSBASE,a1
+		movea.l	_SysBase,a1
 		cmpi.w	#39,LIB_VERSION(a1)
 		blt.b		.nopools		; change to bra for debugging
 
@@ -1184,7 +1184,7 @@ CreatePool
 		cnop	0,4
 
 DeletePool
-		movea.l	_SYSBASE,a1
+		movea.l	_SysBase,a1
 		cmpi.w	#39,LIB_VERSION(a1)
 		blt.b		.nopools		; change to bra for debugging
 
@@ -1216,7 +1216,7 @@ DeletePool
 		cnop	0,4
 
 AllocPooled
-		movea.l	_SYSBASE,a1
+		movea.l	_SysBase,a1
 		cmpi.w	#39,LIB_VERSION(a1)
 		blt.b		.nopools		; change to bra for debugging
 
@@ -1350,8 +1350,8 @@ Flags2		dc.b	0			; backup of Flags
 Flags3		dc.b	0
 
 		cnop	0,4
-per		dc.w	0
-per2		dc.w	0	; period for 11048 Hz
+_per		dc.w	0
+_per2		dc.w	0	; _period for 11048 Hz
 
 ;------------------------------------------------------------------------
 		cnop	0,4
@@ -1381,14 +1381,14 @@ AudioPort	dc.l	0,0
 		dc.l	0			; LN_NAME
 		dc.b	PA_SIGNAL		; mp_Flags
 		dc.b	0			; mp_SigBit
-AudioTask	dc.l	0			; mp_SigTask
+_AudioTask	dc.l	0			; mp_SigTask
 .1		dc.l	.2
 .2		dc.l	0
 		dc.l	.1
 
 		cnop	0,4
 
-AudioIO		dc.l	0,0
+_AudioIO		dc.l	0,0
 		dc.b	NT_REPLYMSG,0		; LN_TYPE, LN_PRI
 		dc.l	0			; LN_NAME
 		dc.l	AudioPort		; mn_ReplyPort
@@ -1427,8 +1427,8 @@ AudioAlloc	dc.b	CHANNELMASK			; Amiga channels to allocate
 
 AudioName	dc.b	'audio.device',0
 TPortName	dc.b	'DoomAttack MUS plugin',0
-AudioOK		dc.b	0
-AudioCh		dc.b	0
+_AudioOK		dc.b	0
+_AudioCh		dc.b	0
 
 ;--------------------------------------
 
@@ -1479,15 +1479,15 @@ pitch_ix	SET	pitch_ix+1
 
 		CNOP	0,4
 
-AudioCh2Buf	dc.l	chipbuffer2
-AudioCh2Ptr	dc.l	chipbuffer2
-AudioCh2Vol	dc.w	64
+_AudioCh2Buf	dc.l	chipbuffer2
+_AudioCh2Ptr	dc.l	chipbuffer2
+_AudioCh2Vol	dc.w	64
 
 		CNOP	0,4
 
-AudioCh3Buf	dc.l	chipbuffer3
-AudioCh3Ptr	dc.l	chipbuffer3
-AudioCh3Vol	dc.w	64
+_AudioCh3Buf	dc.l	chipbuffer3
+_AudioCh3Ptr	dc.l	chipbuffer3
+_AudioCh3Vol	dc.w	64
 
 ;------------------------------------------------------------------------
 

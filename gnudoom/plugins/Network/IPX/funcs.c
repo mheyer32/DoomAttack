@@ -4,11 +4,7 @@
 #include <clib/alib_protos.h>
 
 #ifdef __MAXON__
-#include <pragma/exec_lib.h>
-#include <pragma/dos_lib.h>
-#else
-#include <proto/exec.h>
-#include <proto/dos_lib.h>
+#include <linkerfunc.h>
 #endif
 
 #pragma header
@@ -17,13 +13,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <linkerfunc.h>
 
-#include <libraries/amipx.h>
-#include <pragma/amipx_lib.h>
+//#include <libraries/amiamipx.h>
+//#include <pragma/amipx_lib.h>
 
-#include "/DoomAttackNet/doom.h"
-#include "/DoomAttackNet/DoomAttackNet.h"
+#include "doom.h"
+#include "DoomAttackNet.h"
 
 struct AMIPX_Library *AMIPX_Library;
 
@@ -38,8 +33,8 @@ int	myargc;
 static void (*I_Error)(char *error, ...);
 static int (*M_CheckParm)(char *check);
 
-extern LONG SwapLONG(register __d0 LONG val);
-extern WORD SwapWORD(register __d0 WORD val);
+extern LONG SwapLONG(REGD0(LONG val));
+extern WORD SwapWORD(REGD0(WORD val));
 
 #define MYLONG(x) (SwapLONG(x))
 #define MYSHORT(x) (SwapWORD(x))
@@ -56,7 +51,7 @@ extern WORD SwapWORD(register __d0 WORD val);
 /*=====================*/
 
 
-void DAN_Init(register __a0 struct DANInitialization *daninit)
+void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
 	struct DANInitialization *init=daninit;
 		

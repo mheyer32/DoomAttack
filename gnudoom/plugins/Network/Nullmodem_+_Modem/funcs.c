@@ -2,15 +2,10 @@
 
 #include <OSIncludes.h>
 
-#pragma header
-
-#include <linkerfunc.h>
 #include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "doom.h"
-#include "DoomAttackNet.h"
+#include "doomattacknet.h"
 #include "funcs.h"
 #include "nullmodem.h"
 
@@ -39,6 +34,8 @@ static LONG DEVICEBAUD=14400;
 static LONG bufferpos;
 static BOOL usemodem,modemconnected,pulsedial,quitting;
 
+struct ExecBase *SysBase;
+struct Library *DOSBase;
 struct IntuitionBase *IntuitionBase;
 
 struct Device *SerialBase;
@@ -52,29 +49,28 @@ static char modemexit[257];
 
 /*=====================*/
 
-
-void DAN_Init(register __a0 struct DANInitialization *daninit)
+void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
-	struct DANInitialization *init=daninit;
-		
+    struct DANInitialization *init = daninit;
+
 #ifdef __MAXON__
-	InitModules();
+    InitModules();
 #endif
 
-	// link function pointers to DoomAttack routines
+    // link function pointers to DoomAttack routines
 
-	I_Error=init->I_Error;
-	M_CheckParm=init->M_CheckParm;
-	
-	// setups vars
-				
-	netbuffer	= init->netbuffer;
-	doomcom		= init->doomcom;
-	myargv		= init->myargv;
-	myargc		= init->myargc;
-	
-	IntuitionBase = (struct IntuitionBase *)init->IntuitionBase;
+    I_Error = init->I_Error;
+    M_CheckParm = init->M_CheckParm;
 
+    // setups vars
+    SysBase = init->SysBase;
+    DOSBase = init->DOSBase;
+    netbuffer = init->netbuffer;
+    doomcom = init->doomcom;
+    myargv = init->myargv;
+    myargc = init->myargc;
+
+    IntuitionBase = (struct IntuitionBase *)init->IntuitionBase;
 }
 
 /**********************************************************************/

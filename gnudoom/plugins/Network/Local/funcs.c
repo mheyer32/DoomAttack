@@ -1,18 +1,9 @@
-#include <exec/types.h>
-#include <exec/memory.h>
-#include <exec/ports.h>
-#include <clib/alib_protos.h>
-#include <stdio.h>
-#include <stdlib.h>
+
+#include <OSIncludes.h>
 #include <string.h>
 
 #ifdef __MAXON__
 #include <linkerfunc.h>
-#include <pragma/exec_lib.h>
-#include <pragma/dos_lib.h>
-#else
-#include <proto/exec.h>
-#include <proto/dos_lib.h>
 #endif
 
 #include "doom.h"
@@ -20,6 +11,8 @@
 #include "ComPort.h"
 
 /*=====================*/
+
+struct ExecBase *SysBase;
 
 doomdata_t **netbuffer;
 doomcom_t *doomcom;
@@ -44,7 +37,7 @@ WORD playerid,consoleplayer;
 /*=====================*/
 
 
-void DAN_Init(register __a0 struct DANInitialization *daninit)
+void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
 	struct DANInitialization *init=daninit;
 		
@@ -53,7 +46,7 @@ void DAN_Init(register __a0 struct DANInitialization *daninit)
 #endif
 
 	// link function pointers to DoomAttack routines
-
+	SysBase = init->SysBase;
 	I_Error=init->I_Error;
 	M_CheckParm=init->M_CheckParm;
 	

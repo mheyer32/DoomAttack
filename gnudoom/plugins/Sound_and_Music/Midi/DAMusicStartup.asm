@@ -33,11 +33,11 @@
 	dc.l		_DAM_UnRegisterSong
 	dc.l		_DAM_QrySongPlaying
 
-	dc.l		_DAS_SetVol
-	dc.l		_DAS_Start
-	dc.l		_DAS_Update
-	dc.l		_DAS_Stop
-	dc.l		_DAS_Done
+	dc.l		0; _DAS_SetVol
+	dc.l		0; _DAS_Start
+	dc.l		0; _DAS_Update
+	dc.l		0; _DAS_Stop
+	dc.l		0; _DAS_Done
 	
 	blk.l		3,0
 	

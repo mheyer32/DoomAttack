@@ -4,7 +4,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#ifdef __MAXON__
 #include <linkerfunc.h>
+#endif
 
 #include "deh.h"
 #include "dehinit.h"
@@ -16,7 +18,7 @@ static short linenumber,i;
 static long MAXOBJ[NUMDATA];
 static long RETURNCODE=RETURN_OK;
 
-static char *VERSTRING = "$VER: DADeHackEd 0.5 ("__DATE2__")";
+static char *VERSTRING = "$VER: DADeHackEd 0.5 ("__TIMESTAMP__")";
 static char *AUTHSTRING = "$AUTH: Georg Steger";
 
 static int GetLine(void)

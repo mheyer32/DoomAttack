@@ -1,3 +1,5 @@
+.SUFFIXES:
+
 #provide these as env variables at commandline
 # i.e.  DEBUG=1 make all -j8
 DEBUG ?= 0
@@ -10,8 +12,25 @@ CC = m68k-amigaos-gcc
 STRIP = m68k-amigaos-strip
 PHXASS = vasmm68k_mot
 VLINK = vlink
+MKDIR = mkdir -p
 
 PREFIX := $(shell ./getprefix.sh "$(CC)")
+
+define source_to_object
+	$(addprefix $(BUILDDIR),$(patsubst %.c,%.o,\
+							$(patsubst %.s,%.o,\
+							$(patsubst %.asm,%.o,${1}))))
+endef
+
+define create_objlist
+	$(filter %tartup.o,$(call source_to_object,${1}))\
+	$(filter-out %tartup.o,$(call source_to_object,${1}))
+endef
+
+define collect_sources
+	$(strip $(filter %.c %.s %asm,$(shell find ${1} -name \*)))
+endef
+
 
 CLIB_CFLAGS = -mcrt=clib2 -DUSECLIB2
 CLIB_LDFLAGS =
@@ -38,9 +57,13 @@ endif
 
 CFLAGS += -msmall-code -g -ggdb
 CFLAGS += -Werror -Wimplicit -Wstrict-prototypes
+CFLAGS += -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA -D__NO_NET_API
 CFLAGS += -include "doomdef.h"
+CFLAGS += -I./plugins/Include
+CFLAGS += -I./
 
-ifeq ($(DEBUG),1))
+ifeq ($(DEBUG),1)
+	#-DRANGECHECK
 	CFLAGS += -DDEBUG -Og -fno-omit-frame-pointer
 else
 	CFLAGS += -DNDEBUG -Ofast
@@ -54,10 +77,8 @@ ifeq ($(PROFILE), 1)
 	LDFLAGS += -pg
 endif
 
-#-DRANGECHECK
-CFLAGS += -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA
-
-PINCLUDES = -I$(PREFIX)/m68k-amigaos/ndk-include
+PINCLUDES = -I$(PREFIX)m68k-amigaos/ndk-include
+PLIBS = -L $(PREFIX)m68k-amigaos/lib
 
 PFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces $(PINCLUDES)
 ifeq ($(VERSION060), 1)
@@ -66,121 +87,162 @@ else
 	PFLAGS += -m68020up
 endif
 
-INTERMEDIATE =$(CURDIR)/build/
-OUT = $(CURDIR)/bin/
+BUILDDIR =$(CURDIR)/build/
 
-OBJS = \
-	am_map.o \
-	amigaasm/am_mapamiga.o \
-	amigaasm/analogjoy.o \
-	amigaasm/clip.o \
-	d_items.o \
-	d_locale.o \
-	d_main.o \
-	d_net.o \
-	doomdef.o \
-	doomstat.o \
-	dstrings.o \
-	f_finale.o \
-	f_wipe.o \
-	g_game.o \
-	hu_lib.o \
-	hu_stuff.o \
-	i_main.o \
-	i_net.o \
-	i_sound.o \
-	i_system.o \
-	i_systemmisc.o \
-	i_video.o \
-	info.o \
-	m_argv.o \
-	m_bbox.o \
-	m_cheat.o \
-	m_fixed.o \
-	amigaasm/m_fixedamiga.o \
-	m_menu.o \
-	m_misc.o \
-	m_random.o \
-	m_swap.o \
-	p_ceilng.o \
-	p_doors.o \
-	p_enemy.o \
-	p_floor.o \
-	p_inter.o \
-	p_lights.o \
-	p_map.o \
-	p_maputl.o \
-	p_mobj.o \
-	p_plats.o \
-	p_pspr.o \
-	p_saveg.o \
-	p_setup.o \
-	p_sight.o \
-	p_spec.o \
-	p_switch.o \
-	p_telept.o \
-	p_tick.o \
-	p_user.o \
-	r_bsp.o \
-	r_data.o \
-	r_draw.o \
-	amigaasm/r_engine.o \
-	r_main.o \
-	r_plane.o \
-	r_segs.o \
-	r_sky.o \
-	r_things.o \
-	s_sound.o \
-	sounds.o \
-	st_lib.o \
-	st_stuff.o \
-	tables.o \
-	v_video.o \
-	w_wad.o \
-	wi_stuff.o \
-	z_zone.o
+SOURCES = \
+	am_map.c \
+	amigaasm/am_mapamiga.asm \
+	amigaasm/analogjoy.asm \
+	amigaasm/clip.asm \
+	d_items.c \
+	d_locale.c \
+	d_main.c \
+	d_net.c \
+	doomdef.c \
+	doomstat.c \
+	dstrings.c \
+	f_finale.c \
+	f_wipe.c \
+	g_game.c \
+	hu_lib.c \
+	hu_stuff.c \
+	i_main.c \
+	i_net.c \
+	i_sound.c \
+	i_system.c \
+	i_systemmisc.c \
+	i_video.c \
+	info.c \
+	m_argv.c \
+	m_bbox.c \
+	m_cheat.c \
+	m_fixed.c \
+	amigaasm/m_fixedamiga.asm \
+	m_menu.c \
+	m_misc.c \
+	m_random.c \
+	m_swap.c \
+	p_ceilng.c \
+	p_doors.c \
+	p_enemy.c \
+	p_floor.c \
+	p_inter.c \
+	p_lights.c \
+	p_map.c \
+	p_maputl.c \
+	p_mobj.c \
+	p_plats.c \
+	p_pspr.c \
+	p_saveg.c \
+	p_setup.c \
+	p_sight.c \
+	p_spec.c \
+	p_switch.c \
+	p_telept.c \
+	p_tick.c \
+	p_user.c \
+	r_bsp.c \
+	r_data.c \
+	r_draw.c \
+	amigaasm/r_engine.asm \
+	r_main.c \
+	r_plane.c \
+	r_segs.c \
+	r_sky.c \
+	r_things.c \
+	s_sound.c \
+	sounds.c \
+	st_lib.c \
+	st_stuff.c \
+	tables.c \
+	v_video.c \
+	w_wad.c \
+	wi_stuff.c \
+	z_zone.c
 
-OUTOBJS = $(addprefix $(INTERMEDIATE), $(OBJS))
+OBJS = $(call create_objlist, $(SOURCES))
 
-
-all: c2p DoomAttack
-	cp -r $(OUT)DoomAttackSupport $(BINDIR)
+all: DoomAttack Plugins
 
 clean:
-	rm -f *.o ;
-	rm -f amigaasm/*.o ;
-	rm -f $(OUT)/DoomAttack ;
-	rm -f $(OUT)/DoomAttackSupport/c2p/c2p*
-
+	rm -rf $(BUILDDIR)
 
 DoomAttack: $(OBJS) Makefile
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $@
-	$(STRIP) --strip-debug --strip-unneeded $@ -o $(BINDIR)/$@
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(BUILDDIR)/$@
+	$(STRIP) --remove-section=.stab* --strip-debug --strip-unneeded $(BUILDDIR)/$@ -o $(BINDIR)/$@
 
 profile:
-	m68k-amigaos-gprof --brief DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf
+	m68k-amigaos-gprof --brief $(BUILDDIR))/DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf
 
-%.o: %.asm Makefile
-	$(PHXASS) $(PFLAGS) $< -o $@
+.PHONY : $(BUILDDIR)%__dir
+$(BUILDDIR)%__dir :
+	$(MKDIR) $(@D)
 
-%.o: %.s Makefile
-	$(PHXASS) $(PFLAGS) $< -o $@
-
-
-C2PFILES = $(notdir $(basename $(wildcard amigaasm/c2p_*.s)))
-
-c2p: $(C2PFILES) Makefile
-
-c2p_%:  amigaasm/c2p_%.s Makefile
-	$(PHXASS) $(PINCLUDES) -Fhunk -phxass -nosym -warncomm -ldots $< -o $(basename $<).o
-	$(VLINK) -Bdynamic -nostdlib $(basename $<).o -o $(OUT)DoomAttackSupport/c2p/$(notdir $(basename $<))
-
-
-%.o:	%.c  Makefile
+$(BUILDDIR)%.o : %.c | Makefile $(BUILDDIR)%__dir
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.s:	%.c  Makefile
-	$(CC) $(CFLAGS) -Wa,-adhln -g -c $<  > $@
+
+$(BUILDDIR)%.o : %.asm | Makefile $(BUILDDIR)%__dir
+	$(PHXASS) $(PFLAGS) $< -o $@
+
+$(BUILDDIR)%.o : %.s | Makefile $(BUILDDIR)%__dir
+	$(PHXASS) $(PFLAGS) $< -o $@
+
+%.o.stripped : %.o
+	$(STRIP) --remove-section=.stab* --strip-debug --strip-unneeded -o $@ $<
+
+
+define make_plugin
+	${1}_DIR = ${2}
+	${1}_SRC = $$(call collect_sources,$$(${1}_DIR))
+	${1}_OBJS = $$(call create_objlist,$$(${1}_SRC))
+	${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
+	${1}_TARGET = $$(BINDIR)/${3}
+
+.PHONY : ${1}
+${1} : $$(${1}_OBJS_STRIPPED)
+	$$(MKDIR) $$(dir $$(${1}_TARGET))
+	$$(VLINK) $(PLIBS) -Bsymbolic -gc-all -x -S -s -sd -sc $$^ -o $$(${1}_TARGET)
+
+##	$$(CC) -nostartfiles $$^ -o $$(<D)/${1}
+##	$$(STRIP)  $$(<D)/${1} -o $$(${1}_TARGET)
+
+##-lamiga caused trouble when linking... vlink doesn't like some relocs in there
+endef
+
+#Chunky-To-Planar Plugins
+$(eval $(call make_plugin,c2p_Graffiti,plugins/Chunky2Planar/Graffiti/,DoomAttackSupport/c2p/Graffiti))
+$(eval $(call make_plugin,c2p_020_Blitter, plugins/Chunky2Planar/020_Blitter/,DoomAttackSupport/c2p/020_blitter))
+$(eval $(call make_plugin,c2p_020_Optimized, plugins/Chunky2Planar/020_Optimized/,DoomAttackSupport/c2p/020_optimized))
+$(eval $(call make_plugin,c2p_040, plugins/Chunky2Planar/040/,DoomAttackSupport/c2p/040))
+$(eval $(call make_plugin,c2p_040+, plugins/Chunky2Planar/040+/,DoomAttackSupport/c2p/040+))
+$(eval $(call make_plugin,c2p_akiko, plugins/Chunky2Planar/akiko/,DoomAttackSupport/c2p/akiko))
+$(eval $(call make_plugin,c2p_akiko2, plugins/Chunky2Planar/akiko2/,DoomAttackSupport/c2p/akiko2))
+
+# Music and Sound Plugins
+$(eval $(call make_plugin,music_debug, plugins/Sound_and_Music/Debug/,DoomAttackSupport/plugin/DAMusic_Debug.plugin))
+$(eval $(call make_plugin,music_doomsound, plugins/Sound_and_Music/DoomSound_Library/,DoomAttackSupport/plugin/DAMusic_DoomSndLibrary.plugin))
+$(eval $(call make_plugin,music_p61a, plugins/Sound_and_Music/P61A/,DoomAttackSupport/plugin/DAMusic_P61A.plugin))
+$(eval $(call make_plugin,music_midi, plugins/Sound_and_Music/Midi/,DoomAttackSupport/plugin/DAMusic_Midi.plugin))
+
+#Network
+$(eval $(call make_plugin,net_tcp, plugins/Network/TCP/,DoomAttackSupport/plugin/DANet_TCP.plugin))
+$(eval $(call make_plugin,net_local, plugins/Network/Local/,DoomAttackSupport/plugin/DANet_Local.plugin))
+$(eval $(call make_plugin,net_ipx, plugins/Network/IPX/,DoomAttackSupport/plugin/DANet_IPX.plugin))
+$(eval $(call make_plugin,net_nullmodem, plugins/Network/Nullmodem_+_Modem/,DoomAttackSupport/plugin/DANet_NullModem.plugin))
+
+#DEHacked
+$(eval $(call make_plugin,dehacked, plugins/DeHacked/,DoomAttackSupport/plugin/DeHackEd))
+
+Plugins : c2p_Graffiti \
+		  c2p_020_Blitter \
+		  c2p_020_Optimized \
+		  c2p_040 \
+		  c2p_040 \
+		  c2p_akiko \
+		  c2p_akiko2 \
+		  music_p61a \
+		  music_debug
 
 #############################################################
 #

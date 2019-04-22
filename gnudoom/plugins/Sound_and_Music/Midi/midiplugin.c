@@ -1,24 +1,21 @@
 #include <OSIncludes.h>
 
-#pragma header
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <linkerfunc.h>
 
 #ifdef __MAXON__
-#include <pragma/exec_lib.h>
-#include <pragma/dos_lib.h>
-#else
-#include <proto/exec.h>
-#include <proto/dos.h>
+#include <linkerfunc.h>
 #endif
 
 //#include "compiler.h"
 #include "DoomAttackMusic.h"
 #include "funcs.h"
 #include "musicIDs.h"
+
+struct ExecBase *SysBase;
+struct Library *DOSBase;
+struct GfxBase *GfxBase;
 
 /*=====================*/
 
@@ -31,27 +28,24 @@ static int	myargc;
 void (*I_Error)(char *error, ...);
 static int (*M_CheckParm)(char *check);
 
-struct ExecBase *SYSBASE;
-struct GfxBase *GfxBase;
+// Implemented in assembly
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+extern struct Task		*AudioTask;
+extern struct IOAudio AudioIO;
+extern WORD	per,per2;
+extern WORD	AudioCh2Vol,AudioCh3Vol;
+extern UBYTE AudioOK;
+extern UBYTE AudioCh;
 
-extern "ASM"
-{
-	struct Task		*AudioTask;
-	struct IOAudio AudioIO;
-	WORD	per,per2;
-	WORD	AudioCh2Vol,AudioCh3Vol;
-	UBYTE AudioOK;
-	UBYTE AudioCh;	
-	
-	void Midi_StopSong(void);
-	void Midi_PauseSong(void);
-	void Midi_ResumeSong(void);
-	int  Midi_RegisterSong(register __a0 void *data);
-	void Midi_UnRegisterSong(void);
-	void Midi_PlaySong(void);
-	void Midi_FreeChannels(void);
-	int  Midi_AllocChannels(void);
-};
+extern void Midi_StopSong(void);
+extern void Midi_PauseSong(void);
+extern void Midi_ResumeSong(void);
+extern int  Midi_RegisterSong(REGA0(void *data));
+extern void Midi_UnRegisterSong(void);
+extern void Midi_PlaySong(void);
+extern void Midi_FreeChannels(void);
+extern int  Midi_AllocChannels(void);
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 static WORD voltable[16] =
 {
@@ -80,11 +74,13 @@ void C_DAM_Init(struct DAMInitialization *daminit)
 {
 		// link function pointers to DoomAttack routines
 		
-		#ifdef __MAXON__
+#ifdef __MAXON__
 		InitModules();
-		#endif
-		
-		
+#endif
+        SysBase = daminit->SysBase;
+        DOSBase = daminit->DOSBase;
+        GfxBase = (struct GfxBase *)daminit->GfxBase;
+
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
 
@@ -95,9 +91,6 @@ void C_DAM_Init(struct DAMInitialization *daminit)
 		myargv			 = daminit->myargv;
 		myargc			 = daminit->myargc;
 		
-		SYSBASE 			 = daminit->SysBase;
-		GfxBase			 = (struct GfxBase *)daminit->GfxBase;
-
 		// Tell DoomAttack the informations, it needs
 		
 		daminit->numchannels = 2;

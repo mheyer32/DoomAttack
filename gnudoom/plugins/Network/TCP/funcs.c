@@ -1,36 +1,22 @@
 #define DBUG(x) x
 #define FAST 1
 
-#include <exec/types.h>
-#include <exec/memory.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/errno.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <sys/ioctl.h>
-#include <amitcp/socketbasetags.h>
+#include <OSIncludes.h>
 
+#include <errno.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <sys/filio.h>
 
 #ifdef __MAXON__
 #include <linkerfunc.h>
-#include <pragma/exec_lib.h>
-#include <pragma/socket_lib.h>
-#else
-#include <proto/exec.h>
-#include <proto/socket.h>
 #endif
 
 #include "doom.h"
 #include "DoomAttackNet.h"
 
-extern int errno;
-
 struct Library *SocketBase;
+struct ExecBase *SysBase;
 
 doomdata_t **netbuffer;
 doomcom_t *doomcom;
@@ -41,29 +27,25 @@ int	myargc;
 static void (*I_Error)(char *error, ...);
 static int (*M_CheckParm)(char *check);
 
-void DAN_Init(register __a0 struct DANInitialization *daninit)
+void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
-	struct DANInitialization *init=daninit;
-		
+    struct DANInitialization *init = daninit;
+
 #ifdef __MAXON__
-	InitModules();
+    InitModules();
 #endif
 
-	// link function pointers to DoomAttack routines
+    // link function pointers to DoomAttack routines
+    SysBase = init->SysBase;
+    I_Error = init->I_Error;
+    M_CheckParm = init->M_CheckParm;
 
-	I_Error=init->I_Error;
-	M_CheckParm=init->M_CheckParm;
-
-	// setups vars
-				
-	netbuffer	= init->netbuffer;
-	doomcom		= init->doomcom;
-	myargv		= init->myargv;
-	myargc		= init->myargc;
-
+    // setups vars
+    netbuffer = init->netbuffer;
+    doomcom = init->doomcom;
+    myargv = init->myargv;
+    myargc = init->myargc;
 }
-
-
 
 /**********************************************************************/
 

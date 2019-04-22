@@ -1,22 +1,10 @@
 #include <OSIncludes.h>
 
-#pragma header
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <linkerfunc.h>
-
 #ifdef __MAXON__
-#include <pragma/exec_lib.h>
-#include <pragma/dos_lib.h>
-#else
-#include <proto/exec.h>
-#include <proto/dos.h>
+#include <linkerfunc.h>
 #endif
 
-//#include "compiler.h"
-#include "DoomAttackMusic.h"
+#include "doomattackmusic.h"
 #include "funcs.h"
 #include "musicIDs.h"
 
@@ -115,7 +103,7 @@ static char *musname[] =
     "mus_dm2ttl",
     "mus_dm2int",
 
-	 "!?!?!??!?!"
+     "??????????"
 };
 
 
@@ -130,7 +118,6 @@ void C_DAM_Init(struct DAMInitialization *daminit)
 		#ifdef __MAXON__
 		InitModules();
 		#endif
-		
 		
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
@@ -193,7 +180,7 @@ void C_DAM_StopSong(int handle)
 int C_DAM_RegisterSong(void *data,int songnum)
 {
 	es.es_TextFormat="Song: \"%s\"";
-	EasyRequest(0,&es,0,musname[songnum]);
+	EasyRequest(0,&es,0, (ULONG)&musname[songnum]);
 	
 	return 0;
 }

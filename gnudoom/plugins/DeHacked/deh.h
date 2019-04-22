@@ -21,5 +21,7 @@ extern char *framefields[];
 extern char *weaponfields[];
 extern char *fullwepfields[];
 
+struct DEHInit;
+
 long DeHackEd(char *filename,struct DEHInit *i);
 

@@ -1,23 +1,16 @@
 #include <OSIncludes.h>
 
-#pragma header
-
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <linkerfunc.h>
 
 #ifdef __MAXON__
-#include <pragma/exec_lib.h>
-#include <pragma/dos_lib.h>
-#else
-#include <proto/exec.h>
-#include <proto/dos.h>
+#include <linkerfunc.h>
 #endif
 
-//#include "compiler.h"
-#include "/DoomAttackMusic/DoomAttackMusic.h"
-#include "/DoomAttackMusic/funcs.h"
+#include "DoomAttackMusic.h"
+#include "funcs.h"
+
+static struct ExecBase *SysBase;
+static struct Library *DOSBase;
 
 /*=====================*/
 
@@ -46,11 +39,12 @@ void C_DAM_Init(struct DAMInitialization *daminit)
 {
 		// link function pointers to DoomAttack routines
 		
-		#ifdef __MAXON__
+#ifdef __MAXON__
 		InitModules();
-		#endif
-		
-		
+#endif
+		SysBase = daminit->SysBase;
+		DOSBase = daminit->DOSBase;
+
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
 
