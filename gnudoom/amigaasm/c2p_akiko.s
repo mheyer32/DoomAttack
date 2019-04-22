@@ -41,7 +41,7 @@ InitChunky:			move.l	a6,-(sp)
 					move.l	4.w,a6
 					jsr		_LVOCacheClearU(a6)
 					
-					move.l	4+12(sp),a0
+					move.l	4+16(sp),a0
 					move.l	c2pi_GfxBase(a0),a6
 					move.l	a6,gfxbase
 					
