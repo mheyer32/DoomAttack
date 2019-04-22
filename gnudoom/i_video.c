@@ -544,9 +544,6 @@ void I_ShutdownGraphics(void)
         Wait(DoomMask);
         Blitting = FALSE;
     }
-    if (DoDoubleBuffer) {
-        Wait(SIGBREAKF_CTRL_F);
-    }
 
     if (FlipTask) {
         SetSignal(0, SIGBREAKF_CTRL_E);
@@ -1016,10 +1013,10 @@ void I_FinishUpdate(void)
     if (DoFPS && DoBlitToScreen)
         ShowFPS();
 
-        if (Blitting) {
-            Wait(DoomMask);
-            Blitting = FALSE;
-        }
+    if (Blitting) {
+        Wait(DoomMask);
+        Blitting = FALSE;
+    }
     if (DoDoubleBuffer) {
         Wait(SIGBREAKF_CTRL_F);
     }
