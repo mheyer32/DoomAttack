@@ -10,12 +10,14 @@
 	
 _xP61_Init:
 	movem.l	d2-d7/a2-a6,-(sp)
+	lea		$dff000,a6
 	jsr		P61_Init
 	movem.l	(sp)+,d2-d7/a2-a6
 	rts
 	
 _xP61_Music:
 	movem.l	d2-d7/a2-a6,-(sp)
+	lea		$dff000,a6
 	jsr		P61_Music
 	movem.l	(sp)+,d2-d7/a2-a6
 	rts
