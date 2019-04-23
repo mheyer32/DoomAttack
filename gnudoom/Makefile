@@ -207,13 +207,13 @@ ${1} : $$(${1}_OBJS_STRIPPED)
 endef
 
 #Chunky-To-Planar Plugins
-$(eval $(call make_plugin,c2p_Graffiti,plugins/Chunky2Planar/Graffiti/,DoomAttackSupport/c2p/Graffiti))
-$(eval $(call make_plugin,c2p_020_Blitter, plugins/Chunky2Planar/020_Blitter/,DoomAttackSupport/c2p/020_blitter))
-$(eval $(call make_plugin,c2p_020_Optimized, plugins/Chunky2Planar/020_Optimized/,DoomAttackSupport/c2p/020_optimized))
-$(eval $(call make_plugin,c2p_040, plugins/Chunky2Planar/040/,DoomAttackSupport/c2p/040))
-$(eval $(call make_plugin,c2p_040+, plugins/Chunky2Planar/040+/,DoomAttackSupport/c2p/040+))
-$(eval $(call make_plugin,c2p_akiko, plugins/Chunky2Planar/akiko/,DoomAttackSupport/c2p/akiko))
-$(eval $(call make_plugin,c2p_akiko2, plugins/Chunky2Planar/akiko2/,DoomAttackSupport/c2p/akiko2))
+$(eval $(call make_plugin,c2p_Graffiti,plugins/Chunky2Planar/Graffiti/,DoomAttackSupport/c2p/c2p_graffiti))
+$(eval $(call make_plugin,c2p_020_Blitter, plugins/Chunky2Planar/020_Blitter/,DoomAttackSupport/c2p/c2p_020_blitter))
+$(eval $(call make_plugin,c2p_020_Optimized, plugins/Chunky2Planar/020_Optimized/,DoomAttackSupport/c2p/c2p_020_optimized))
+$(eval $(call make_plugin,c2p_040, plugins/Chunky2Planar/040/,DoomAttackSupport/c2p/c2p_040))
+$(eval $(call make_plugin,c2p_040+, plugins/Chunky2Planar/040+/,DoomAttackSupport/c2p/c2p_040+))
+$(eval $(call make_plugin,c2p_akiko, plugins/Chunky2Planar/akiko/,DoomAttackSupport/c2p/c2p_akiko))
+$(eval $(call make_plugin,c2p_akiko2, plugins/Chunky2Planar/akiko2/,DoomAttackSupport/c2p/c2p_akiko2))
 
 # Music and Sound Plugins
 $(eval $(call make_plugin,music_debug, plugins/Sound_and_Music/Debug/,DoomAttackSupport/plugin/DAMusic_Debug.plugin))
