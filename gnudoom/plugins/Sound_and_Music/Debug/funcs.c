@@ -4,7 +4,7 @@
 #include <linkerfunc.h>
 #endif
 
-#include "doomattackmusic.h"
+#include "DoomAttackMusic.h"
 #include "funcs.h"
 #include "musicIDs.h"
 

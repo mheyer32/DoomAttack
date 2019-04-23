@@ -51,5 +51,31 @@ struct DAMInitialization
 #define DAMF_FASTRAM 0x40000000
 
 
+struct DAMFile
+{
+    void *NextSeg;
+    WORD moveqcode;
+    WORD rtscode;
+    char id[4];
+    void (*DAM_Init)(struct DAMInitialization *daminit);
+    int (*DAM_InitMusic)(void);
+    void (*DAM_ShutdownMusic)(void);
+    void (*DAM_SetMusicVolume)(int volume);
+    void (*DAM_PauseSong)(int handle);
+    void (*DAM_ResumeSong)(int handle);
+    void (*DAM_StopSong)(int handle);
+    int (*DAM_RegisterSong)(void *data, int songnum);
+    void (*DAM_PlaySong)(int handle, int looping);
+    void (*DAM_UnRegisterSong)(int handle);
+    int (*DAM_QrySongPlaying)(int handle);
+
+    void (*DAS_SetVol)(int volume);
+    void (*DAS_Start)(APTR wave, int cnum, int pitch, int vol, int sep, int length);
+    void (*DAS_Update)(APTR wave, int cnum, int pitch, int vol, int sep);
+    void (*DAS_Stop)(int cnum);
+    int (*DAS_Done)(int cnum);
+
+    ULONG reserved[7];
+};
 
 #endif /* DOOMATTACKMUSIC_H */

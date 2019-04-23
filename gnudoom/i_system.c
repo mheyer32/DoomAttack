@@ -95,6 +95,7 @@ BOOL InputHandlerON;
 #include "v_video.h"
 #include "w_wad.h"
 
+#include "c2p.h"
 #include "amiga.h"
 
 #ifdef __GNUG__
@@ -117,7 +118,7 @@ int joy_pad;
 int joy_port;
 int cputype;
 
-struct c2pfile *C2P = NULL;
+struct C2PFile *C2P = NULL;
 BPTR C2PFile = 0;
 BOOL DoC2P = FALSE;
 BOOL DoDoubleBuffer = TRUE;
@@ -168,7 +169,7 @@ void GetC2P(void)
         C2P = NULL;
         C2PFile = LoadSeg(routine);  // FIXME: where's the UnloadSeg for that?
         if (C2PFile) {
-            C2P = (struct c2pfile *)BADDR(C2PFile);
+            C2P = (struct C2PFile *)BADDR(C2PFile);
             while (C2P) {
                 memcpy(id, C2P->id, 4);
                 id[4] = '\0';

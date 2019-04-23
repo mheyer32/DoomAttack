@@ -45,20 +45,11 @@ static const char rcsid[] = "$Id: m_bbox.c,v 1.1 1997/02/03 22:45:10 b1 Exp $";
 #endif
 #include "i_net.h"
 
-#include "doomattacknet.h"
+#include "plugins/Include/DoomAttackNet.h"
 
-struct danfile
-{
-    void *NextSeg;
-    WORD moveqcode;
-    WORD rtscode;
-    char id[4];
-    void (*DAN_Init)(struct DANInitialization *daninit); /* a0 */
-    int (*DAN_InitNetwork)(void);
-    void (*DAN_NetCmd)(void);
-    void (*DAN_CleanupNetwork)(void);
-    ULONG reserved[8];
-};
+// The inlines refer to DAN
+static struct DANFile *DAN;
+#include "plugins/Include/DoomAttackNetInline.h"
 
 extern struct Library *IntuitionBase;
 extern struct Library *GfxBase;
@@ -66,13 +57,10 @@ extern struct Library *KeymapBase;
 extern struct Library *TimerBase;
 
 static struct DANInitialization daninit;
-static struct danfile *DAN;
 static BPTR DANFile;
 static void (*DAN_NetCmd)(void);
 
 char *NetPlugin;
-
-#include "doomattacknetinline.h"
 
 static LONG oldfpustate;
 
@@ -86,7 +74,7 @@ static void GetDANPlugin(void)
     if (!DANFile) {
         fprintf(stderr, "I_Net: Couldn't load plugin \"%s\"!", NetPlugin);
     } else {
-        DAN = (struct danfile *)BADDR(DANFile);
+        DAN = (struct DANFile *)BADDR(DANFile);
         memcpy(id, DAN->id, 4);
         id[4] = '\0';
         if (strcmp(id, "DANW")) {
@@ -97,11 +85,11 @@ static void GetDANPlugin(void)
             daninit.M_CheckParm = M_CheckParm;
 
             daninit.SysBase = SysBase;
-            daninit.DOSBase = DOSBase;
+            daninit.DOSBase = (struct Library*)DOSBase;
             daninit.IntuitionBase = IntuitionBase;
             daninit.GfxBase = GfxBase;
             daninit.KeymapBase = KeymapBase;
-            daninit.TimerBase = TimerBase;
+            daninit.TimerBase = (struct Device*)TimerBase;
 
             daninit.netbuffer = &netbuffer;
             daninit.doomcom = doomcom;

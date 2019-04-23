@@ -27,12 +27,24 @@ struct DANInitialization
 	struct Library *KeymapBase;
 	struct Device  *TimerBase;
 	
-	doomdata_t	**netbuffer;	// pointer to var!! */
+	doomdata_t	**netbuffer;
 	doomcom_t	*doomcom;
 	
 	char	**myargv;
 	int	myargc;
 };
 
+struct DANFile
+{
+    void *NextSeg;
+    WORD moveqcode;
+    WORD rtscode;
+    char id[4];
+    void (*DAN_Init)(struct DANInitialization *daninit); /* a0 */
+    int (*DAN_InitNetwork)(void);
+    void (*DAN_NetCmd)(void);
+    void (*DAN_CleanupNetwork)(void);
+    ULONG reserved[8];
+};
 
 #endif /* DOOMATTACKNET_H */

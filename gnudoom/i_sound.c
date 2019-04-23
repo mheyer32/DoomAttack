@@ -52,34 +52,7 @@ static const char rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
 
 #include "doomdef.h"
 
-#include "doomattackmusic.h"
-
-struct damfile
-{
-    void *NextSeg;
-    WORD moveqcode;
-    WORD rtscode;
-    char id[4];
-    void (*DAM_Init)(struct DAMInitialization *daminit);
-    int (*DAM_InitMusic)(void);
-    void (*DAM_ShutdownMusic)(void);
-    void (*DAM_SetMusicVolume)(int volume);
-    void (*DAM_PauseSong)(int handle);
-    void (*DAM_ResumeSong)(int handle);
-    void (*DAM_StopSong)(int handle);
-    int (*DAM_RegisterSong)(void *data, int songnum);
-    void (*DAM_PlaySong)(int handle, int looping);
-    void (*DAM_UnRegisterSong)(int handle);
-    int (*DAM_QrySongPlaying)(int handle);
-
-    void (*DAS_SetVol)(int volume);
-    void (*DAS_Start)(APTR wave, int cnum, int pitch, int vol, int sep, int length);
-    void (*DAS_Update)(APTR wave, int cnum, int pitch, int vol, int sep);
-    void (*DAS_Stop)(int cnum);
-    int (*DAS_Done)(int cnum);
-
-    ULONG reserved[7];
-};
+#include "DoomAttackMusic.h"
 
 extern int numChannels;
 
@@ -88,10 +61,10 @@ extern struct Library *KeymapBase;
 extern struct Library *TimerBase;
 
 static struct DAMInitialization daminit;
-static struct damfile *DAM;
 static BPTR DAMFile;
 
-#include "doomattackmusicinline.h"
+static struct DAMFile *DAM;
+#include "DoomAttackMusicInline.h"
 
 char *MusicPlugin;
 
@@ -705,7 +678,7 @@ static void GetDAMPlugin(void)
     if (!DAMFile) {
         fprintf(stderr, "I_Sound: Couldn't load plugin \"%s\"!\n", MusicPlugin);
     } else {
-        DAM = (struct damfile *)BADDR(DAMFile);
+        DAM = (struct DAMFile *)BADDR(DAMFile);
         memcpy(id, DAM->id, 4);
         id[4] = '\0';
         if (strcmp(id, "DAMS")) {
@@ -718,9 +691,9 @@ static void GetDAMPlugin(void)
             daminit.SysBase = SysBase;
             daminit.DOSBase = (struct Library *)DOSBase;
             daminit.IntuitionBase = (struct Library *)IntuitionBase;
-            daminit.GfxBase = GfxBase;
+            daminit.GfxBase = (struct Library *)GfxBase;
             daminit.KeymapBase = KeymapBase;
-            daminit.TimerBase = TimerBase;
+            daminit.TimerBase = (struct Device*)TimerBase;
 
             daminit.gametic = &gametic;
             daminit.snd_MusicVolume = &snd_MusicVolume;

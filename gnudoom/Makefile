@@ -77,8 +77,8 @@ ifeq ($(PROFILE), 1)
 	LDFLAGS += -pg
 endif
 
-PINCLUDES = -I$(PREFIX)m68k-amigaos/ndk-include
-PLIBS = -L $(PREFIX)m68k-amigaos/lib
+PINCLUDES = -I./plugins/Include -I$(PREFIX)m68k-amigaos/ndk-include
+PLIBS = -L$(PREFIX)m68k-amigaos/lib
 
 PFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces $(PINCLUDES)
 ifeq ($(VERSION060), 1)
