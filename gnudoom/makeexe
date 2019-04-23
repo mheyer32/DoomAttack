@@ -1,3 +1,0 @@
-gcc -s -noixemul ram:archive amigaasm/m_fixedamigaGNU.o amigaasm/am_mapamigaGNU.o amigaasm/r_engineGNU.o amigaasm/analogjoyGNU.o amigaasm/clipGNU.o -o doom:DoomAttack
-protect doom:DoomAttack +e
-

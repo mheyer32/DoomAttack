@@ -1,3 +1,0 @@
-set count 0
-list #?.c lformat "set count *`eval *$count+1*`*necho *$count:_Compiling_%n*ngcc -c -O3 -m68060 -Wa,-m68020 -Dversion060 %n" >t:li
-execute t:li

@@ -1,7 +1,0 @@
-.key NAME/A
-.bra {
-.ket }
-
-gcc -c -Isys:gnudoom -O3 -m68030 {NAME}.c
-
-setenv LASTGCCFILE {NAME}

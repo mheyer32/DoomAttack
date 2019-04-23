@@ -1,3 +1,0 @@
-set count 0
-list #?.c lformat "set count *`eval *$count+1*`*necho *$count:_Compiling_%n*ngccv -c -O3 -I sys:gnudoom -m68030 -Dmc68060 %n" >t:li
-execute t:li

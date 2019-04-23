@@ -1,7 +1,0 @@
-hu_lib.o g_game.o f_wipe.o f_finale.o d_net.o d_main.o d_items.o dstrings.o w_wad.o doomstat.o
-doomdef.o am_map.o z_zone.o wi_stuff.o tables.o s_sound.o st_stuff.o sounds.o r_things.o r_sky.o
-r_segs.o r_plane.o r_draw.o p_user.o p_tick.o p_telept.o p_switch.o p_spec.o p_sight.o p_setup.o
-p_saveg.o p_plats.o p_pspr.o r_bsp.o r_main.o v_video.o i_system.o i_video.o p_maputl.o
-p_map.o p_lights.o p_inter.o p_floor.o p_enemy.o p_doors.o m_swap.o p_ceilng.o p_mobj.o
-m_random.o m_misc.o r_data.o m_fixed.o m_cheat.o m_bbox.o m_argv.o st_lib.o i_sound.o
-i_net.o i_main.o m_menu.o info.o hu_stuff.o

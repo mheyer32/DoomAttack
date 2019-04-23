@@ -1,5 +1,0 @@
-.key NAME/A
-.bra {
-.ket }
-
-gccv -c -Isys:gnudoom -O3 -m68030 -Dmc68060 {NAME}

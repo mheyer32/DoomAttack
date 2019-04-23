@@ -1,9 +1,0 @@
-cd amigaasm
-
-asm060 m_fixedamiga
-asm060 am_mapamiga
-asm060 r_engine
-asm060 analogjoy
-asm060 clip
-
-cd /
