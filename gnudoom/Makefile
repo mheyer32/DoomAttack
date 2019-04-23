@@ -202,12 +202,8 @@ define make_plugin
 .PHONY : ${1}
 ${1} : $$(${1}_OBJS_STRIPPED)
 	$$(MKDIR) $$(dir $$(${1}_TARGET))
-	$$(VLINK) $(PLIBS) -Bsymbolic -gc-all -x -S -s -sd -sc $$^ -o $$(${1}_TARGET)
-
-##	$$(CC) -nostartfiles $$^ -o $$(<D)/${1}
-##	$$(STRIP)  $$(<D)/${1} -o $$(${1}_TARGET)
-
-##-lamiga caused trouble when linking... vlink doesn't like some relocs in there
+	$$(CC) -nostartfiles $$^ -o $$(<D)/${1}
+	$$(STRIP)  $$(<D)/${1} -o $$(${1}_TARGET)
 endef
 
 #Chunky-To-Planar Plugins
