@@ -40,17 +40,16 @@ static const char rcsid[] = "$Id: z_zone.c,v 1.4 1997/02/03 16:47:58 b1 Exp $";
 
 #define ZONEID 0x1d4a11
 
-typedef struct
-{
+typedef struct {
     /* total bytes malloced, including header*/
     int size;
 
     /* start / end cap for linked list*/
     memblock_t blocklist;
-
     memblock_t *rover;
 
-} memzone_t;
+    int pad[2];  // 48 bytes, multiple of 16
+}  memzone_t;
 
 memzone_t *mainzone;
 
@@ -181,7 +180,6 @@ void* Z_Malloc
     memblock_t* newblock;
     memblock_t*	base;
 
-    size = (size + 3) & ~3;
 
     /* scan through the block list,*/
     /* looking for the first free block*/
@@ -190,6 +188,8 @@ void* Z_Malloc
 
     /* account for size of block header*/
     size += sizeof(memblock_t);
+
+    size = (size + 15) & ~15;
 
     /* if there is a free block behind the rover,*/
     /*  back up over them*/

@@ -57,6 +57,8 @@ typedef struct memblock_s
     void **user; /* NULL if a free block*/
     int tag;     /* purgelevel*/
     int id;      /* should be ZONEID*/
+    int pad[2];  /* make memblock_s multiple of 16. Originally I wanted to put them
+                   at the end of memblock, but it results in really weird bugs */
     struct memblock_s *next;
     struct memblock_s *prev;
 } memblock_t;

@@ -81,10 +81,8 @@ int spanstop[MAXSCREENHEIGHT];
 /* texture mapping*/
 /**/
 
-/*
-lighttable_t**		planezlight;
-fixed_t			planeheight;
-*/
+extern lighttable_t **planezlight;
+extern fixed_t planeheight;
 
 extern fixed_t basexscale;
 extern fixed_t baseyscale;
@@ -133,66 +131,55 @@ void R_InitPlanes(void)
 /* BASIC PRIMITIVE*/
 /**/
 
-#if 0
-void R_MapPlane
-( int		y,
-  int		x1,
-  int		x2 )
+#if 1
+void R_MapPlane(int y, int x1, int x2)
 {
-    angle_t	angle;
-    fixed_t	distance;
-    fixed_t	length;
-    unsigned	index;
+    angle_t angle;
+    fixed_t distance;
+    fixed_t length;
+    unsigned index;
 
 #ifdef RANGECHECK
-    if (x2 < x1
-	|| x1<0
-	|| x2>=viewwidth
-	|| (unsigned)y>viewheight)
-    {
-		/* hallohallohallo*/
-		/* I_Error ("R_MapPlane: %i, %i at %i",x1,x2,y);*/
-		return;
+    if (x2 < x1 || x1 < 0 || x2 >= viewwidth || (unsigned)y > viewheight) {
+        /* hallohallohallo*/
+        /* I_Error ("R_MapPlane: %i, %i at %i",x1,x2,y);*/
+        return;
     }
 #endif
 
-    if (planeheight != cachedheight[y])
-    {
-	cachedheight[y] = planeheight;
-	distance = cacheddistance[y] = FixedMul (planeheight, yslope[y]);
-	ds_xstep = cachedxstep[y] = FixedMul (distance,basexscale);
-	ds_ystep = cachedystep[y] = FixedMul (distance,baseyscale);
+    if (planeheight != cachedheight[y]) {
+        cachedheight[y] = planeheight;
+        distance = cacheddistance[y] = FixedMul(planeheight, yslope[y]);
+        ds_xstep = cachedxstep[y] = FixedMul(distance, basexscale);
+        ds_ystep = cachedystep[y] = FixedMul(distance, baseyscale);
+    } else {
+        distance = cacheddistance[y];
+        ds_xstep = cachedxstep[y];
+        ds_ystep = cachedystep[y];
     }
-    else
-    {
-	distance = cacheddistance[y];
-	ds_xstep = cachedxstep[y];
-	ds_ystep = cachedystep[y];
-    }
-	
-    length = FixedMul (distance,distscale[x1]);
-    angle = (viewangle + xtoviewangle[x1])>>ANGLETOFINESHIFT;
+
+    length = FixedMul(distance, distscale[x1]);
+    angle = (viewangle + xtoviewangle[x1]) >> ANGLETOFINESHIFT;
     ds_xfrac = viewx + FixedMul(finecosine[angle], length);
     ds_yfrac = -viewy - FixedMul(finesine[angle], length);
 
     if (fixedcolormap)
-	ds_colormap = fixedcolormap;
-    else
-    {
-	index = distance >> LIGHTZSHIFT;
-	
-	if (index >= MAXLIGHTZ )
-	    index = MAXLIGHTZ-1;
+        ds_colormap = fixedcolormap;
+    else {
+        index = distance >> LIGHTZSHIFT;
 
-	ds_colormap = planezlight[index];
+        if (index >= MAXLIGHTZ)
+            index = MAXLIGHTZ - 1;
+
+        ds_colormap = planezlight[index];
     }
-	
+
     ds_y = y;
     ds_x1 = x1;
     ds_x2 = x2;
 
     /* high or low detail*/
-    spanfunc ();	
+    spanfunc();
 }
 #endif
 
@@ -404,34 +391,25 @@ visplane_t* R_CheckPlane
 /**/
 /* R_MakeSpans*/
 /**/
-#if 0
-void R_MakeSpans
-( int		x,
-  int		t1,
-  int		b1,
-  int		t2,
-  int		b2 )
+#if 1
+void R_MakeSpans(int x, int t1, int b1, int t2, int b2)
 {
-    while (t1 < t2 && t1<=b1)
-    {
-	R_MapPlane (t1,spanstart[t1],x-1);
-	t1++;
+    while (t1 < t2 && t1 <= b1) {
+        R_MapPlane(t1, spanstart[t1], x - 1);
+        t1++;
     }
-    while (b1 > b2 && b1>=t1)
-    {
-	R_MapPlane (b1,spanstart[b1],x-1);
-	b1--;
+    while (b1 > b2 && b1 >= t1) {
+        R_MapPlane(b1, spanstart[b1], x - 1);
+        b1--;
     }
-	
-    while (t2 < t1 && t2<=b2)
-    {
-	spanstart[t2] = x;
-	t2++;
+
+    while (t2 < t1 && t2 <= b2) {
+        spanstart[t2] = x;
+        t2++;
     }
-    while (b2 > b1 && b2>=t2)
-    {
-	spanstart[b2] = x;
-	b2--;
+    while (b2 > b1 && b2 >= t2) {
+        spanstart[b2] = x;
+        b2--;
     }
 }
 #endif
@@ -441,92 +419,102 @@ void R_MakeSpans
 /* At the end of each frame.*/
 /**/
 
-#if 0
-void R_DrawPlanes (void)
+#if 1
+void R_DrawPlanes(void)
 {
-    visplane_t*		pl;
-    int			light;
-    int			x;
-    int			stop;
-    int			angle;
+    visplane_t *pl;
+    int light;
+    int x;
+    int stop;
+    int angle;
 
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
-	I_Error ("R_DrawPlanes: drawsegs overflow (%i)",
-		 ds_p - drawsegs);
-    
+        I_Error("R_DrawPlanes: drawsegs overflow (%i)", ds_p - drawsegs);
+
     if (lastvisplane - visplanes > MAXVISPLANES)
-	I_Error ("R_DrawPlanes: visplane overflow (%i)",
-		 lastvisplane - visplanes);
-    
+        I_Error("R_DrawPlanes: visplane overflow (%i)", lastvisplane - visplanes);
+
     if (lastopening - openings > MAXOPENINGS)
-	I_Error ("R_DrawPlanes: opening overflow (%i)",
-		 lastopening - openings);
+        I_Error("R_DrawPlanes: opening overflow (%i)", lastopening - openings);
 #endif
 
-    for (pl = visplanes ; pl < lastvisplane ; pl++)
-    {
-	if (pl->minx > pl->maxx)
-	    continue;
+    for (pl = visplanes; pl < lastvisplane; pl++) {
+        if (pl->minx > pl->maxx)
+            continue;
 
-	
-	/* sky flat*/
-	if (pl->picnum == skyflatnum)
-	{
-	    dc_iscale = pspriteiscale>>detailshift;
-	    
-	    /* Sky is allways drawn full bright,*/
-	    /*  i.e. colormaps[0] is used.*/
-	    /* Because of this hack, sky is not affected*/
-	    /*  by INVUL inverse mapping.*/
-	    dc_colormap = colormaps;
-	    dc_texturemid = skytexturemid;
-	    for (x=pl->minx ; x <= pl->maxx ; x++)
-	    {
-		dc_yl = pl->top[x];
-		dc_yh = pl->bottom[x];
+        /* sky flat*/
+        if (pl->picnum == skyflatnum) {
+            dc_iscale = pspriteiscale >> detailshift;
 
-		if (dc_yl <= dc_yh)
-		{
-		    angle = (viewangle + xtoviewangle[x])>>ANGLETOSKYSHIFT;
-		    dc_x = x;
-		    dc_source = R_GetColumn(skytexture, angle);
-		    colfunc ();
-		}
-	    }
-	    continue;
-	}
-	
-;	/* regular flat*/
-	ds_source = W_CacheLumpNum(firstflat +
-				   flattranslation[pl->picnum],
-				   PU_STATIC);
-	
-	planeheight = abs(pl->height-viewz);
-	light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
+            /* Sky is allways drawn full bright,*/
+            /*  i.e. colormaps[0] is used.*/
+            /* Because of this hack, sky is not affected*/
+            /*  by INVUL inverse mapping.*/
+            dc_colormap = colormaps;
+            dc_texturemid = skytexturemid;
+            for (x = pl->minx; x <= pl->maxx; x++) {
+                dc_yl = pl->top[x];
+                dc_yh = pl->bottom[x];
 
-	if (light >= LIGHTLEVELS)
-	    light = LIGHTLEVELS-1;
+                if (dc_yl <= dc_yh) {
+                    angle = (viewangle + xtoviewangle[x]) >> ANGLETOSKYSHIFT;
+                    dc_x = x;
+                    dc_source = R_GetColumn(skytexture, angle);
+                    colfunc();
+                }
+            }
+            continue;
+        }
 
-	if (light < 0)
-	    light = 0;
+        ; /* regular flat*/
+        int lumpnum = firstflat + flattranslation[pl->picnum];
+        boolean firstLoad = !lumpcache[lumpnum];
 
-	planezlight = zlight[light];
+        ds_source = W_CacheLumpNum(lumpnum, PU_STATIC);
 
-	pl->top[pl->maxx+1] = 0xffff;
-	pl->top[pl->minx-1] = 0xffff;
-		
-	stop = pl->maxx + 1;
+        if (firstLoad) {
+            // on first load, translate the flat from pitch linear
+            // into tiled layout of 4x4 pixels
+            byte *pitch = Z_Malloc(4096, PU_STATIC, NULL);
+            byte *tiled = (byte *)ds_source;
+            memcpy(pitch, tiled, 4096);
 
-	for (x=pl->minx ; x<= stop ; x++)
-	{
-	    R_MakeSpans(x,pl->top[x-1],
-			pl->bottom[x-1],
-			pl->top[x],
-			pl->bottom[x]);
-	}
-	
-	Z_ChangeTag (ds_source, PU_CACHE);
+            for (int y = 0; y < 16; ++y) {
+                for (int x = 0; x < 16; ++x) {
+                    int tileOffsetPitch = (y * 64 + x) * 4;
+                    int tileOffsetTiled = y * 256 + x * 16;
+                    for (int tx = 0; tx < 4; ++tx) {
+                        for (int ty = 0; ty < 4; ++ty) {
+                            tiled[tileOffsetTiled + tx * 4 + ty] = pitch[tileOffsetPitch + ty * 64 + tx];
+                        }
+                    }
+                }
+            }
+            Z_Free(pitch);
+        }
+
+        planeheight = abs(pl->height - viewz);
+        light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
+
+        if (light >= LIGHTLEVELS)
+            light = LIGHTLEVELS - 1;
+
+        if (light < 0)
+            light = 0;
+
+        planezlight = zlight[light];
+
+        pl->top[pl->maxx + 1] = 0xffff;
+        pl->top[pl->minx - 1] = 0xffff;
+
+        stop = pl->maxx + 1;
+
+        for (x = pl->minx; x <= stop; x++) {
+            R_MakeSpans(x, pl->top[x - 1], pl->bottom[x - 1], pl->top[x], pl->bottom[x]);
+        }
+
+        Z_ChangeTag(ds_source, PU_CACHE);
     }
 }
 #endif

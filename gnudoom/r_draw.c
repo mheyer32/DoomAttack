@@ -484,16 +484,35 @@ extern byte* ds_source;
 /* just for profiling*/
 int dscount;
 
-#ifdef hallohallohallo
+#if 1
+
+typedef union {
+    fixed_t f;
+    struct
+    {
+        unsigned int topbits : 4;
+        unsigned int t : 4;
+        unsigned int ty : 2;
+        unsigned int frac : 20;
+    };
+} YFrac;
+
+typedef union {
+    fixed_t f;
+    struct
+    {
+        unsigned int topbits : 10;
+        unsigned int ttx : 6;
+        unsigned int frac : 16;
+    };
+} XFrac;
+
 /**/
 /* Draws the actual span.*/
 void R_DrawSpan(void)
 {
-    fixed_t xfrac;
-    fixed_t yfrac;
-    byte* dest;
     int count;
-    int spot;
+//    int spot;
 
 #ifdef RANGECHECK
     if (ds_x2 < ds_x1 || ds_x1 < 0 || ds_x2 >= SCREENWIDTH || (unsigned)ds_y > REALSCREENHEIGHT) {
@@ -502,25 +521,31 @@ void R_DrawSpan(void)
 /*	dscount++; */
 #endif
 
-    xfrac = ds_xfrac;
-    yfrac = ds_yfrac;
-
-    dest = ylookup[ds_y] + columnofs[ds_x1];
-
     /* We do not check for zero spans here?*/
     count = ds_x2 - ds_x1;
+    if (!count) {
+        return;
+    }
+
+    fixed_t xfrac = ds_xfrac;
+    fixed_t yfrac = ds_yfrac;
+    byte* dest = ylookup[ds_y] + columnofs[ds_x1];
+
+    lighttable_t const* const light = ds_colormap;
+    byte const* const source = ds_source;
+    const fixed_t dx = ds_xstep;
+    const fixed_t dy = ds_ystep;
 
     do {
-        /* Current texture index in u,v.*/
-        spot = ((yfrac >> (16 - 6)) & (63 * 64)) + ((xfrac >> 16) & 63);
+        short spot = ((((YFrac)yfrac).t) << 8) | (((YFrac)yfrac).ty) | ((((XFrac)xfrac).ttx )<< 2);
 
         /* Lookup pixel from flat texture tile,*/
         /*  re-index using light/colormap.*/
-        *dest++ = ds_colormap[ds_source[spot]];
+        *dest++ = light[source[spot]];
 
         /* Next step in u,v.*/
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
+        xfrac += dx;
+        yfrac += dy;
 
     } while (count--);
 }

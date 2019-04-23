@@ -1234,7 +1234,7 @@ R_MAKESPANS:	macro		;// d2 = x  d4 = t1  d5 = b1
 	ENDM
 
 
-	XDEF	_R_DrawPlanes
+	;XDEF	_R_DrawPlanes
 	CNOP	0,4
 	
 _R_DrawPlanes:
@@ -7154,7 +7154,7 @@ fuzzpos:		dc.l	0
 
 ;/*= R_DrawSpan ==================================================================*/
 
-	XDEF	_R_DrawSpan
+;	XDEF	_R_DrawSpan
 	XDEF	_R_DrawSpan_Check
 
 	CNOP	0,4
@@ -7210,47 +7210,58 @@ DrawSpan_Common:
 		beq.b   .skipb0
 		move.l  d0,d5           ; do the unaligned pixels
 		move.l  d1,d6           ; so we can write to longword
+
 		swap    d5              ; boundary in the main loop
 		swap    d6
-		and.w   #$3f,d5
-		and.w   #$3f,d6
+
+		ror.l	#2,d6
 		lsl.w   #6,d6
+		and.w	#$3F,d5			; remove garbage
 		or.w    d5,d6
+		rol.l	#2,d6
+
 		move.b  (a1,d6.w),d5
 		add.l   d2,d0
-		move.b  (a2,d5.w),(a0)+
 		add.l   d3,d1
+		move.b  (a2,d5.w),(a0)+
+
 		move.l  a0,d4
 		subq.l  #1,d7
 .skipb0		btst    #1,d4
 		beq.b   .skips0
 		moveq   #2,d4
 		cmp.l   d4,d7
+
 		bls.b   .skips0
 		move.l  d0,d5           ; write two pixels
 		move.l  d1,d6
+
 		swap    d5
 		swap    d6
 		and.w   #$3f,d5
 		and.w   #$3f,d6
 		lsl.w   #6,d6
 		or.w    d5,d6
+
 		move.b  (a1,d6.w),d5
-		move.w  (a2,d5.w),d4
 		add.l   d2,d0
 		add.l   d3,d1
-		move.l  d0,d5
 		move.l  d1,d6
+		move.w  (a2,d5.w),d4
+		move.l  d0,d5
+
 		swap    d5
 		swap    d6
 		and.w   #$3f,d5
 		and.w   #$3f,d6
 		lsl.w   #6,d6
 		or.w    d5,d6
+
 		move.b  (a1,d6.w),d5
 		move.b  (a2,d5.w),d4
 		add.l   d2,d0
 		move.w  d4,(a0)+
+
 		add.l   d3,d1
 		subq.l  #2,d7
 .skips0		move.l  a2,d4

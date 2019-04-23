@@ -711,11 +711,11 @@ _Z_Malloc:			;// (int size, int tag, void *user)
 
 	movem.l	a2/a3,-(sp)
 
-;//    size = (size + 3) & ~3;
-	moveq		#mb_SIZEOF+3,d0
+;//    size = (size + 15) & ~15;
+	moveq		#mb_SIZEOF+15,d0
 	add.l		ZMSPOFF+4(sp),d0
-;//	moveq		#~3,d1
-	moveq		#-4,d1
+;//	moveq		#~15,d1
+	moveq		#-16,d1
 
 	and.l		d1,d0									;' d0 = size
     

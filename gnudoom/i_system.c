@@ -87,13 +87,13 @@ BOOL InputHandlerON;
 #include "i_sound.h"
 #include "i_video.h"
 #include "m_misc.h"
-
 #include "d_locale.h"
 #include "d_net.h"
 #include "g_game.h"
 #include "m_argv.h"
 #include "v_video.h"
 #include "w_wad.h"
+#include "z_zone.h"
 
 #include "c2p.h"
 #include "amiga.h"
@@ -269,12 +269,17 @@ byte *I_ZoneBase(int *size)
 
     do {
         *size = kb_used * 1024L;
-        rc = (byte *)malloc(*size);
+        rc = (byte *)malloc(*size + 16);
         if (!rc) {
             kb_used -= 50;
         }
     } while (!rc);
 
+    // make we align the start of the zone to multiples of 16,
+    // so each block will get aligne to 16, too
+    rc = (byte*)(((uintptr_t)rc + 15) & ~15);
+
+    // rc will never free()'d ... DOOM relies on clib cleaning up after it
     return rc;
 }
 

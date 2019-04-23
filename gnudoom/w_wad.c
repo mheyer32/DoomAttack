@@ -632,6 +632,8 @@ void W_ReadLump(int lump, void* dest)
     /* ??? I_EndRead ();*/
 }
 
+#include <assert.h>
+
 /**/
 /* W_CacheLumpNum*/
 /**/
