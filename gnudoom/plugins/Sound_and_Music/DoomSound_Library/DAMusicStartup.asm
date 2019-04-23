@@ -16,6 +16,8 @@
 	xref		_DAS_Stop
 	xref		_DAS_Done
 	
+				section .text
+
 	moveq		#-1,d0
 	rts
 

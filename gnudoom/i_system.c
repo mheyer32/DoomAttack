@@ -212,7 +212,7 @@ void GetC2P(void)
                     }
                     break;
                 }
-                C2P = C2P->NextSeg;
+                C2P = BADDR(C2P->NextSeg);
             }
             if (!C2P || !DoC2P) {
                 fprintf(stderr, "I_Init: The selected C2P file is not compatible.\n");

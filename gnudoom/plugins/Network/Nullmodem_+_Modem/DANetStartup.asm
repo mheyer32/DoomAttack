@@ -3,6 +3,8 @@
 	XREF		_DAN_NetCmd
 	XREF		_DAN_CleanupNetwork
 	
+				section .text
+
 	moveq		#-1,d0
 	rts
 
