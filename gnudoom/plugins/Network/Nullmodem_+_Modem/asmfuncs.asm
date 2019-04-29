@@ -495,10 +495,11 @@ _PacketGet:
 
 	CNOP	0,4
 
-	XDEF	packetlen
+	XDEF	_packetlen
 	
 bufferpos:
 	dc.l	0
+_packetlen
 packetlen:
 	dc.l	0
 unreadbytes:

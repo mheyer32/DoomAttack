@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "doom.h"
-#include "doomattacknet.h"
+#include "DoomAttackNet.h"
 #include "funcs.h"
 #include "nullmodem.h"
 
@@ -128,7 +128,7 @@ static void PacketSend (char *buffer, LONG len)
 	SerWriting=TRUE;
 }
 #else
-void PacketSend(register __a0 char *buffer,register __d0 LONG len);
+void PacketSend(REGA0(char *buffer), REGD0(LONG len));
 #endif
 
 /**********************************************************************
@@ -157,7 +157,7 @@ static BOOL inescape;
 static BOOL newpacket;
 static LONG packetlen;
 #else
-extern "ASM" LONG packetlen;
+extern LONG packetlen;
 #endif
 
 char	packet[MAXPACKET+1]; 

@@ -26,8 +26,8 @@ static int (*M_CheckParm)(char *check);
 /*=====================*/
 
 static struct ComPort *comport;
-static struct ComMsg sendmsg,*getmsg;
-static struct ComMsg fastmsg[NUM_FASTMSG];
+static struct ComMsg sendMsg,*getMsg;
+static struct ComMsg fastMsg[NUM_FASTMSG];
 
 static struct List *sendport[MAX_PLAYERS+1];
 static WORD portnode[MAX_PLAYERS+1];
@@ -78,10 +78,10 @@ static void PacketSend (void)
 
   for(c=0;c<NUM_FASTMSG;c++)
   {
-		if(!(fastmsg[c].flags & CMF_MESSAGEUSED))
+        if(!(fastMsg[c].flags & CMF_MESSAGEUSED))
 		{
-			fastmsg[c].flags |= CMF_MESSAGEUSED;
-			msg=&fastmsg[c];
+			fastMsg[c].flags |= CMF_MESSAGEUSED;
+			msg=&fastMsg[c];
 			break;
 		}
   }
@@ -114,30 +114,30 @@ static void PacketGet (void)
   doomdata_t *netbuf = *netbuffer;
 
   Forbid();
-  getmsg=(struct ComMsg *)RemHead(&comport->playerport[playerid].msglist);
+  getMsg=(struct ComMsg *)RemHead(&comport->playerport[playerid].msglist);
   Permit();
   
-  if (!getmsg)
+  if (!getMsg)
   {
   		doomcom->remotenode = -1; // no packet
   		return;
   }
   
-  doomcom->remotenode = portnode[getmsg->playerid];
-  doomcom->datalength = getmsg->datalen;
+  doomcom->remotenode = portnode[getMsg->playerid];
+  doomcom->datalength = getMsg->datalen;
   
   if (doomcom->remotenode < 0 || doomcom->remotenode >= MAX_PLAYERS)
   {
   		doomcom->remotenode = - 1;
 	} else {
-		*netbuf = getmsg->dd;
+		*netbuf = getMsg->dd;
   }
   
-  if (getmsg->flags&CMF_ALLOCATED)
+  if (getMsg->flags&CMF_ALLOCATED)
   {
-		FreePooled(comport->pool,getmsg,sizeof(struct ComMsg));
+        FreePooled(comport->pool,getMsg,sizeof(struct ComMsg));
   } else {
-  		getmsg->flags &= (~CMF_MESSAGEUSED);
+        getMsg->flags &= (~CMF_MESSAGEUSED);
   }
 
 }
@@ -237,7 +237,7 @@ int DAN_InitNetwork (void)
 
 	Permit();
 	
-	sendmsg.playerid=playerid;
+	sendMsg.playerid=playerid;
 
 	for(i=0;i<doomcom->numplayers;i++)
 	{

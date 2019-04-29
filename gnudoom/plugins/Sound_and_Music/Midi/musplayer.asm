@@ -38,6 +38,7 @@
 		xdef	_Midi_FreeChannels
 		xdef	_Midi_AllocChannels
 
+		section .text
 ;------------------------------------------------------------------------
 
 CHANNEL1 = aud0

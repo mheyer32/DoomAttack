@@ -32,11 +32,11 @@ define collect_sources
 endef
 
 
-CLIB_CFLAGS = -mcrt=clib2 -DUSECLIB2
-CLIB_LDFLAGS =
+CLIB_CFLAGS = -mcrt=clib2
+CLIB_LDFLAGS = -mcrt=clib2
 
-NOIXEMUL_CFLAGS = -noixemul -DUSENOIXEMUL
-NOIXEMUL_LDFLAGS =
+NOIXEMUL_CFLAGS = -noixemul
+NOIXEMUL_LDFLAGS = -noixemul
 
 ifeq ($(USENOIXEMUL), 1)
 	RUNTIME_CFLAGS = $(NOIXEMUL_CFLAGS)
@@ -168,7 +168,7 @@ clean:
 	rm -rf $(BUILDDIR)
 
 DoomAttack: $(OBJS) Makefile
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(BUILDDIR)/$@
+	$(CC) $(LDFLAGS) $(OBJS) -o $(BUILDDIR)/$@
 	$(STRIP) --remove-section=.stab* --strip-debug --strip-unneeded $(BUILDDIR)/$@ -o $(BINDIR)/$@
 
 profile:
@@ -199,10 +199,12 @@ define make_plugin
 	${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
 	${1}_TARGET = $$(BINDIR)/${3}
 
-.PHONY : ${1}
+#.PHONY : ${1}
+${1} : CFLAGS+=-D__ASM_ROUTINES__
 ${1} : $$(${1}_OBJS_STRIPPED)
+	echo "Current set of CFLAGS" $$(CFLAGS)
 	$$(MKDIR) $$(dir $$(${1}_TARGET))
-	$$(CC) -nostartfiles $$^ -o $$(<D)/${1}
+	$$(CC) $$(LDFLAGS) -noixemul -nostartfiles $$^ -o $$(<D)/${1}
 	$$(STRIP)  $$(<D)/${1} -o $$(${1}_TARGET)
 endef
 
