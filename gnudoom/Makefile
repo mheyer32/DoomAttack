@@ -194,7 +194,7 @@ $(BUILDDIR)%.o : %.s | Makefile $(BUILDDIR)%__dir
 
 define make_plugin
 	${1}_DIR = ${2}
-	${1}_SRC = $$(call collect_sources,$$(${1}_DIR))
+	${1}_SRC = $$(call collect_sources,$$(${1}_DIR)) plugin_runtime.c
 	${1}_OBJS = $$(call create_objlist,$$(${1}_SRC))
 	${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
 	${1}_TARGET = $$(BINDIR)/${3}
@@ -240,8 +240,12 @@ Plugins : c2p_Graffiti \
 		  c2p_akiko \
 		  c2p_akiko2 \
 		  music_p61a \
-		  music_debug
-
+		  music_doomsound \
+		  music_midi \
+		  music_debug \
+		  net_tcp \
+		  net_local \
+		  net_nullmodem
 #############################################################
 #
 #############################################################

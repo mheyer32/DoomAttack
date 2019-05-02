@@ -16,7 +16,8 @@
 #include "DoomAttackNet.h"
 
 struct Library *SocketBase;
-struct ExecBase *SysBase;
+extern struct ExecBase *SysBase;
+extern struct Library *DOSBase;
 
 doomdata_t **netbuffer;
 doomcom_t *doomcom;
@@ -31,12 +32,13 @@ void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
     struct DANInitialization *init = daninit;
 
-#ifdef __MAXON__
-    InitModules();
-#endif
+    SysBase = init->SysBase;
+    DOSBase = init->DOSBase;
+
+    InitRuntime();
 
     // link function pointers to DoomAttack routines
-    SysBase = init->SysBase;
+
     I_Error = init->I_Error;
     M_CheckParm = init->M_CheckParm;
 
@@ -377,10 +379,7 @@ void DAN_CleanupNetwork (void)
     SocketBase = NULL;
   }
   
-#ifdef __MAXON__
-	CleanupModules();
-#endif
-
+    CleanupRuntime();
 }
 
 /**********************************************************************/

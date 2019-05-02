@@ -9,8 +9,8 @@
 #include "DoomAttackMusic.h"
 #include "funcs.h"
 
-static struct ExecBase *SysBase;
-static struct Library *DOSBase;
+extern struct ExecBase *SysBase;
+extern struct Library *DOSBase;
 
 /*=====================*/
 
@@ -37,28 +37,24 @@ extern BOOL NoSound;
 
 void C_DAM_Init(struct DAMInitialization *daminit)
 {
-		// link function pointers to DoomAttack routines
-		
-#ifdef __MAXON__
-		InitModules();
-#endif
+		// Fill in LibNix' globals
 		SysBase = daminit->SysBase;
 		DOSBase = daminit->DOSBase;
 
+		InitRuntime();
+
+		// link function pointers to DoomAttack routines
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
 
-		// setups vars
-				
+		// setups vars			
 		gametic         = daminit->gametic;
 		snd_MusicVolume = daminit->snd_MusicVolume;
 		myargv			 = daminit->myargv;
 		myargc			 = daminit->myargc;
 		
 		// Tell DoomAttack the informations, it needs
-		
 		daminit->numchannels = 16 | DAMF_SOUNDFX | DAMF_FASTRAM;
-
 }
 
 static char *PREFSNAME = "DoomAttackSupport/config/DAMusic_DoomSndLibrary.config";
@@ -137,7 +133,7 @@ case!!
 int DAM_InitMusic(void)
 {
 	int rc=FALSE;
-	
+
 	DoomSoundBase=OpenLibrary("PROGDIR:libs/doomsound.library",37);
 	if (!DoomSoundBase) DoomSoundBase=OpenLibrary("PROGDIR:doomsound.library",37);
 	if (!DoomSoundBase) DoomSoundBase=OpenLibrary("doomsound.library",37);
@@ -174,9 +170,7 @@ void DAM_ShutdownMusic(void)
 		}
 	}
 	
-	#ifdef __MAXON__
-	CleanupModules();
-	#endif
+	CleanupRuntime();
 }
 
 

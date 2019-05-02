@@ -2,10 +2,6 @@
 #include <OSIncludes.h>
 #include <string.h>
 
-#ifdef __MAXON__
-#include <linkerfunc.h>
-#endif
-
 #include "doom.h"
 #include "DoomAttackNet.h"
 #include "ComPort.h"

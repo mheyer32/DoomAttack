@@ -34,9 +34,9 @@ static LONG DEVICEBAUD=14400;
 static LONG bufferpos;
 static BOOL usemodem,modemconnected,pulsedial,quitting;
 
-struct ExecBase *SysBase;
-struct Library *DOSBase;
-struct IntuitionBase *IntuitionBase;
+extern struct ExecBase *SysBase;
+extern struct Library *DOSBase;
+extern struct IntuitionBase *IntuitionBase;
 
 struct Device *SerialBase;
 struct MsgPort *SerWriteMP;

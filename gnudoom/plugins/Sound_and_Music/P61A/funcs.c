@@ -8,8 +8,8 @@
 #include "funcs.h"
 #include "musicIDs.h"
 
-static struct ExecBase *SysBase;
-static struct Library *DOSBase;
+extern struct ExecBase *SysBase;
+extern struct Library *DOSBase;
 
 /*=====================*/
 

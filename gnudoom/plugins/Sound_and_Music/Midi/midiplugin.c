@@ -4,18 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef __MAXON__
-#include <linkerfunc.h>
-#endif
-
-//#include "compiler.h"
 #include "DoomAttackMusic.h"
 #include "funcs.h"
 #include "musicIDs.h"
 
-struct ExecBase *SysBase;
-struct Library *DOSBase;
-struct GfxBase *GfxBase;
+extern struct ExecBase *SysBase;
+extern struct Library *DOSBase;
+static struct GfxBase *GfxBase;
 
 /*=====================*/
 
@@ -73,13 +68,12 @@ static WORD voltable[16] =
 void C_DAM_Init(struct DAMInitialization *daminit)
 {
 		// link function pointers to DoomAttack routines
-		
-#ifdef __MAXON__
-		InitModules();
-#endif
+
         SysBase = daminit->SysBase;
         DOSBase = daminit->DOSBase;
         GfxBase = (struct GfxBase *)daminit->GfxBase;
+
+        InitRuntime();
 
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
@@ -171,9 +165,7 @@ void C_DAM_ShutdownMusic(void)
 		CloseDevice((struct IORequest *)&AudioIO);
 	}
 	
-	#ifdef __MAXON__
-	CleanupModules();
-	#endif
+	CleanupRuntime();
 }
 
 /*********************************************************
