@@ -1,4 +1,6 @@
-.SUFFIXES:
+.SUFFIXES :
+
+.PRECIOUS : %.o
 
 #provide these as env variables at commandline
 # i.e.  DEBUG=1 make all -j8
@@ -28,7 +30,7 @@ define create_objlist
 endef
 
 define collect_sources
-	$(strip $(filter %.c %.s %asm,$(shell find ${1} -name \*)))
+	$(strip $(filter %.c %.s %.asm,$(shell find ${1} -name \*)))
 endef
 
 
@@ -47,7 +49,7 @@ else
 endif
 
 CFLAGS = $(RUNTIME_CFLAGS)
-LDFLAGS = $(RUNTIME_LDFLAGS) -g -ggdb
+LDFLAGS = $(RUNTIME_LDFLAGS) -g -ggdb -msmall-code
 
 ifeq ($(VERSION060), 1)
 	CFLAGS += -m68060 -Dversion060
@@ -174,7 +176,7 @@ DoomAttack: $(OBJS) Makefile
 profile:
 	m68k-amigaos-gprof --brief $(BUILDDIR))/DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf
 
-.PHONY : $(BUILDDIR)%__dir
+#.PHONY : $(BUILDDIR)%__dir
 $(BUILDDIR)%__dir :
 	$(MKDIR) $(@D)
 
