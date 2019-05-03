@@ -65,76 +65,75 @@ Therefore ASM must be used. */
 #define __a7
 #endif
 
- /* for SAS/C we don't need this, for StormC this is done in the
-    makefile or projectfile */
+/* for SAS/C we don't need this, for StormC this is done in the
+   makefile or projectfile */
 
 /*                                                                       */
 /* ********************************************************************* */
-
 
 /* ********************************************************************* */
 /* Method 2: defining our own keywords                                   */
 /*                                                                       */
 #ifdef __SASC
 
-#  define REG(r)     register __ ## r
-#  define GNUCREG(r)
-#  define SAVEDS     __saveds
-#  define ASM        __asm
-#  define REGARGS    __regargs
-#  define STDARGS    __stdargs
-#  define ALIGNED    __aligned
+#define REG(r) register __##r
+#define GNUCREG(r)
+#define SAVEDS __saveds
+#define ASM __asm
+#define REGARGS __regargs
+#define STDARGS __stdargs
+#define ALIGNED __aligned
 
 #else
-# ifdef __MAXON__
+#ifdef __MAXON__
 
 #ifdef REG
 #undef REG
 #endif
 
-#   define REG(r)    register __ ## r
-#   define GNUCREG(r)
-#   define SAVEDS
-#   define ASM
-#   define REGARGS
-#   define STDARGS
-#   define ALIGNED
+#define REG(r) register __##r
+#define GNUCREG(r)
+#define SAVEDS
+#define ASM
+#define REGARGS
+#define STDARGS
+#define ALIGNED
 
-# else
-#   ifdef __STORM__
+#else
+#ifdef __STORM__
 
-#     define REG(r)  register __ ## r
-#     define GNUCREG(r)
-#     define SAVEDS  __saveds
-#     define ASM
-#     define REGARGS
-#     define STDARGS
-#     define ALIGNED
+#define REG(r) register __##r
+#define GNUCREG(r)
+#define SAVEDS __saveds
+#define ASM
+#define REGARGS
+#define STDARGS
+#define ALIGNED
 
-#   else
-#     ifdef __GNUC__
+#else
+#ifdef __GNUC__
 
-#       define REG(r)
-#       define GNUCREG(r)  __asm( #r )
-#       define SAVEDS  __saveds
-#       define ASM
-#       define REGARGS __regargs
-#       define STDARGS __stdargs
-#       define ALIGNED __aligned
+#define REG(r)
+#define GNUCREG(r) __asm(#r)
+#define SAVEDS __saveds
+#define ASM
+#define REGARGS __regargs
+#define STDARGS __stdargs
+#define ALIGNED __aligned
 
-#     else /* any other compiler, to be added here */
+#else /* any other compiler, to be added here */
 
-#       define REG(r)
-#       define GNUCREG(r)
-#       define SAVEDS
-#       define ASM
-#       define REGARGS
-#       define STDARGS
-#       define ALIGNED
+#define REG(r)
+#define GNUCREG(r)
+#define SAVEDS
+#define ASM
+#define REGARGS
+#define STDARGS
+#define ALIGNED
 
-#     endif /* __GNUC__ */
-#   endif /* __STORM__ */
-# endif /* __MAXON__ */
+#endif /* __GNUC__ */
+#endif /* __STORM__ */
+#endif /* __MAXON__ */
 #endif /* __SASC */
 /*                                                                       */
 /* ********************************************************************* */

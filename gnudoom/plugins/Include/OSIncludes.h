@@ -15,6 +15,5 @@
 #include <proto/intuition.h>
 #include <proto/socket.h>
 
-
 extern void InitRuntime(void);
 extern void CleanupRuntime(void);

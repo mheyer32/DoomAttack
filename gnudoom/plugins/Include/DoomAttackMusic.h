@@ -1,12 +1,12 @@
 #ifndef DOOMATTACKMUSIC_H
 #define DOOMATTACKMUSIC_H
 
-#ifdef   __MAXON__
-#ifndef  EXEC_LIBRARIES_H
+#ifdef __MAXON__
+#ifndef EXEC_LIBRARIES_H
 #include <exec/libraries.h>
 #endif
 #else
-#ifndef  EXEC_LIBRARIES
+#ifndef EXEC_LIBRARIES
 #include <exec/libraries.h>
 #endif /* EXEC_LIBRARIES_H */
 #endif
@@ -14,31 +14,31 @@
 
 struct DAMInitialization
 {
-	/* Routines */
+    /* Routines */
 
-	void (*I_Error) (char *error, ...);
-	int (*M_CheckParm) (char *check);
+    void (*I_Error)(char *error, ...);
+    int (*M_CheckParm)(char *check);
 
-	/* Vars */
+    /* Vars */
 
-	struct ExecBase *SysBase;
-	struct Library *DOSBase;
-	struct Library *IntuitionBase;
-	struct Library *GfxBase;
-	struct Library *KeymapBase;
-	struct Device  *TimerBase;
-		
-	int *gametic;				// pointer to variable!!!
-	int *snd_MusicVolume;	// pointer to variable!!!
-	
-	char	**myargv;
-	int	myargc;
-	
-	/* The plugin has to fill in <numchannels> so that
-	   DoomAttack knows how many audio.device channels
-	   the plugin is going to use */
-	
-	int	numchannels;
+    struct ExecBase *SysBase;
+    struct Library *DOSBase;
+    struct Library *IntuitionBase;
+    struct Library *GfxBase;
+    struct Library *KeymapBase;
+    struct Device *TimerBase;
+
+    int *gametic;          // pointer to variable!!!
+    int *snd_MusicVolume;  // pointer to variable!!!
+
+    char **myargv;
+    int myargc;
+
+    /* The plugin has to fill in <numchannels> so that
+       DoomAttack knows how many audio.device channels
+       the plugin is going to use */
+
+    int numchannels;
 };
 
 /* If the plugin does both music and sound FX then */
@@ -50,7 +50,6 @@ struct DAMInitialization
 /* OR DAMF_FASTRAM to numchannels!                 */
 
 #define DAMF_FASTRAM 0x40000000
-
 
 struct DAMFile
 {

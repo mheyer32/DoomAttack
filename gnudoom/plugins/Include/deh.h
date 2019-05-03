@@ -4,15 +4,18 @@
 #define SOUND_FIELDS 9
 #define WEAPON_FIELDS 6
 
-typedef enum {NO,YES} boolean;
+typedef enum { NO, YES } boolean;
 
-enum {DATA_THING,
-		DATA_SOUND,
-		DATA_FRAME,
-		DATA_SPRITE,
-		DATA_AMMO,
-		DATA_WEAPON,
-		DATA_TEXT};
+enum
+{
+    DATA_THING,
+    DATA_SOUND,
+    DATA_FRAME,
+    DATA_SPRITE,
+    DATA_AMMO,
+    DATA_WEAPON,
+    DATA_TEXT
+};
 
 extern char *datanames[];
 extern char *thingfields[];
@@ -23,5 +26,4 @@ extern char *fullwepfields[];
 
 struct DEHInit;
 
-long DeHackEd(char *filename,struct DEHInit *i);
-
+long DeHackEd(char *filename, struct DEHInit *i);
