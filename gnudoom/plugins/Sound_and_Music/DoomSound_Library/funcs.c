@@ -124,22 +124,37 @@ case!!
 
 *********************************************************/
 
+static struct Library *loadLibrary(const char *libName)
+{
+    struct Library *lib = NULL;
+    char path[128] = "PROGDIR:libs/";
+    strcat(path, libName);
+    lib = OldOpenLibrary(path);  // Try PROGDIR:libs/ first
+    if (!lib) {
+        strcpy(path + 8, libName);  // Try PROGDIR: next
+        lib = OldOpenLibrary(path);
+    }
+    if (!lib) {
+        lib = OldOpenLibrary(libName); // Try just the library name
+    }
+    return lib;
+}
+
 int DAM_InitMusic(void)
 {
-	int rc=FALSE;
+    int rc = FALSE;
 
-	DoomSoundBase=OpenLibrary("PROGDIR:libs/doomsound.library",37);
-	if (!DoomSoundBase) DoomSoundBase=OpenLibrary("PROGDIR:doomsound.library",37);
-	if (!DoomSoundBase) DoomSoundBase=OpenLibrary("doomsound.library",37);
-	
-	if (!DoomSoundBase)
-	{
-		printf("DAMusic_DoomSoundLibrary: Could not open \"doomsound.library\"!\n");
-	} else {
-		LoadSettings();
-		serverOK = rc = TRUE;
-	}
-	return rc;
+    DoomSoundBase = loadLibrary("doomsound_midi.library");
+    if (!DoomSoundBase)
+        DoomSoundBase = loadLibrary("doomsound.library");
+
+    if (!DoomSoundBase) {
+        printf("DAMusic_DoomSoundLibrary: Could not open \"doomsound.library\"!\n");
+    } else {
+        LoadSettings();
+        serverOK = rc = TRUE;
+    }
+    return rc;
 }
 
 /*********************************************************

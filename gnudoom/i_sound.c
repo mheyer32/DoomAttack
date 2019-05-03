@@ -45,6 +45,7 @@ static const char rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
 #include "z_zone.h"
 
 #include "i_sound.h"
+#include "s_sound.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_misc.h"
@@ -772,6 +773,8 @@ void I_InitMusic(void)
 
 void I_ShutdownMusic(void)
 {
+    S_StopMusic();
+
     if (DAM) {
         DAM->DAM_ShutdownMusic();
     }
