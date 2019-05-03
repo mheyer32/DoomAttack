@@ -3,8 +3,6 @@
 #include <OSIncludes.h>
 #include <string.h>
 
-#include "doom.h"
-
 #include "DoomAttackNet.h"
 #include "funcs.h"
 #include "nullmodem.h"

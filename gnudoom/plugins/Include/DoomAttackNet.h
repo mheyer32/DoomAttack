@@ -1,16 +1,10 @@
 #ifndef DOOMATTACKNET_H
 #define DOOMATTACKNET_H
 
-#ifdef __MAXON__
-#ifndef EXEC_LIBRARIES_H
 #include <exec/libraries.h>
-#endif
-#else
-#ifndef EXEC_LIBRARIES
-#include <exec/libraries.h>
-#endif /* EXEC_LIBRARIES_H */
-#endif
 #include <dos/dos.h>
+
+#include "d_net.h"
 
 struct DANInitialization
 {

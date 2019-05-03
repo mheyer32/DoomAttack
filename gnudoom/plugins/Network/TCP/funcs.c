@@ -8,8 +8,6 @@
 #include <string.h>
 #include <sys/filio.h>
 
-#include "doom.h"
-
 #include "DoomAttackNet.h"
 
 struct Library *SocketBase;

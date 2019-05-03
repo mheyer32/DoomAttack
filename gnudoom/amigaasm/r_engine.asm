@@ -4,7 +4,7 @@
 	INCDIR AINCLUDE:
 	
 	include "r_engine.i"
-	include "doom.i"
+	include "d_net.i"
 	
 	XREF	_I_Error
 	XREF	_R_MapPlane

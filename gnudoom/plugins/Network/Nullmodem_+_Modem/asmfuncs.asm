@@ -4,7 +4,7 @@
 	include exec/io.i
 	include devices/serial.i
 	include lvo/exec_lib.i
-	include "doom.i"
+	include "d_net.i"
 	include "nullmodem.i"
 	
 	XREF	_doomcom
