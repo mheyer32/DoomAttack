@@ -10,6 +10,7 @@
 #include <exec/libraries.h>
 #endif /* EXEC_LIBRARIES_H */
 #endif
+#include <dos/dos.h>
 
 struct DAMInitialization
 {
@@ -53,7 +54,7 @@ struct DAMInitialization
 
 struct DAMFile
 {
-    void *NextSeg;
+    BPTR NextSeg;
     WORD moveqcode;
     WORD rtscode;
     char id[4];

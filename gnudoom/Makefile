@@ -66,7 +66,8 @@ CFLAGS += -I./
 
 ifeq ($(DEBUG),1)
 	#-DRANGECHECK
-	CFLAGS += -DDEBUG -Og -fno-omit-frame-pointer
+	CFLAGS += -DDEBUG -DDEBUG_LIB=1 -Og -fno-omit-frame-pointer
+	LDFLAGS += -ldebug
 else
 	CFLAGS += -DNDEBUG -Ofast
 	ifeq ($(PROFILE), 0)
@@ -170,7 +171,7 @@ clean:
 	rm -rf $(BUILDDIR)
 
 DoomAttack: $(OBJS) Makefile
-	$(CC) $(LDFLAGS) $(OBJS) -o $(BUILDDIR)/$@
+	$(CC) $(OBJS) $(LDFLAGS) -o $(BUILDDIR)/$@
 	$(STRIP) --remove-section=.stab* --strip-debug --strip-unneeded $(BUILDDIR)/$@ -o $(BINDIR)/$@
 
 profile:
@@ -203,10 +204,10 @@ define make_plugin
 
 #.PHONY : ${1}
 ${1} : CFLAGS+=-D__ASM_ROUTINES__
-${1} : $$(${1}_OBJS_STRIPPED)
+${1} : $$(${1}_OBJS)
 	echo "Current set of CFLAGS" $$(CFLAGS)
 	$$(MKDIR) $$(dir $$(${1}_TARGET))
-	$$(CC) $$(LDFLAGS) -noixemul -nostartfiles $$^ -o $$(<D)/${1}
+	$$(CC) $$^ $$(LDFLAGS) -nostartfiles -lstubs -o $$(<D)/${1}
 	$$(STRIP)  $$(<D)/${1} -o $$(${1}_TARGET)
 endef
 
@@ -247,7 +248,8 @@ Plugins : c2p_Graffiti \
 		  music_debug \
 		  net_tcp \
 		  net_local \
-		  net_nullmodem
+		  net_nullmodem \
+		  dehacked
 #############################################################
 #
 #############################################################

@@ -53,9 +53,7 @@ void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
     struct DANInitialization *init = daninit;
 
-#ifdef __MAXON__
-    InitModules();
-#endif
+    InitRuntime();
 
     // link function pointers to DoomAttack routines
 
@@ -63,8 +61,6 @@ void DAN_Init(REGA0(struct DANInitialization *daninit))
     M_CheckParm = init->M_CheckParm;
 
     // setups vars
-    SysBase = init->SysBase;
-    DOSBase = init->DOSBase;
     netbuffer = init->netbuffer;
     doomcom = init->doomcom;
     myargv = init->myargv;
@@ -821,10 +817,7 @@ void DAN_CleanupNetwork (void)
 	if (SerWriteMP) DeleteMsgPort(SerWriteMP);
 	if (SerReadMP) DeleteMsgPort(SerReadMP);
 	
-#ifdef __MAXON__
-	CleanupModules();
-#endif
-
+	CleanupRuntime();
 }
 
 /**********************************************************************/

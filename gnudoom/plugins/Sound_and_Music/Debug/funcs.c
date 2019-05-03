@@ -113,17 +113,14 @@ static char *musname[] =
 
 void C_DAM_Init(struct DAMInitialization *daminit)
 {
+//		Activate if access to runtime is needed
+//		InitRuntime();
+
 		// link function pointers to DoomAttack routines
-		
-		#ifdef __MAXON__
-		InitModules();
-		#endif
-		
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
 
 		// setups vars
-				
 		IntuitionBase	 = (struct IntuitionBase *)daminit->IntuitionBase;
 
 		gametic         = daminit->gametic;
@@ -148,9 +145,7 @@ int C_DAM_InitMusic(void)
 
 void C_DAM_ShutdownMusic(void)
 {
-	#ifdef __MAXON__
-	CleanupModules();
-	#endif
+	// CleanupModules();
 }
 
 /*********************************************************/

@@ -1,9 +1,5 @@
 #include <OSIncludes.h>
 
-#ifdef __MAXON__
-#include <linkerfunc.h>
-#endif
-
 #include "DoomAttackMusic.h"
 #include "funcs.h"
 #include "musicIDs.h"
@@ -68,15 +64,9 @@ static WORD voltable[16] =
 
 void C_DAM_Init(struct DAMInitialization *daminit)
 {
-		// link function pointers to DoomAttack routines
-		
-#ifdef __MAXON__
-		InitModules();
-#endif
-		
-		SysBase = *(struct ExecBase **)(4);
-		DOSBase = daminit->DOSBase;
+		InitRuntime();
 
+		// link function pointers to DoomAttack routines	
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
 
@@ -208,9 +198,7 @@ void C_DAM_ShutdownMusic(void)
  	if (ConfigBuffer) FreeVec(ConfigBuffer);
 	if (SemAdded) RemSemaphore(&mysem);
 
-	#ifdef __MAXON__
-	CleanupModules();
-	#endif
+	CleanupRuntime();
 }
 
 /*********************************************************/

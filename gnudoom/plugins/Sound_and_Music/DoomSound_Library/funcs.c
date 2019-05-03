@@ -37,10 +37,6 @@ extern BOOL NoSound;
 
 void C_DAM_Init(struct DAMInitialization *daminit)
 {
-		// Fill in LibNix' globals
-		SysBase = daminit->SysBase;
-		DOSBase = daminit->DOSBase;
-
 		InitRuntime();
 
 		// link function pointers to DoomAttack routines
@@ -127,8 +123,6 @@ case!!
 
 
 *********************************************************/
-
-
 
 int DAM_InitMusic(void)
 {

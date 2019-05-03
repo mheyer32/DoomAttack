@@ -1,6 +1,7 @@
 #ifndef __C2P_H__
 #define __C2P_H__
 
+#include <dos/dos.h>
 
 #define C2PF_SIGNALFLIP 1
 #define C2PF_VARIABLEHEIGHT 2
@@ -22,7 +23,7 @@ struct C2PInit
 
 struct C2PFile
 {
-    void *NextSeg;
+    BPTR NextSeg;
     WORD moveqcode;
     WORD rtscode;
     char id[4];

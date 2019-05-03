@@ -1,12 +1,9 @@
-#include <dos/dos.h>
+#include <OSIncludes.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#ifdef __MAXON__
-#include <linkerfunc.h>
-#endif
 
 #include "deh.h"
 #include "dehinit.h"
@@ -292,9 +289,7 @@ static void Action(void)
 
 long DeHackEd (char *filename,struct DEHInit *i)
 {
-	#ifdef __MAXON__
-	InitModules();
-	#endif
+	InitRuntime();
 	
 	init=i;
 	if (!(fp=fopen(filename,"rb")))
@@ -316,9 +311,7 @@ long DeHackEd (char *filename,struct DEHInit *i)
 		fclose(fp);
 	}
 	
-	#ifdef __MAXON__
-	CleanupModules();	
-	#endif
+	CleanupRuntime();
 	
 	return RETURNCODE;
 }

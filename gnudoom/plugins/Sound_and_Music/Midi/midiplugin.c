@@ -67,26 +67,20 @@ static WORD voltable[16] =
 
 void C_DAM_Init(struct DAMInitialization *daminit)
 {
-		// link function pointers to DoomAttack routines
-
-        SysBase = daminit->SysBase;
-        DOSBase = daminit->DOSBase;
-        GfxBase = (struct GfxBase *)daminit->GfxBase;
-
         InitRuntime();
 
+		// link function pointers to DoomAttack routines
 		I_Error=daminit->I_Error;
 		M_CheckParm=daminit->M_CheckParm;
 
 		// setups vars
-				
+		GfxBase = (struct GfxBase *)daminit->GfxBase;
 		gametic         = daminit->gametic;
 		snd_MusicVolume = daminit->snd_MusicVolume;
 		myargv			 = daminit->myargv;
 		myargc			 = daminit->myargc;
 		
-		// Tell DoomAttack the informations, it needs
-		
+		// Tell DoomAttack the informations, it needs	
 		daminit->numchannels = 2;
 
 

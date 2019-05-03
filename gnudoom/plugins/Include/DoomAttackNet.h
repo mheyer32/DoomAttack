@@ -10,6 +10,7 @@
 #include <exec/libraries.h>
 #endif /* EXEC_LIBRARIES_H */
 #endif
+#include <dos/dos.h>
 
 struct DANInitialization
 {
@@ -36,7 +37,7 @@ struct DANInitialization
 
 struct DANFile
 {
-    void *NextSeg;
+    BPTR NextSeg;
     WORD moveqcode;
     WORD rtscode;
     char id[4];

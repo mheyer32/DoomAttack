@@ -36,10 +36,9 @@ WORD playerid,consoleplayer;
 void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
 	struct DANInitialization *init=daninit;
-		
-#ifdef __MAXON__
-	InitModules();
-#endif
+
+// Activate if access to clib is required
+//	InitRuntime();
 
 	// link function pointers to DoomAttack routines
 	SysBase = init->SysBase;
@@ -290,9 +289,8 @@ void DAN_CleanupNetwork (void)
 	}
 	Permit();
 
-#ifdef __MAXON__
-	CleanupModules();
-#endif
+
+	//CleanupRuntime();
 
 }
 

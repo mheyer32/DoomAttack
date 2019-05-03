@@ -32,9 +32,6 @@ void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
     struct DANInitialization *init = daninit;
 
-    SysBase = init->SysBase;
-    DOSBase = init->DOSBase;
-
     InitRuntime();
 
     // link function pointers to DoomAttack routines
@@ -379,7 +376,7 @@ void DAN_CleanupNetwork (void)
     SocketBase = NULL;
   }
   
-    CleanupRuntime();
+  CleanupRuntime();
 }
 
 /**********************************************************************/
