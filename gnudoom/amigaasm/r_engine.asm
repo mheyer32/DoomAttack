@@ -899,7 +899,8 @@ R_MAPPLANE:		macro
 		fmove.l	fp0,d3		;/* d3 = ds_ystep */
 	endc
 
-	lea		_cachedystep,a0
+	lea		_cachedystep,a0			
+	lsl.l	#6,d3	; prescale by 64 (flat tile width)
 	move.l	d3,(a0,d0.w*4)
 	move.l	d3,_ds_ystep
 	bra.s		.\@dataok
@@ -980,6 +981,7 @@ R_MAPPLANE:		macro
 
 	add.l		_viewy(pc),d6
 	neg.l		d6
+	lsl.l	#6,d6			;prescale by 64 (flat tile width)
 	move.l	d6,_ds_yfrac
 				
    ; 	/* if (fixedcolormap) ds_colormap = fixedcolormap; */
@@ -7214,11 +7216,9 @@ DrawSpan_Common:
 		swap    d5              ; boundary in the main loop
 		swap    d6
 
-		ror.l	#2,d6
-		lsl.w   #6,d6
-		and.w	#$3F,d5			; remove garbage
+		and.w   #$3f,d5
+		and.w   #$fc0,d6
 		or.w    d5,d6
-		rol.l	#2,d6
 
 		move.b  (a1,d6.w),d5
 		add.l   d2,d0
@@ -7233,37 +7233,35 @@ DrawSpan_Common:
 		cmp.l   d4,d7
 
 		bls.b   .skips0
+
 		move.l  d0,d5           ; write two pixels
 		move.l  d1,d6
 
 		swap    d5
-		swap    d6
+		swap    d6	
 		and.w   #$3f,d5
-		and.w   #$3f,d6
-		lsl.w   #6,d6
+		and.w   #$fc0,d6
 		or.w    d5,d6
 
 		move.b  (a1,d6.w),d5
 		add.l   d2,d0
 		add.l   d3,d1
-		move.l  d1,d6
 		move.w  (a2,d5.w),d4
 		move.l  d0,d5
-
+		move.l  d1,d6
 		swap    d5
 		swap    d6
 		and.w   #$3f,d5
-		and.w   #$3f,d6
-		lsl.w   #6,d6
+		and.w   #$fc0,d6
 		or.w    d5,d6
 
 		move.b  (a1,d6.w),d5
-		move.b  (a2,d5.w),d4
 		add.l   d2,d0
+		add.l   d3,d1
+		move.b  (a2,d5.w),d4
+		subq.l  #2,d7
 		move.w  d4,(a0)+
 
-		add.l   d3,d1
-		subq.l  #2,d7
 .skips0		move.l  a2,d4
 		add.l   #$1000,a1       ; catch 22
 		move.l  a0,a3
@@ -7282,8 +7280,6 @@ DrawSpan_Common:
 		swap    d1
 		swap    d2
 		swap    d3
-		lsl.w   #6,d1
-		lsl.w   #6,d3
 		move.w  #$ffc0,d6
 		move.w  #$f03f,d7
 		lsr.w   #2,d5
@@ -7412,8 +7408,7 @@ DrawSpanLow_Common:
 		swap    d5              ; boundary in the main loop
 		swap    d6
 		and.w   #$3f,d5
-		and.w   #$3f,d6		; this is the worst possible
-		lsl.w   #6,d6		; way but hey, this is not a loop
+		and.w   #$fc0,d6		; this is the worst possible way but hey, this is not a loop
 		or.w    d5,d6
 		move.b  (a1,d6.w),d5
 		add.l   d2,d0
@@ -7421,7 +7416,9 @@ DrawSpanLow_Common:
 		add.l   d3,d1
 		move.b	(a2,d5.w),(a0)+	; I know this is crap but spare me the comments
 		subq.l  #2,d7
-.skips2		move.l  a2,d4
+
+.skips2
+		move.l  a2,d4
 		lea     $1000(a1),a1	; catch 22
 		move.l  a0,a3
 		add.l   d7,a3
@@ -7429,25 +7426,31 @@ DrawSpanLow_Common:
 		and.b   #~7,d5
 		move.l  a0,a4
 		add.l   d5,a4
+
 		eor.w   d0,d1           ; swap fraction parts for addx
 		eor.w   d2,d3
+
 		eor.w   d1,d0
 		eor.w   d3,d2
+
 		eor.w   d0,d1
 		eor.w   d2,d3
+
 		swap    d0
 		swap    d1
 		swap    d2
 		swap    d3
-		lsl.w   #6,d1
-		lsl.w   #6,d3
 		move.w  #$ffc0,d6
 		move.w  #$f03f,d7
+
 		lsr.w   #3,d5
+
 		beq.b   .skip_loop22
 		sub.w   d2,d0
 		add.l   d2,d0           ; setup the X flag
-.loop22		or.w    d6,d0		; Not really and exercise in optimizing
+
+.loop22
+		or.w    d6,d0		; Not really and exercise in optimizing
 		or.w    d7,d1		; but I guess it's faster than 1x1 for 030
 		and.w   d1,d0		; where this low detail business is needed.
 		addx.l  d3,d1
