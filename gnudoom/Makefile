@@ -1,6 +1,9 @@
-.SUFFIXES :
-
-.PRECIOUS : %.o
+#disable built-in rules
+.SUFFIXES:
+# don't delete intermeditae .o and build directories
+.PRECIOUS: %.o %/.
+#enable second expansion, so we can use $(@D) as dependency
+.SECONDEXPANSION:
 
 #provide these as env variables at commandline
 # i.e.  DEBUG=1 make all -j8
@@ -12,26 +15,50 @@ PROFILE ?= 0
 
 CC = m68k-amigaos-gcc
 STRIP = m68k-amigaos-strip
-PHXASS = vasmm68k_mot
+ASS = vasmm68k_mot
 VLINK = vlink
 MKDIR = mkdir -p
 
 PREFIX := $(shell ./getprefix.sh "$(CC)")
 
 define source_to_object
-	$(addprefix $(BUILDDIR),$(patsubst %.c,%.o,\
+	$(addprefix ${2},$(patsubst %.c,%.o,\
 							$(patsubst %.s,%.o,\
 							$(patsubst %.asm,%.o,${1}))))
 endef
 
 define create_objlist
-	$(filter %tartup.o,$(call source_to_object,${1}))\
-	$(filter-out %tartup.o,$(call source_to_object,${1}))
+	$(filter %tartup.o,$(call source_to_object,${1},${2}))\
+	$(filter-out %tartup.o,$(call source_to_object,${1},${2}))
 endef
 
 define collect_sources
 	$(strip $(filter %.c %.s %.asm,$(shell find ${1} -name \*)))
 endef
+
+define build_rules
+
+#create build directory if needed
+%/.:
+	$$(MKDIR) $$(@D)
+
+# build .c .asm and .s files into .o
+# $$$$(@D)/. will be doubly-evaluated to $(@D)/. which will trigger the build directory
+# target above
+${1}%.o: %.c | Makefile $$$$(@D)/.
+	echo $$(@D)
+	$$(CC) $$(CFLAGS) -c $$< -o $$@
+
+${1}%.o: %.asm | Makefile $$$$(@D)/.
+	$$(ASS) $$(AFLAGS) $$< -o $$@
+
+${1}%.o: %.s | Makefile $$$$(@D)/.
+	$$(ASS) $$(AFLAGS) $$< -o $$@
+
+endef
+
+%.o.stripped: %.o
+	$(STRIP) --remove-section=.stab* --strip-debug --strip-unneeded -o $@ $<
 
 
 CLIB_CFLAGS = -mcrt=clib2
@@ -51,11 +78,6 @@ endif
 CFLAGS = $(RUNTIME_CFLAGS)
 LDFLAGS = $(RUNTIME_LDFLAGS) -g -ggdb -msmall-code
 
-ifeq ($(VERSION060), 1)
-	CFLAGS += -m68060 -Dversion060
-else
-	CFLAGS += -m68030
-endif
 
 CFLAGS += -msmall-code -g -ggdb
 CFLAGS += -Werror -Wimplicit -Wstrict-prototypes
@@ -66,10 +88,10 @@ CFLAGS += -I./
 
 ifeq ($(DEBUG),1)
 	#-DRANGECHECK
-	CFLAGS += -DDEBUG -DDEBUG_LIB=1 -Og -fno-omit-frame-pointer
+	CFLAGS += -DDEBUG -DDEBUG_LIB=1 -Og -fno-omit-frame-pointer -fno-tree-vrp
 	LDFLAGS += -ldebug
 else
-	CFLAGS += -DNDEBUG -Ofast
+	CFLAGS += -DNDEBUG -Ofast -ffast-math -fno-tree-vrp
 	ifeq ($(PROFILE), 0)
 		CFLAGS += -fomit-frame-pointer
 	endif
@@ -80,17 +102,12 @@ ifeq ($(PROFILE), 1)
 	LDFLAGS += -pg
 endif
 
-PINCLUDES = -I./plugins/Include -I$(PREFIX)m68k-amigaos/ndk-include
-PLIBS = -L$(PREFIX)m68k-amigaos/lib
+AINCLUDES = -I./plugins/Include -I$(PREFIX)m68k-amigaos/ndk-include
+ALIBS = -L$(PREFIX)m68k-amigaos/lib
 
-PFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces $(PINCLUDES)
-ifeq ($(VERSION060), 1)
-	PFLAGS += -m68060 -Dversion060
-else
-	PFLAGS += -m68020up
-endif
+AFLAGS = -Fhunk -phxass -warncomm -nosym -ldots -spaces $(AINCLUDES)
 
-BUILDDIR =$(CURDIR)/build/
+BUILDDIR ?=$(CURDIR)/build/
 
 SOURCES = \
 	am_map.c \
@@ -163,49 +180,49 @@ SOURCES = \
 	wi_stuff.c \
 	z_zone.c
 
-OBJS = $(call create_objlist, $(SOURCES))
 
-all: DoomAttack Plugins
+all: DoomAttack DoomAttack060 Plugins
 
 clean:
 	rm -rf $(BUILDDIR)
 
-DoomAttack: $(OBJS) Makefile
-	$(CC) $(OBJS) $(LDFLAGS) -o $(BUILDDIR)/$@
-	$(STRIP) --remove-section=.stab* --strip-debug --strip-unneeded $(BUILDDIR)/$@ -o $(BINDIR)/$@
+define make_exe
+${1}_SRC = $$(call collect_sources,$$(SOURCES))
+${1}_OBJS = $$(call create_objlist,$$(${1}_SRC),${2})
+${1}_TARGET = $$(BINDIR)/${1}
+
+$$(eval $$(call build_rules,${2}))
+
+${1} : $$(BUILDDIR)=${2}
+${1} : $$(${1}_OBJS)
+	$$(MKDIR) $$(dir $$(${1}_TARGET))
+	$$(CC) $$^ $$(LDFLAGS) -o $$(<D)/${1}
+	$$(STRIP) $$(<D)/${1} -o $$(${1}_TARGET)
+endef
+
+DoomAttack060: CFLAGS+=-m68060 -Dversion060
+DoomAttack060: LDFLAGS+=-m68060 -Dversion060
+DoomAttack060: AFLAGS+=-m68060 -Dversion060
+$(eval $(call make_exe,DoomAttack060,$(BUILDDIR)/060/))
+
+DoomAttack: CFLAGS+=-m68030
+DoomAttack: LDFLAGS+=-m68030
+DoomAttack: AFLAGS+=-m68020up
+$(eval $(call make_exe,DoomAttack,$(BUILDDIR)/030/))
 
 profile:
 	m68k-amigaos-gprof --brief $(BUILDDIR))/DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf
 
-#.PHONY : $(BUILDDIR)%__dir
-$(BUILDDIR)%__dir :
-	$(MKDIR) $(@D)
-
-$(BUILDDIR)%.o : %.c | Makefile $(BUILDDIR)%__dir
-	$(CC) $(CFLAGS) -c $< -o $@
-
-
-$(BUILDDIR)%.o : %.asm | Makefile $(BUILDDIR)%__dir
-	$(PHXASS) $(PFLAGS) $< -o $@
-
-$(BUILDDIR)%.o : %.s | Makefile $(BUILDDIR)%__dir
-	$(PHXASS) $(PFLAGS) $< -o $@
-
-%.o.stripped : %.o
-	$(STRIP) --remove-section=.stab* --strip-debug --strip-unneeded -o $@ $<
-
-
 define make_plugin
-	${1}_DIR = ${2}
-	${1}_SRC = $$(call collect_sources,$$(${1}_DIR)) plugin_runtime.c
-	${1}_OBJS = $$(call create_objlist,$$(${1}_SRC))
-	${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
-	${1}_TARGET = $$(BINDIR)/${3}
+$$(eval $$(call build_rules,$$(BUILDDIR)))
+${1}_DIR = ${2}
+${1}_SRC = $$(call collect_sources,$$(${1}_DIR)) plugin_runtime.c
+${1}_OBJS = $$(call create_objlist,$$(${1}_SRC), $$(BUILDDIR))
+${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
+${1}_TARGET = $$(BINDIR)/${3}
 
-#.PHONY : ${1}
 ${1} : CFLAGS+=-D__ASM_ROUTINES__
 ${1} : $$(${1}_OBJS)
-	echo "Current set of CFLAGS" $$(CFLAGS)
 	$$(MKDIR) $$(dir $$(${1}_TARGET))
 	$$(CC) $$^ $$(LDFLAGS) -nostartfiles -lstubs -o $$(<D)/${1}
 	$$(STRIP)  $$(<D)/${1} -o $$(${1}_TARGET)
@@ -235,6 +252,10 @@ $(eval $(call make_plugin,net_nullmodem, plugins/Network/Nullmodem_+_Modem/,Doom
 #DEHacked
 $(eval $(call make_plugin,dehacked, plugins/DeHacked/,DoomAttackSupport/plugin/DeHackEd))
 
+Plugins: BUILDDIR=$(CURDIR)/build/
+Plugins: CFLAGS+=-m68030
+Plugins: LDFLAGS+=-m68030
+Plugins: AFLAGS+=-m68020up
 Plugins : c2p_Graffiti \
 		  c2p_020_Blitter \
 		  c2p_020_Optimized \
@@ -253,3 +274,4 @@ Plugins : c2p_Graffiti \
 #############################################################
 #
 #############################################################
+
