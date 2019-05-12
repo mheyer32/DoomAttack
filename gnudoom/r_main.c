@@ -688,15 +688,15 @@ void R_ExecuteSetViewSize(void)
     pspritescale = FRACUNIT * viewwidth / SCREENWIDTH;
     pspriteiscale = FRACUNIT * SCREENWIDTH / viewwidth;
 
-    /*    pspriteiscale2 = FRACUNIT*200/viewheight;*/
-    skyspriteiscale = (pspriteiscale / skystretch) >> detailshift;
-
 #else
     pspritescale = LongDiv(FRACUNIT * viewwidth, SCREENWIDTH);
     pspriteiscale = LongDiv(FRACUNIT * SCREENWIDTH, viewwidth);
 
     pspriteiscale2 = FRACUNIT * 200 / viewheight;
 #endif
+
+    /*    pspriteiscale2 = FRACUNIT*200/viewheight;*/
+    skyspriteiscale = (pspriteiscale / skystretch) >> detailshift;
 
     /* thing clipping*/
     for (i = 0; i < viewwidth; i++)
