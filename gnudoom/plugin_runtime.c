@@ -14,9 +14,8 @@ struct InitListItem
 extern const long __INIT_LIST__[];
 extern const long __EXIT_LIST__[];
 
-extern struct ExecBase *SysBase;  // referring to LibNix's SysBase
-
-struct WBStartup *_WBenchMsg = NULL;
+struct ExecBase *SysBase;
+struct WBStartup *_WBenchMsg;
 
 // Walk the __INIT_LIST__ or __EXIT_LIST__ in ascending(0) or descending(-1) order
 static void callFuncs(const struct InitListItem *list, long order)
