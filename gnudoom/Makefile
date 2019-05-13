@@ -88,10 +88,10 @@ CFLAGS += -I./
 
 ifeq ($(DEBUG),1)
 	#-DRANGECHECK
-	CFLAGS += -DDEBUG -DDEBUG_LIB=1 -Og -fno-omit-frame-pointer -fno-tree-vrp
+	CFLAGS += -DDEBUG -DDEBUG_LIB=1 -Og -fno-omit-frame-pointer
 	LDFLAGS += -ldebug
 else
-	CFLAGS += -DNDEBUG -Ofast -ffast-math -fno-tree-vrp
+	CFLAGS += -DNDEBUG -Ofast -ffast-math
 	ifeq ($(PROFILE), 0)
 		CFLAGS += -fomit-frame-pointer
 	endif
