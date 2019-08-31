@@ -21,7 +21,6 @@
 /**/
 /*-----------------------------------------------------------------------------*/
 
-static const char rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
 
 #include <devices/audio.h>
 #include <proto/alib.h>
