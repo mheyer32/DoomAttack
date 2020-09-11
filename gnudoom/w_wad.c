@@ -526,7 +526,7 @@ int W_NumLumps(void)
 /* Returns -1 if name not found.*/
 /**/
 
-int W_CheckNumForName(char* name)
+int W_CheckNumForName(const char* name)
 {
     union {
         char s[9];

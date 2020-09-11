@@ -95,7 +95,7 @@ extern anim_t* lastanim;
 /*  and end entry, in the order found in*/
 /*  the WAD file.*/
 /**/
-animdef_t animdefs[] = {{false, "NUKAGE3", "NUKAGE1", 8},
+const animdef_t animdefs[] = {{false, "NUKAGE3", "NUKAGE1", 8},
                         {false, "FWATER4", "FWATER1", 8},
                         {false, "SWATER4", "SWATER1", 8},
                         {false, "LAVA4", "LAVA1", 8},
