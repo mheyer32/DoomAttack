@@ -571,18 +571,8 @@ extern struct Window *window;
 
 static boolean ArgsAlloced;
 
-void I_InitWBArgs(void)
+void InitCPUType(void)
 {
-    char *argstring, *argstringpos, ing, **argpos, **myargvpos, *arg, c;
-    struct DiskObject *progicon;
-    struct MsgPort *mp;
-    struct IORequest *ior;
-    struct Task *progtask;
-
-    BPTR olddir;
-    WORD i;
-    BOOL splitted;
-
     if (SysBase->AttnFlags & AFF_68060) {
         cputype = 68060;
     } else if (SysBase->AttnFlags & AFF_68040) {
@@ -599,31 +589,6 @@ void I_InitWBArgs(void)
         cputype = 68040;
     if (M_CheckParm("-68060"))
         cputype = 68060;
-
-    signal(SIGINT, (STDARGS void (*)(int))I_Quit);
-
-    MainTask = FindTask(0);
-
-    if ((mp = CreateMsgPort())) {
-        if ((ior = CreateIORequest(mp, sizeof(struct IOStdReq)))) {
-            if (!OpenDevice("input.device", 0, ior, 0)) {
-                InputBase = ior->io_Device;
-                StartQualifier = PeekQualifier();
-                CloseDevice(ior);
-            }
-            DeleteIORequest(ior);
-        }
-        DeleteMsgPort(mp);
-    }
-
-    progtask = FindTask(NULL);
-    if ((((unsigned long)progtask->tc_SPUpper) - (unsigned long)progtask->tc_SPLower + 1) < 20000) {
-        if (_WBenchMsg) {
-            I_Error("The minimum stack size is 20000.\nCorrect it in the icon information window!");
-        } else {
-            I_Error("The minimum stack size is 20000.\nUse the shell command \"stack\"!");
-        }
-    }
 
 #ifdef version060
 
@@ -650,9 +615,51 @@ void I_InitWBArgs(void)
     Enable();
 
 #endif
+}
+
+void I_InitWBArgs(void)
+{
+    char *argstring, *argstringpos, ing, **argpos, **myargvpos, *arg, c;
+    struct DiskObject *progicon;
+    struct MsgPort *mp;
+    struct IORequest *ior;
+    struct Task *progtask;
+
+    BPTR olddir;
+    WORD i;
+    BOOL splitted;
+
+
+    signal(SIGINT, (STDARGS void (*)(int))I_Quit);
+
+    MainTask = FindTask(0);
+
+    if ((mp = CreateMsgPort())) {
+        if ((ior = CreateIORequest(mp, sizeof(struct IOStdReq)))) {
+            if (!OpenDevice("input.device", 0, ior, 0)) {
+                InputBase = ior->io_Device;
+                StartQualifier = PeekQualifier();
+                CloseDevice(ior);
+            }
+            DeleteIORequest(ior);
+        }
+        DeleteMsgPort(mp);
+    }
+
+    progtask = FindTask(NULL);
+    if ((((unsigned long)progtask->tc_SPUpper) - (unsigned long)progtask->tc_SPLower + 1) < 20000) {
+        if (_WBenchMsg) {
+            I_Error("The minimum stack size is 20000.\nCorrect it in the icon information window!");
+        } else {
+            I_Error("The minimum stack size is 20000.\nUse the shell command \"stack\"!");
+        }
+    }
 
     if (!_WBenchMsg)
+    {
+        InitCPUType();
         return;
+    }
 
     if (!IconBase)
         IconBase = OpenLibrary("icon.library", 0);
@@ -720,6 +727,8 @@ void I_InitWBArgs(void)
         CloseLibrary(IconBase);
         IconBase = NULL;
     }
+
+    InitCPUType();
 }
 
 void I_InitConfigArgs(void)
