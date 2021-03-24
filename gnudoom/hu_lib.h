@@ -125,7 +125,7 @@ void HUlib_initSText(hu_stext_t* s, int x, int y, int h, patch_t** font, int sta
 void HUlib_addLineToSText(hu_stext_t* s);
 
 /* ?*/
-void HUlib_addMessageToSText(hu_stext_t* s, char* prefix, char* msg);
+void HUlib_addMessageToSText(hu_stext_t* s, const char* prefix, const char* msg);
 
 /* draws stext*/
 void HUlib_drawSText(hu_stext_t* s);

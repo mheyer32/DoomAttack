@@ -87,7 +87,7 @@ int quickSaveSlot;
 /* 1 = message to be printed*/
 int messageToPrint;
 /* ...and here is the message string!*/
-char* messageString;
+const char* messageString;
 
 /* message x & y*/
 int messx;
@@ -207,11 +207,11 @@ static void M_SetupNextMenu(menu_t* menudef);
 static void M_DrawThermo(int x, int y, int thermWidth, int thermDot);
 static void M_DrawEmptyCell(menu_t* menu, int item);
 static void M_DrawSelCell(menu_t* menu, int item);
-static void M_WriteText(int x, int y, char* string);
-static int M_StringWidth(char* string);
-static int M_StringHeight(char* string);
+static void M_WriteText(int x, int y, const char* string);
+static int M_StringWidth(const char* string);
+static int M_StringHeight(const char* string);
 void M_StartControlPanel(void);
-static void M_StartMessage(char* string, void* routine, boolean input);
+static void M_StartMessage(const char* string, void* routine, boolean input);
 static void M_StopMessage(void);
 static void M_ClearMenus(void);
 
@@ -986,7 +986,7 @@ static void M_DrawSelCell(menu_t* menu, int item)
     V_DrawPatchDirect3(menu->x - 10, menu->y + item * LINEHEIGHT - 1, 0, W_CacheLumpName("M_CELL2", PU_CACHE));
 }
 
-static void M_StartMessage(char* string, void* routine, boolean input)
+static void M_StartMessage(const char* string, void* routine, boolean input)
 {
     messageLastMenuActive = menuactive;
     messageToPrint = 1;
@@ -1006,7 +1006,7 @@ static void M_StopMessage(void)
 /**/
 /* Find string width from hu_font chars*/
 /**/
-static int M_StringWidth(char* string)
+static int M_StringWidth(const char* string)
 {
     int i;
     int w = 0;
@@ -1026,7 +1026,7 @@ static int M_StringWidth(char* string)
 /**/
 /*      Find string height from hu_font chars*/
 /**/
-static int M_StringHeight(char* string)
+static int M_StringHeight(const char* string)
 {
     int i;
     int h;
@@ -1043,10 +1043,10 @@ static int M_StringHeight(char* string)
 /**/
 /*      Write a string using the hu_font*/
 /**/
-static void M_WriteText(int x, int y, char* string)
+static void M_WriteText(int x, int y, const char* string)
 {
     int w;
-    char* ch;
+    const char* ch;
     int c;
     int cx;
     int cy;

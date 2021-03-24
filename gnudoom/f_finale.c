@@ -80,7 +80,7 @@ int finalecount;
 #define t5text T5TEXT
 #define t6text T6TEXT
 
-char* finaletext;
+const char* finaletext;
 char* finaleflat;
 
 static void F_StartCast(void);
@@ -244,7 +244,7 @@ static void F_TextWrite(void)
 
     int x, y, w;
     int count;
-    char* ch;
+    const char* ch;
     int c;
     int cx;
     int cy;

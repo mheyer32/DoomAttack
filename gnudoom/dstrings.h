@@ -53,43 +53,43 @@
 /* QuitDOOM messages*/
 #define NUM_QUITMESSAGES 22
 
-extern FAR char *endmsg[];
+extern FAR const char * const endmsg[];
 
-extern FAR char *YESKEY;
-extern FAR char *NOKEY;
-extern FAR char *D_DEVSTR;
-extern FAR char *D_CDROM;
+extern FAR const char * const YESKEY;
+extern FAR const char * const NOKEY;
+extern FAR const char * const D_DEVSTR;
+extern FAR const char * const D_CDROM;
 
 /**/
 /*	M_Menu.C*/
 /**/
-extern FAR char *PRESSKEY;
-extern FAR char *PRESSYN;
-extern FAR char *QUITMSG;
-extern FAR char *LOADNET;
-extern FAR char *QLOADNET;
-extern FAR char *QSAVESPOT;
-extern FAR char *SAVEDEAD;
-extern FAR char *QSPROMPT;
-extern FAR char *QLPROMPT;
+extern FAR const char * const PRESSKEY;
+extern FAR const char * const PRESSYN;
+extern FAR const char * const QUITMSG;
+extern FAR const char * const LOADNET;
+extern FAR const char * const QLOADNET;
+extern FAR const char * const QSAVESPOT;
+extern FAR const char * const SAVEDEAD;
+extern FAR const char * const QSPROMPT;
+extern FAR const char * const QLPROMPT;
 
-extern FAR char *NEWGAME;
+extern FAR const char * const NEWGAME;
 
-extern FAR char *NIGHTMARE;
+extern FAR const char * const NIGHTMARE;
 
-extern FAR char *SWSTRING;
+extern FAR const char * const SWSTRING;
 
-extern FAR char *MSGOFF;
-extern FAR char *MSGON;
-extern FAR char *NETEND;
-extern FAR char *ENDGAME;
+extern FAR const char * const MSGOFF;
+extern FAR const char * const MSGON;
+extern FAR const char * const NETEND;
+extern FAR const char * const ENDGAME;
 
-extern FAR char *DOSY;
+extern FAR const char * const DOSY;
 
-extern FAR char *DETAILHI;
-extern FAR char *DETAILLO;
-extern FAR char *ALWAYSRUNON;
-extern FAR char *ALWAYSRUNOFF;
+extern FAR const char * const DETAILHI;
+extern FAR const char * const DETAILLO;
+extern FAR const char * const ALWAYSRUNON;
+extern FAR const char * const ALWAYSRUNOFF;
 
 #define GAMMALVL0 "Gamma correction OFF"
 #define GAMMALVL1 "Gamma correction level 1"
@@ -97,72 +97,72 @@ extern FAR char *ALWAYSRUNOFF;
 #define GAMMALVL3 "Gamma correction level 3"
 #define GAMMALVL4 "Gamma correction level 4"
 
-extern FAR char *EMPTYSTRING;
+extern FAR const char * const EMPTYSTRING;
 
 /**/
 /*	P_inter.C*/
 /**/
-extern FAR char *GOTARMOR;
-extern FAR char *GOTMEGA;
-extern FAR char *GOTHTHBONUS;
-extern FAR char *GOTARMBONUS;
-extern FAR char *GOTSTIM;
-extern FAR char *GOTMEDINEED;
-extern FAR char *GOTMEDIKIT;
-extern FAR char *GOTSUPER;
+extern FAR const char * const GOTARMOR;
+extern FAR const char * const GOTMEGA;
+extern FAR const char * const GOTHTHBONUS;
+extern FAR const char * const GOTARMBONUS;
+extern FAR const char * const GOTSTIM;
+extern FAR const char * const GOTMEDINEED;
+extern FAR const char * const GOTMEDIKIT;
+extern FAR const char * const GOTSUPER;
 
-extern FAR char *GOTBLUECARD;
-extern FAR char *GOTYELWCARD;
-extern FAR char *GOTREDCARD;
-extern FAR char *GOTBLUESKUL;
-extern FAR char *GOTYELWSKUL;
-extern FAR char *GOTREDSKULL;
+extern FAR const char * const GOTBLUECARD;
+extern FAR const char * const GOTYELWCARD;
+extern FAR const char * const GOTREDCARD;
+extern FAR const char * const GOTBLUESKUL;
+extern FAR const char * const GOTYELWSKUL;
+extern FAR const char * const GOTREDSKULL;
 
-extern FAR char *GOTINVUL;
-extern FAR char *GOTBERSERK;
-extern FAR char *GOTINVIS;
-extern FAR char *GOTSUIT;
-extern FAR char *GOTMAP;
-extern FAR char *GOTVISOR;
-extern FAR char *GOTMSPHERE;
+extern FAR const char * const GOTINVUL;
+extern FAR const char * const GOTBERSERK;
+extern FAR const char * const GOTINVIS;
+extern FAR const char * const GOTSUIT;
+extern FAR const char * const GOTMAP;
+extern FAR const char * const GOTVISOR;
+extern FAR const char * const GOTMSPHERE;
 
-extern FAR char *GOTCLIP;
-extern FAR char *GOTCLIPBOX;
-extern FAR char *GOTROCKET;
-extern FAR char *GOTROCKBOX;
-extern FAR char *GOTCELL;
-extern FAR char *GOTCELLBOX;
-extern FAR char *GOTSHELLS;
-extern FAR char *GOTSHELLBOX;
-extern FAR char *GOTBACKPACK;
+extern FAR const char * const GOTCLIP;
+extern FAR const char * const GOTCLIPBOX;
+extern FAR const char * const GOTROCKET;
+extern FAR const char * const GOTROCKBOX;
+extern FAR const char * const GOTCELL;
+extern FAR const char * const GOTCELLBOX;
+extern FAR const char * const GOTSHELLS;
+extern FAR const char * const GOTSHELLBOX;
+extern FAR const char * const GOTBACKPACK;
 
-extern FAR char *GOTBFG9000;
-extern FAR char *GOTCHAINGUN;
-extern FAR char *GOTCHAINSAW;
-extern FAR char *GOTLAUNCHER;
-extern FAR char *GOTPLASMA;
-extern FAR char *GOTSHOTGUN;
-extern FAR char *GOTSHOTGUN2;
+extern FAR const char * const GOTBFG9000;
+extern FAR const char * const GOTCHAINGUN;
+extern FAR const char * const GOTCHAINSAW;
+extern FAR const char * const GOTLAUNCHER;
+extern FAR const char * const GOTPLASMA;
+extern FAR const char * const GOTSHOTGUN;
+extern FAR const char * const GOTSHOTGUN2;
 
 /**/
 /* P_Doors.C*/
 /**/
-extern FAR char *PD_BLUEO;
-extern FAR char *PD_REDO;
-extern FAR char *PD_YELLOWO;
-extern FAR char *PD_BLUEK;
-extern FAR char *PD_REDK;
-extern FAR char *PD_YELLOWK;
+extern FAR const char * const PD_BLUEO;
+extern FAR const char * const PD_REDO;
+extern FAR const char * const PD_YELLOWO;
+extern FAR const char * const PD_BLUEK;
+extern FAR const char * const PD_REDK;
+extern FAR const char * const PD_YELLOWK;
 
 /**/
 /*	G_game.C*/
 /**/
-extern FAR char *GGSAVED;
+extern FAR const char * const GGSAVED;
 
 /**/
 /*	HU_stuff.C*/
 /**/
-extern FAR char *HUSTR_MSGU;
+extern FAR const char * const HUSTR_MSGU;
 
 #define HUSTR_E1M1 "E1M1: Hangar"
 #define HUSTR_E1M2 "E1M2: Nuclear Plant"
@@ -323,13 +323,13 @@ extern FAR char *HUSTR_MSGU;
 #define HUSTR_CHATMACRO9 "Yes"
 #define HUSTR_CHATMACRO0 "No"
 
-extern FAR char *HUSTR_TALKTOSELF1;
-extern FAR char *HUSTR_TALKTOSELF2;
-extern FAR char *HUSTR_TALKTOSELF3;
-extern FAR char *HUSTR_TALKTOSELF4;
-extern FAR char *HUSTR_TALKTOSELF5;
+extern FAR const char * const HUSTR_TALKTOSELF1;
+extern FAR const char * const HUSTR_TALKTOSELF2;
+extern FAR const char * const HUSTR_TALKTOSELF3;
+extern FAR const char * const HUSTR_TALKTOSELF4;
+extern FAR const char * const HUSTR_TALKTOSELF5;
 
-extern FAR char *HUSTR_MESSAGESENT;
+extern FAR const char * const HUSTR_MESSAGESENT;
 
 /* The following should NOT be changed unless it seems*/
 /* just AWFULLY necessary*/
@@ -348,106 +348,106 @@ extern FAR char *HUSTR_MESSAGESENT;
 /*	AM_map.C*/
 /**/
 
-extern FAR char *AMSTR_FOLLOWON;
-extern FAR char *AMSTR_FOLLOWOFF;
+extern FAR const char * const AMSTR_FOLLOWON;
+extern FAR const char * const AMSTR_FOLLOWOFF;
 
-extern FAR char *AMSTR_GRIDON;
-extern FAR char *AMSTR_GRIDOFF;
+extern FAR const char * const AMSTR_GRIDON;
+extern FAR const char * const AMSTR_GRIDOFF;
 
-extern FAR char *AMSTR_MARKEDSPOT;
-extern FAR char *AMSTR_MARKSCLEARED;
+extern FAR const char * const AMSTR_MARKEDSPOT;
+extern FAR const char * const AMSTR_MARKSCLEARED;
 
 /**/
 /*	ST_stuff.C*/
 /**/
 
-extern FAR char *STSTR_MUS;
-extern FAR char *STSTR_NOMUS;
-extern FAR char *STSTR_DQDON;
-extern FAR char *STSTR_DQDOFF;
+extern FAR const char * const STSTR_MUS;
+extern FAR const char * const STSTR_NOMUS;
+extern FAR const char * const STSTR_DQDON;
+extern FAR const char * const STSTR_DQDOFF;
 
-extern FAR char *STSTR_KFAADDED;
-extern FAR char *STSTR_FAADDED;
+extern FAR const char * const STSTR_KFAADDED;
+extern FAR const char * const STSTR_FAADDED;
 
-extern FAR char *STSTR_NCON;
-extern FAR char *STSTR_NCOFF;
+extern FAR const char * const STSTR_NCON;
+extern FAR const char * const STSTR_NCOFF;
 
-extern FAR char *STSTR_BEHOLD;
-extern FAR char *STSTR_BEHOLDX;
+extern FAR const char * const STSTR_BEHOLD;
+extern FAR const char * const STSTR_BEHOLDX;
 
-extern FAR char *STSTR_CHOPPERS;
-extern FAR char *STSTR_CLEV;
+extern FAR const char * const STSTR_CHOPPERS;
+extern FAR const char * const STSTR_CLEV;
 
 /**/
 /*	F_Finale.C*/
 /**/
-extern FAR char *E1TEXT;
+extern FAR const char * const E1TEXT;
 
-extern FAR char *E2TEXT;
+extern FAR const char * const E2TEXT;
 
-extern FAR char *E3TEXT;
+extern FAR const char * const E3TEXT;
 
-extern FAR char *E4TEXT;
+extern FAR const char * const E4TEXT;
 
 /* after level 6, put this:*/
 
-extern FAR char *C1TEXT;
+extern FAR const char * const C1TEXT;
 
 /* After level 11, put this:*/
 
-extern FAR char *C2TEXT;
+extern FAR const char * const C2TEXT;
 
 /* After level 20, put this:*/
 
-extern FAR char *C3TEXT;
+extern FAR const char * const C3TEXT;
 
 /* After level 29, put this:*/
 
-extern FAR char *C4TEXT;
+extern FAR const char * const C4TEXT;
 
 /* Before level 31, put this:*/
 
-extern FAR char *C5TEXT;
+extern FAR const char * const C5TEXT;
 
 /* Before level 32, put this:*/
 
-extern FAR char *C6TEXT;
+extern FAR const char * const C6TEXT;
 
 /* after map 06	*/
 
-extern FAR char *P1TEXT;
+extern FAR const char * const P1TEXT;
 
 /* after map 11*/
 
-extern FAR char *P2TEXT;
+extern FAR const char * const P2TEXT;
 
 /* after map 20*/
 
-extern FAR char *P3TEXT;
+extern FAR const char * const P3TEXT;
 
 /* after map 30*/
 
-extern FAR char *P4TEXT;
+extern FAR const char * const P4TEXT;
 
 /* before map 31*/
 
-extern FAR char *P5TEXT;
+extern FAR const char * const P5TEXT;
 
 /* before map 32*/
 
-extern FAR char *P6TEXT;
+extern FAR const char * const P6TEXT;
 
-extern FAR char *T1TEXT;
+extern FAR const char * const T1TEXT;
 
-extern FAR char *T2TEXT;
+extern FAR const char * const T2TEXT;
 
-extern FAR char *T3TEXT;
+extern FAR const char * const T3TEXT;
 
-extern FAR char *T4TEXT;
+extern FAR const char * const T4TEXT;
 
-extern FAR char *T5TEXT;
+extern FAR const char * const T5TEXT;
 
-extern FAR char *T6TEXT;
+extern FAR const char * const T6TEXT;
 
 /**/
 /* extern FAR character cast strings F_FINALE.C*/

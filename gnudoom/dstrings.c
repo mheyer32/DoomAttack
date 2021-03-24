@@ -28,7 +28,7 @@
 #endif
 #include "dstrings.h"
 
-char *endmsg[NUM_QUITMESSAGES + 1] = {
+FAR const char * const endmsg[NUM_QUITMESSAGES + 1] = {
     /* DOOM1*/
     /* QUITMSG, */
     "are you sure you want to\nquit this great game?", "please don't leave, there's more\ndemons to toast!",
@@ -54,116 +54,116 @@ char *endmsg[NUM_QUITMESSAGES + 1] = {
     /* Internal debug. Different style, too.*/
     "THIS IS NO MESSAGE!\nPage intentionally left blank."};
 
-char *YESKEY = "y";
-char *NOKEY = "n";
+FAR const char * const YESKEY = "y";
+FAR const char * const NOKEY = "n";
 
-char *D_DEVSTR = "Development mode ON.\n";
-char *D_CDROM = "CD-ROM Version: default.cfg from c:\\doomdata\n";
+FAR const char * const D_DEVSTR = "Development mode ON.\n";
+FAR const char * const D_CDROM = "CD-ROM Version: default.cfg from c:\\doomdata\n";
 
 /**/
 /*	M_Menu.C*/
 /**/
-char *PRESSKEY = "press a key.";
-char *PRESSYN = "press y or n.";
-char *QUITMSG = "are you sure you want to\nquit this great game?";
-char *LOADNET = "you can't do load while in a net game!\n\npress a key.";
-char *QLOADNET = "you can't quickload during a netgame!\n\npress a key.";
-char *QSAVESPOT = "you haven't picked a quicksave slot yet!\n\npress a key.";
-char *SAVEDEAD = "you can't save if you aren't playing!\n\npress a key.";
-char *QSPROMPT = "quicksave over your game named\n\n'%s'?\n\npress y or n.";
-char *QLPROMPT = "do you want to quickload the game named\n\n'%s'?\n\npress y or n.";
+FAR const char * const PRESSKEY = "press a key.";
+FAR const char * const PRESSYN = "press y or n.";
+FAR const char * const QUITMSG = "are you sure you want to\nquit this great game?";
+FAR const char * const LOADNET = "you can't do load while in a net game!\n\npress a key.";
+FAR const char * const QLOADNET = "you can't quickload during a netgame!\n\npress a key.";
+FAR const char * const QSAVESPOT = "you haven't picked a quicksave slot yet!\n\npress a key.";
+FAR const char * const SAVEDEAD = "you can't save if you aren't playing!\n\npress a key.";
+FAR const char * const QSPROMPT = "quicksave over your game named\n\n'%s'?\n\npress y or n.";
+FAR const char * const QLPROMPT = "do you want to quickload the game named\n\n'%s'?\n\npress y or n.";
 
-char *NEWGAME = "you can't start a new game\nwhile in a network game.\n\npress a key.";
+FAR const char * const NEWGAME = "you can't start a new game\nwhile in a network game.\n\npress a key.";
 
-char *NIGHTMARE = "are you sure? this skill level\nisn't even remotely fair.\n\npress y or n.";
+FAR const char * const NIGHTMARE = "are you sure? this skill level\nisn't even remotely fair.\n\npress y or n.";
 
-char *SWSTRING = "this is the shareware version of doom.\n\nyou need to order the entire trilogy.\n\npress a key.";
+FAR const char * const SWSTRING = "this is the shareware version of doom.\n\nyou need to order the entire trilogy.\n\npress a key.";
 
-char *MSGOFF = "Messages OFF";
-char *MSGON = "Messages ON";
-char *NETEND = "you can't end a netgame!\n\npress a key.";
-char *ENDGAME = "are you sure you want to end the game?\n\npress y or n.";
+FAR const char * const MSGOFF = "Messages OFF";
+FAR const char * const MSGON = "Messages ON";
+FAR const char * const NETEND = "you can't end a netgame!\n\npress a key.";
+FAR const char * const ENDGAME = "are you sure you want to end the game?\n\npress y or n.";
 
-char *DOSY = "(press y to quit)";
+FAR const char * const DOSY = "(press y to quit)";
 
-char *DETAILHI = "High detail";
-char *DETAILLO = "Low detail";
-char *ALWAYSRUNON = "Always run ON";
-char *ALWAYSRUNOFF = "Always run OFF";
-char *EMPTYSTRING = "empty slot";
+FAR const char * const DETAILHI = "High detail";
+FAR const char * const DETAILLO = "Low detail";
+FAR const char * const ALWAYSRUNON = "Always run ON";
+FAR const char * const ALWAYSRUNOFF = "Always run OFF";
+FAR const char * const EMPTYSTRING = "empty slot";
 
 /**/
 /*	P_inter.C*/
 /**/
-char *GOTARMOR = "Picked up the armor.";
-char *GOTMEGA = "Picked up the MegaArmor!";
-char *GOTHTHBONUS = "Picked up a health bonus.";
-char *GOTARMBONUS = "Picked up an armor bonus.";
-char *GOTSTIM = "Picked up a stimpack.";
-char *GOTMEDINEED = "Picked up a medikit that you REALLY need!";
-char *GOTMEDIKIT = "Picked up a medikit.";
-char *GOTSUPER = "Supercharge!";
+FAR const char * const GOTARMOR = "Picked up the armor.";
+FAR const char * const GOTMEGA = "Picked up the MegaArmor!";
+FAR const char * const GOTHTHBONUS = "Picked up a health bonus.";
+FAR const char * const GOTARMBONUS = "Picked up an armor bonus.";
+FAR const char * const GOTSTIM = "Picked up a stimpack.";
+FAR const char * const GOTMEDINEED = "Picked up a medikit that you REALLY need!";
+FAR const char * const GOTMEDIKIT = "Picked up a medikit.";
+FAR const char * const GOTSUPER = "Supercharge!";
 
-char *GOTBLUECARD = "Picked up a blue keycard.";
-char *GOTYELWCARD = "Picked up a yellow keycard.";
-char *GOTREDCARD = "Picked up a red keycard.";
-char *GOTBLUESKUL = "Picked up a blue skull key.";
-char *GOTYELWSKUL = "Picked up a yellow skull key.";
-char *GOTREDSKULL = "Picked up a red skull key.";
+FAR const char * const GOTBLUECARD = "Picked up a blue keycard.";
+FAR const char * const GOTYELWCARD = "Picked up a yellow keycard.";
+FAR const char * const GOTREDCARD = "Picked up a red keycard.";
+FAR const char * const GOTBLUESKUL = "Picked up a blue skull key.";
+FAR const char * const GOTYELWSKUL = "Picked up a yellow skull key.";
+FAR const char * const GOTREDSKULL = "Picked up a red skull key.";
 
-char *GOTINVUL = "Invulnerability!";
-char *GOTBERSERK = "Berserk!";
-char *GOTINVIS = "Partial Invisibility";
-char *GOTSUIT = "Radiation Shielding Suit";
-char *GOTMAP = "Computer Area Map";
-char *GOTVISOR = "Light Amplification Visor";
-char *GOTMSPHERE = "MegaSphere!";
+FAR const char * const GOTINVUL = "Invulnerability!";
+FAR const char * const GOTBERSERK = "Berserk!";
+FAR const char * const GOTINVIS = "Partial Invisibility";
+FAR const char * const GOTSUIT = "Radiation Shielding Suit";
+FAR const char * const GOTMAP = "Computer Area Map";
+FAR const char * const GOTVISOR = "Light Amplification Visor";
+FAR const char * const GOTMSPHERE = "MegaSphere!";
 
-char *GOTCLIP = "Picked up a clip.";
-char *GOTCLIPBOX = "Picked up a box of bullets.";
-char *GOTROCKET = "Picked up a rocket.";
-char *GOTROCKBOX = "Picked up a box of rockets.";
-char *GOTCELL = "Picked up an energy cell.";
-char *GOTCELLBOX = "Picked up an energy cell pack.";
-char *GOTSHELLS = "Picked up 4 shotgun shells.";
-char *GOTSHELLBOX = "Picked up a box of shotgun shells.";
-char *GOTBACKPACK = "Picked up a backpack full of ammo!";
+FAR const char * const GOTCLIP = "Picked up a clip.";
+FAR const char * const GOTCLIPBOX = "Picked up a box of bullets.";
+FAR const char * const GOTROCKET = "Picked up a rocket.";
+FAR const char * const GOTROCKBOX = "Picked up a box of rockets.";
+FAR const char * const GOTCELL = "Picked up an energy cell.";
+FAR const char * const GOTCELLBOX = "Picked up an energy cell pack.";
+FAR const char * const GOTSHELLS = "Picked up 4 shotgun shells.";
+FAR const char * const GOTSHELLBOX = "Picked up a box of shotgun shells.";
+FAR const char * const GOTBACKPACK = "Picked up a backpack full of ammo!";
 
-char *GOTBFG9000 = "You got the BFG9000!  Oh, yes.";
-char *GOTCHAINGUN = "You got the chaingun!";
-char *GOTCHAINSAW = "A chainsaw!  Find some meat!";
-char *GOTLAUNCHER = "You got the rocket launcher!";
-char *GOTPLASMA = "You got the plasma gun!";
-char *GOTSHOTGUN = "You got the shotgun!";
-char *GOTSHOTGUN2 = "You got the super shotgun!";
+FAR const char * const GOTBFG9000 = "You got the BFG9000!  Oh, yes.";
+FAR const char * const GOTCHAINGUN = "You got the chaingun!";
+FAR const char * const GOTCHAINSAW = "A chainsaw!  Find some meat!";
+FAR const char * const GOTLAUNCHER = "You got the rocket launcher!";
+FAR const char * const GOTPLASMA = "You got the plasma gun!";
+FAR const char * const GOTSHOTGUN = "You got the shotgun!";
+FAR const char * const GOTSHOTGUN2 = "You got the super shotgun!";
 
 /**/
 /* P_Doors.C*/
 /**/
-char *PD_BLUEO = "You need a blue key to activate this object";
-char *PD_REDO = "You need a red key to activate this object";
-char *PD_YELLOWO = "You need a yellow key to activate this object";
-char *PD_BLUEK = "You need a blue key to open this door";
-char *PD_REDK = "You need a red key to open this door";
-char *PD_YELLOWK = "You need a yellow key to open this door";
+FAR const char * const PD_BLUEO = "You need a blue key to activate this object";
+FAR const char * const PD_REDO = "You need a red key to activate this object";
+FAR const char * const PD_YELLOWO = "You need a yellow key to activate this object";
+FAR const char * const PD_BLUEK = "You need a blue key to open this door";
+FAR const char * const PD_REDK = "You need a red key to open this door";
+FAR const char * const PD_YELLOWK = "You need a yellow key to open this door";
 
 /**/
 /*	G_game.C*/
 /**/
-char *GGSAVED = "game saved.";
+FAR const char * const GGSAVED = "game saved.";
 
 /**/
 /*	HU_stuff.C*/
 /**/
-char *HUSTR_MSGU = "[Message unsent]";
+FAR const char * const HUSTR_MSGU = "[Message unsent]";
 
-char *HUSTR_TALKTOSELF1 = "You mumble to yourself";
-char *HUSTR_TALKTOSELF2 = "Who's there?";
-char *HUSTR_TALKTOSELF3 = "You scare yourself";
-char *HUSTR_TALKTOSELF4 = "You start to rave";
-char *HUSTR_TALKTOSELF5 = "You've lost it...";
+FAR const char * const HUSTR_TALKTOSELF1 = "You mumble to yourself";
+FAR const char * const HUSTR_TALKTOSELF2 = "Who's there?";
+FAR const char * const HUSTR_TALKTOSELF3 = "You scare yourself";
+FAR const char * const HUSTR_TALKTOSELF4 = "You start to rave";
+FAR const char * const HUSTR_TALKTOSELF5 = "You've lost it...";
 
-char *HUSTR_MESSAGESENT = "[Message Sent]";
+FAR const char * const HUSTR_MESSAGESENT = "[Message Sent]";
 
 /* The following should NOT be changed unless it seems*/
 /* just AWFULLY necessary*/
@@ -172,40 +172,40 @@ char *HUSTR_MESSAGESENT = "[Message Sent]";
 /*	AM_map.C*/
 /**/
 
-char *AMSTR_FOLLOWON = "Follow Mode ON";
-char *AMSTR_FOLLOWOFF = "Follow Mode OFF";
+FAR const char * const AMSTR_FOLLOWON = "Follow Mode ON";
+FAR const char * const AMSTR_FOLLOWOFF = "Follow Mode OFF";
 
-char *AMSTR_GRIDON = "Grid ON";
-char *AMSTR_GRIDOFF = "Grid OFF";
+FAR const char * const AMSTR_GRIDON = "Grid ON";
+FAR const char * const AMSTR_GRIDOFF = "Grid OFF";
 
-char *AMSTR_MARKEDSPOT = "Marked Spot";
-char *AMSTR_MARKSCLEARED = "All Marks Cleared";
+FAR const char * const AMSTR_MARKEDSPOT = "Marked Spot";
+FAR const char * const AMSTR_MARKSCLEARED = "All Marks Cleared";
 
 /**/
 /*	ST_stuff.C*/
 /**/
 
-char *STSTR_MUS = "Music Change";
-char *STSTR_NOMUS = "IMPOSSIBLE SELECTION";
-char *STSTR_DQDON = "Degreelessness Mode On";
-char *STSTR_DQDOFF = "Degreelessness Mode Off";
+FAR const char * const STSTR_MUS = "Music Change";
+FAR const char * const STSTR_NOMUS = "IMPOSSIBLE SELECTION";
+FAR const char * const STSTR_DQDON = "Degreelessness Mode On";
+FAR const char * const STSTR_DQDOFF = "Degreelessness Mode Off";
 
-char *STSTR_KFAADDED = "Very Happy Ammo Added";
-char *STSTR_FAADDED = "Ammo (no keys) Added";
+FAR const char * const STSTR_KFAADDED = "Very Happy Ammo Added";
+FAR const char * const STSTR_FAADDED = "Ammo (no keys) Added";
 
-char *STSTR_NCON = "No Clipping Mode ON";
-char *STSTR_NCOFF = "No Clipping Mode OFF";
+FAR const char * const STSTR_NCON = "No Clipping Mode ON";
+FAR const char * const STSTR_NCOFF = "No Clipping Mode OFF";
 
-char *STSTR_BEHOLD = "inVuln, Str, Inviso, Rad, Allmap, or Lite-amp";
-char *STSTR_BEHOLDX = "Power-up Toggled";
+FAR const char * const STSTR_BEHOLD = "inVuln, Str, Inviso, Rad, Allmap, or Lite-amp";
+FAR const char * const STSTR_BEHOLDX = "Power-up Toggled";
 
-char *STSTR_CHOPPERS = "... doesn't suck - GM";
-char *STSTR_CLEV = "Changing Level...";
+FAR const char * const STSTR_CHOPPERS = "... doesn't suck - GM";
+FAR const char * const STSTR_CLEV = "Changing Level...";
 
 /**/
 /*	F_Finale.C*/
 /**/
-char *E1TEXT =
+FAR const char * const E1TEXT =
     "Once you beat the big badasses and\n"
     "clean out the moon base you're supposed\n"
     "to win, aren't you? Aren't you? Where's\n"
@@ -222,7 +222,7 @@ char *E1TEXT =
     "The Shores of Hell and its amazing\n"
     "sequel, Inferno!\n";
 
-char *E2TEXT =
+FAR const char * const E2TEXT =
     "You've done it! The hideous cyber-\n"
     "demon lord that ruled the lost Deimos\n"
     "moon base has been slain and you\n"
@@ -241,7 +241,7 @@ char *E2TEXT =
     "Now, it's on to the final chapter of\n"
     "DOOM! -- Inferno.";
 
-char *E3TEXT =
+FAR const char * const E3TEXT =
     "The loathsome spiderdemon that\n"
     "masterminded the invasion of the moon\n"
     "bases and caused so much death has had\n"
@@ -260,7 +260,7 @@ char *E3TEXT =
     "spawn could have come through that\n"
     "door with you ...";
 
-char *E4TEXT =
+FAR const char * const E4TEXT =
     "the spider mastermind must have sent forth\n"
     "its legions of hellspawn before your\n"
     "final confrontation with that terrible\n"
@@ -280,7 +280,7 @@ char *E4TEXT =
 
 /* after level 6, put this:*/
 
-char *C1TEXT =
+FAR const char * const C1TEXT =
     "YOU HAVE ENTERED DEEPLY INTO THE INFESTED\n"
     "STARPORT. BUT SOMETHING IS WRONG. THE\n"
     "MONSTERS HAVE BROUGHT THEIR OWN REALITY\n"
@@ -296,7 +296,7 @@ char *C1TEXT =
 
 /* After level 11, put this:*/
 
-char *C2TEXT =
+FAR const char * const C2TEXT =
     "YOU HAVE WON! YOUR VICTORY HAS ENABLED\n"
     "HUMANKIND TO EVACUATE EARTH AND ESCAPE\n"
     "THE NIGHTMARE.  NOW YOU ARE THE ONLY\n"
@@ -317,7 +317,7 @@ char *C2TEXT =
 
 /* After level 20, put this:*/
 
-char *C3TEXT =
+FAR const char * const C3TEXT =
     "YOU ARE AT THE CORRUPT HEART OF THE CITY,\n"
     "SURROUNDED BY THE CORPSES OF YOUR ENEMIES.\n"
     "YOU SEE NO WAY TO DESTROY THE CREATURES'\n"
@@ -330,7 +330,7 @@ char *C3TEXT =
 
 /* After level 29, put this:*/
 
-char *C4TEXT =
+FAR const char * const C4TEXT =
     "THE HORRENDOUS VISAGE OF THE BIGGEST\n"
     "DEMON YOU'VE EVER SEEN CRUMBLES BEFORE\n"
     "YOU, AFTER YOU PUMP YOUR ROCKETS INTO\n"
@@ -349,7 +349,7 @@ char *C4TEXT =
 
 /* Before level 31, put this:*/
 
-char *C5TEXT =
+FAR const char * const C5TEXT =
     "CONGRATULATIONS, YOU'VE FOUND THE SECRET\n"
     "LEVEL! LOOKS LIKE IT'S BEEN BUILT BY\n"
     "HUMANS, RATHER THAN DEMONS. YOU WONDER\n"
@@ -358,14 +358,14 @@ char *C5TEXT =
 
 /* Before level 32, put this:*/
 
-char *C6TEXT =
+FAR const char * const C6TEXT =
     "CONGRATULATIONS, YOU'VE FOUND THE\n"
     "SUPER SECRET LEVEL!  YOU'D BETTER\n"
     "BLAZE THROUGH THIS ONE!\n";
 
 /* after map 06	*/
 
-char *P1TEXT =
+FAR const char * const P1TEXT =
     "You gloat over the steaming carcass of the\n"
     "Guardian.  With its death, you've wrested\n"
     "the Accelerator from the stinking claws\n"
@@ -381,7 +381,7 @@ char *P1TEXT =
 
 /* after map 11*/
 
-char *P2TEXT =
+FAR const char * const P2TEXT =
     "Even the deadly Arch-Vile labyrinth could\n"
     "not stop you, and you've gotten to the\n"
     "prototype Accelerator which is soon\n"
@@ -391,7 +391,7 @@ char *P2TEXT =
 
 /* after map 20*/
 
-char *P3TEXT =
+FAR const char * const P3TEXT =
     "You've bashed and battered your way into\n"
     "the heart of the devil-hive.  Time for a\n"
     "Search-and-Destroy mission, aimed at the\n"
@@ -405,7 +405,7 @@ char *P3TEXT =
 
 /* after map 30*/
 
-char *P4TEXT =
+FAR const char * const P4TEXT =
     "The Gatekeeper's evil face is splattered\n"
     "all over the place.  As its tattered corpse\n"
     "collapses, an inverted Gate forms and\n"
@@ -421,7 +421,7 @@ char *P4TEXT =
 
 /* before map 31*/
 
-char *P5TEXT =
+FAR const char * const P5TEXT =
     "You've found the second-hardest level we\n"
     "got. Hope you have a saved game a level or\n"
     "two previous.  If not, be prepared to die\n"
@@ -429,12 +429,12 @@ char *P5TEXT =
 
 /* before map 32*/
 
-char *P6TEXT =
+FAR const char * const P6TEXT =
     "Betcha wondered just what WAS the hardest\n"
     "level we had ready for ya?  Now you know.\n"
     "No one gets out alive.";
 
-char *T1TEXT =
+FAR const char * const T1TEXT =
     "You've fought your way out of the infested\n"
     "experimental labs.   It seems that UAC has\n"
     "once again gulped it down.  With their\n"
@@ -448,7 +448,7 @@ char *T1TEXT =
     "complex still has some warlike ordnance\n"
     "laying around.";
 
-char *T2TEXT =
+FAR const char * const T2TEXT =
     "You hear the grinding of heavy machinery\n"
     "ahead.  You sure hope they're not stamping\n"
     "out new hellspawn, but you're ready to\n"
@@ -459,7 +459,7 @@ char *T2TEXT =
     "\n"
     "You don't plan to go down easy.";
 
-char *T3TEXT =
+FAR const char * const T3TEXT =
     "The vista opening ahead looks real damn\n"
     "familiar. Smells familiar, too -- like\n"
     "fried excrement. You didn't like this\n"
@@ -469,7 +469,7 @@ char *T3TEXT =
     "Hefting your gun, an evil grin trickles\n"
     "onto your face. Time to take some names.";
 
-char *T4TEXT =
+FAR const char * const T4TEXT =
     "Suddenly, all is silent, from one horizon\n"
     "to the other. The agonizing echo of Hell\n"
     "fades away, the nightmare sky turns to\n"
@@ -482,14 +482,14 @@ char *T4TEXT =
     "A blue light begins to glow inside the\n"
     "ruined skull of the demon-spitter.";
 
-char *T5TEXT =
+FAR const char * const T5TEXT =
     "What now? Looks totally different. Kind\n"
     "of like King Tut's condo. Well,\n"
     "whatever's here can't be any worse\n"
     "than usual. Can it?  Or maybe it's best\n"
     "to let sleeping gods lie..";
 
-char *T6TEXT =
+FAR const char * const T6TEXT =
     "Time for a vacation. You've burst the\n"
     "bowels of hell and by golly you're ready\n"
     "for a break. You mutter to yourself,\n"
