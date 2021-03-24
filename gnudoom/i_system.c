@@ -405,7 +405,7 @@ void I_Init(void)
 
     I_InitGraphics();
     I_InitSound();
-    I_InitLocale();
+//    I_InitLocale();
 }
 
 void I_QuitAmiga(void)
@@ -453,7 +453,7 @@ void I_QuitAmiga(void)
     }
 
     I_CleanupNetwork();
-    I_CleanupLocale();
+//    I_CleanupLocale();
 
     if (IntuitionBase)
         CloseLibrary((struct Library *)IntuitionBase);

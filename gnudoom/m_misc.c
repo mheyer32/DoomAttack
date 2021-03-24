@@ -261,7 +261,7 @@ extern int crosshaircolor;
 extern int maxvisplanes;
 extern int maxvissprites;
 extern int maxdrawsegs;
-extern int uselocale;
+//extern int uselocale;
 
 extern char *c2p_routine;
 
@@ -426,7 +426,7 @@ default_t defaults[] = {{"mouse_sensitivity", &mouseSensitivity, 5, DTYP_INTEGER
                         {"maxvissprites", &maxvissprites, 128, DTYP_INTEGER},
                         {"maxdrawsegs", &maxdrawsegs, 256, DTYP_INTEGER},
                         {"special", &special, 0, DTYP_INTEGER},
-                        {"uselocale", &uselocale, 1, DTYP_INTEGER}};
+                        /*{"uselocale", &uselocale, 1, DTYP_INTEGER}*/};
 
 int numdefaults;
 char *defaultfile;

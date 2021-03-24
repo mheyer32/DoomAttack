@@ -115,7 +115,6 @@ SOURCES = \
 	amigaasm/analogjoy.asm \
 	amigaasm/clip.asm \
 	d_items.c \
-	d_locale.c \
 	d_main.c \
 	d_net.c \
 	doomdef.c \
