@@ -211,7 +211,7 @@ DoomAttack: AFLAGS+=-m68020up
 $(eval $(call make_exe,DoomAttack,$(BUILDDIR)/030/))
 
 profile:
-	m68k-amigaos-gprof --brief $(BUILDDIR))/DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf
+	m68k-amigaos-gprof --brief $(BUILDDIR)/DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf
 
 define make_plugin
 $$(eval $$(call build_rules,$$(BUILDDIR)))
