@@ -215,7 +215,7 @@ profile:
 define make_plugin
 $$(eval $$(call build_rules,$$(BUILDDIR)))
 ${1}_DIR = ${2}
-${1}_SRC = $$(call collect_sources,$$(${1}_DIR)) plugin_runtime.c
+${1}_SRC = plugin_runtime.c $$(call collect_sources,$$(${1}_DIR)) plugin_exit.c
 ${1}_OBJS = $$(call create_objlist,$$(${1}_SRC), $$(BUILDDIR))
 ${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
 ${1}_TARGET = $$(BINDIR)/${3}
