@@ -58,6 +58,9 @@ void C_DAM_Init(struct DAMInitialization *daminit)
 
     // setups vars
     GfxBase = (struct GfxBase *)daminit->GfxBase;
+    DOSBase = daminit->DOSBase;
+    SysBase = daminit->SysBase;
+
     gametic = daminit->gametic;
     snd_MusicVolume = daminit->snd_MusicVolume;
     myargv = daminit->myargv;
