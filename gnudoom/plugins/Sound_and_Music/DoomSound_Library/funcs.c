@@ -37,13 +37,14 @@ extern BOOL NoSound;
 
 void C_DAM_Init(struct DAMInitialization *daminit)
 {
-    InitRuntime();
 
     // link function pointers to DoomAttack routines
+    DOSBase = daminit->DOSBase;
+    SysBase = daminit->SysBase;
+
     I_Error = daminit->I_Error;
     M_CheckParm = daminit->M_CheckParm;
 
-    // setups vars
     gametic = daminit->gametic;
     snd_MusicVolume = daminit->snd_MusicVolume;
     myargv = daminit->myargv;
@@ -51,6 +52,9 @@ void C_DAM_Init(struct DAMInitialization *daminit)
 
     // Tell DoomAttack the informations, it needs
     daminit->numchannels = 16 | DAMF_SOUNDFX | DAMF_FASTRAM;
+
+    // setups vars
+    InitRuntime();
 }
 
 static char *PREFSNAME = "DoomAttackSupport/config/DAMusic_DoomSndLibrary.config";

@@ -60,6 +60,8 @@ void DAN_Init(REGA0(struct DANInitialization *daninit))
 #endif
 
     // link function pointers to DoomAttack routines
+    DOSBase = init->DOSBase;
+    SysBase = init->SysBase;
 
     I_Error = init->I_Error;
     M_CheckParm = init->M_CheckParm;
