@@ -27,6 +27,7 @@ define source_to_object
 							$(patsubst %.asm,%.o,${1}))))
 endef
 
+#place XXStartup first
 define create_objlist
 	$(filter %tartup.o,$(call source_to_object,${1},${2}))\
 	$(filter-out %tartup.o,$(call source_to_object,${1},${2}))
@@ -215,7 +216,7 @@ profile:
 define make_plugin
 $$(eval $$(call build_rules,$$(BUILDDIR)))
 ${1}_DIR = ${2}
-${1}_SRC = plugin_init.c $$(call collect_sources,$$(${1}_DIR)) plugin_runtime.c plugin_exit.c
+${1}_SRC = plugin_init.c $$(call collect_sources,$$(${1}_DIR)) plugin_runtime.c
 ${1}_OBJS = $$(call create_objlist,$$(${1}_SRC), $$(BUILDDIR))
 ${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
 ${1}_TARGET = $$(BINDIR)/${3}
@@ -224,9 +225,9 @@ ${1}: BUILDDIR=$(CURDIR)/build/
 ${1}: CFLAGS+=-m68020-60 -mtune=68030 -D__ASM_ROUTINES__
 ${1}: LDFLAGS+=-m68020-60 -mtune=68030
 ${1}: AFLAGS+=-m68020up
-${1} : $$(${1}_OBJS)
+${1} : $$(${1}_OBJS) $$(BUILDDIR)xplugin_exit.o
 	$$(MKDIR) $$(dir $$(${1}_TARGET))
-	$$(CC) $$^ $$(LDFLAGS) -nostartfiles -lstubs -o $$(<D)/${1}
+	$$(CC) -v $$(LDFLAGS) -nostartfiles $$(${1}_OBJS) -lstubs $$(BUILDDIR)xplugin_exit.o -o $$(<D)/${1}
 	$$(STRIP)  $$(<D)/${1} -o $$(${1}_TARGET)
 endef
 
