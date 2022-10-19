@@ -220,7 +220,10 @@ ${1}_OBJS = $$(call create_objlist,$$(${1}_SRC), $$(BUILDDIR))
 ${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
 ${1}_TARGET = $$(BINDIR)/${3}
 
-${1} : CFLAGS+=-D__ASM_ROUTINES__
+${1}: BUILDDIR=$(CURDIR)/build/
+${1}: CFLAGS+=-m68020-60 -mtune=68030 -D__ASM_ROUTINES__
+${1}: LDFLAGS+=-m68020-60 -mtune=68030
+${1}: AFLAGS+=-m68020up
 ${1} : $$(${1}_OBJS)
 	$$(MKDIR) $$(dir $$(${1}_TARGET))
 	$$(CC) $$^ $$(LDFLAGS) -nostartfiles -lstubs -o $$(<D)/${1}
@@ -251,11 +254,7 @@ $(eval $(call make_plugin,net_nullmodem, plugins/Network/Nullmodem_+_Modem/,Doom
 #DEHacked
 $(eval $(call make_plugin,dehacked, plugins/DeHacked/,DoomAttackSupport/plugin/DeHackEd))
 
-Plugins: BUILDDIR=$(CURDIR)/build/
-Plugins: CFLAGS+=-m68030
-Plugins: LDFLAGS+=-m68030
-Plugins: AFLAGS+=-m68020up
-Plugins : c2p_Graffiti \
+Plugins:  c2p_Graffiti \
 		  c2p_020_Blitter \
 		  c2p_020_Optimized \
 		  c2p_040 \
