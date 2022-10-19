@@ -51,9 +51,9 @@ void DAN_Init(REGA0(struct DANInitialization *daninit))
 {
     struct DANInitialization *init = daninit;
 
-    InitRuntime();
-
     // link function pointers to DoomAttack routines
+    DOSBase = init->DOSBase;
+    SysBase = init->SysBase;
 
     I_Error = init->I_Error;
     M_CheckParm = init->M_CheckParm;
@@ -65,6 +65,9 @@ void DAN_Init(REGA0(struct DANInitialization *daninit))
     myargc = init->myargc;
 
     IntuitionBase = (struct IntuitionBase *)init->IntuitionBase;
+
+    InitRuntime();
+
 }
 
 /**********************************************************************/

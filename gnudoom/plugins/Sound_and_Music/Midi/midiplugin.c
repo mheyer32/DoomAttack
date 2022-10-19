@@ -50,8 +50,6 @@ static WORD voltable[16] = {
 
 void C_DAM_Init(struct DAMInitialization *daminit)
 {
-    InitRuntime();
-
     // link function pointers to DoomAttack routines
     I_Error = daminit->I_Error;
     M_CheckParm = daminit->M_CheckParm;
@@ -68,6 +66,8 @@ void C_DAM_Init(struct DAMInitialization *daminit)
 
     // Tell DoomAttack the informations, it needs
     daminit->numchannels = 2;
+
+    InitRuntime();
 
     if (GfxBase->DisplayFlags & PAL) {
         // PAL
