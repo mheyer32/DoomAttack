@@ -11,8 +11,13 @@ struct InitListItem
     long priority;
 };
 
-extern __far const long __INIT_LIST__[];
-extern __far const long __EXIT_LIST__[];
+__attribute__((section(".list___INIT_LIST__")))
+long __INIT_LIST__[] = {0};
+__attribute__((section(".list___EXIT_LIST__")))
+long __EXIT_LIST__[] = {0};
+__attribute__((section(".list___ZZZZ__")))
+long __ZZZZ__[] = {0};
+
 
 struct ExecBase *SysBase;
 struct WBStartup *_WBenchMsg;

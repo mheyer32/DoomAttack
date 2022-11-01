@@ -14,6 +14,7 @@ VERSION060 ?= 0
 PROFILE ?= 0
 
 CC = m68k-amigaos-gcc
+LD = m68k-amigaos-ld
 STRIP = m68k-amigaos-strip
 ASS = vasmm68k_mot
 VLINK = vlink
@@ -27,6 +28,7 @@ define source_to_object
 							$(patsubst %.asm,%.o,${1}))))
 endef
 
+#place XXStartup first
 define create_objlist
 	$(filter %tartup.o,$(call source_to_object,${1},${2}))\
 	$(filter-out %tartup.o,$(call source_to_object,${1},${2}))
@@ -215,9 +217,8 @@ profile:
 define make_plugin
 $$(eval $$(call build_rules,$$(BUILDDIR)))
 ${1}_DIR = ${2}
-${1}_SRC = plugin_runtime.c $$(call collect_sources,$$(${1}_DIR)) plugin_exit.c
+${1}_SRC = plugin_runtime.c $$(call collect_sources,$$(${1}_DIR))
 ${1}_OBJS = $$(call create_objlist,$$(${1}_SRC), $$(BUILDDIR))
-${1}_OBJS_STRIPPED = $$(patsubst %,%.stripped,$$(${1}_OBJS))
 ${1}_TARGET = $$(BINDIR)/${3}
 
 ${1}: BUILDDIR=$(CURDIR)/build/
