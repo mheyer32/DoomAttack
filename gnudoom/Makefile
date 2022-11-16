@@ -182,7 +182,7 @@ SOURCES = \
 	z_zone.c
 
 
-all: DoomAttack DoomAttack060 Plugins
+all: DoomAttack DoomAttack060 Plugins doomsound_midi.library
 
 clean:
 	rm -rf $(BUILDDIR)
@@ -210,6 +210,9 @@ DoomAttack: CFLAGS+=-m68030
 DoomAttack: LDFLAGS+=-m68030
 DoomAttack: AFLAGS+=-m68020up
 $(eval $(call make_exe,DoomAttack,$(BUILDDIR)/030/))
+
+doomsound_midi.library: 
+	$(MAKE) --directory=./camd_tools --file Makefile
 
 profile:
 	m68k-amigaos-gprof --brief $(BUILDDIR)/DoomAttack $(BINDIR)/gmon.out | gprof2dot.py | dot -s -Tpdf -oDoomAttack.pdf

@@ -1,0 +1,3 @@
+[submodule "gnudoom/camd_tools"]
+	path = gnudoom/camd_tools
+	url = https://github.com/mheyer32/camd_tools.git
