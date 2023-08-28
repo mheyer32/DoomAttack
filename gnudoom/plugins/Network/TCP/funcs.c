@@ -140,7 +140,7 @@ static void PacketGet(void)
     doomdata_t *netbuf = *netbuffer;
     int i, c;
     struct sockaddr_in fromaddress;
-    LONG fromlen;
+    socklen_t fromlen;
 
 #ifndef FAST
     doomdata_t sw;
