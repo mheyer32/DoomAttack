@@ -24,6 +24,7 @@
 
 
 #include "doomdef.h"
+#include <string.h>
 
 #include "m_bbox.h"
 

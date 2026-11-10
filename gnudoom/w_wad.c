@@ -23,11 +23,6 @@
 
 #define MAXWADFILES 20
 
-#define alloca(x) mymalloc(x)
-#define freea(x) free(x)
-
-
-
 #include <dos/dosextens.h>
 #include <exec/exec.h>
 #include <proto/dos.h>
@@ -36,6 +31,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* after system headers: they #define alloca to __builtin_alloca */
+#ifdef alloca
+#undef alloca
+#endif
+#define alloca(x) mymalloc(x)
+#define freea(x) free(x)
 
 /*#endif*/
 

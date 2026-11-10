@@ -26,6 +26,7 @@
 #include "i_system.h"
 #include "m_random.h"
 #include "z_zone.h"
+#include <string.h>
 
 #include "doomdef.h"
 #include "p_local.h"

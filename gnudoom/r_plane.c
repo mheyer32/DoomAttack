@@ -26,6 +26,7 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "i_system.h"
 #include "w_wad.h"

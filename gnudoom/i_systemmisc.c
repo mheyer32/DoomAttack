@@ -506,7 +506,7 @@ struct DEHPlugin
     long (*deh_DeHackEd)(char *file, struct DEHInit *i);
 };
 
-static LONG oldfpustate;
+static LONG oldfpustate __attribute__((used));
 
 void I_DeHackEd(char *file)
 {

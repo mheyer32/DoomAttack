@@ -24,6 +24,7 @@
 
 
 #include <ctype.h>
+#include <string.h>
 
 /* Functions.*/
 #include "i_system.h"

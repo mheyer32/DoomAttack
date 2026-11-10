@@ -81,6 +81,7 @@ CFLAGS = $(RUNTIME_CFLAGS)
 LDFLAGS = $(RUNTIME_LDFLAGS) -g -ggdb -msmall-code
 
 
+CFLAGS += -std=gnu99
 CFLAGS += -msmall-code -g -ggdb
 CFLAGS += -Werror -Wimplicit -Wstrict-prototypes
 CFLAGS += -D__BIG_ENDIAN__ -DNORMALUNIX -DAMIGA -D__NO_NET_API

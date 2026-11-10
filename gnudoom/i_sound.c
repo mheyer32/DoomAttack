@@ -27,6 +27,7 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
+#include <string.h>
 
 #ifdef MAXINT
 #undef MAXINT
@@ -666,7 +667,7 @@ void I_InitSound()
 /* Remains. Dummies.*/
 /**/
 
-static LONG oldfpustate;
+static LONG oldfpustate __attribute__((used));
 
 static void GetDAMPlugin(void)
 {

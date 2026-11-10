@@ -217,9 +217,8 @@ static __inline int R_PointOnSide(fixed_t x, fixed_t y, node_t* node)
 
         "9:"
 
-        : "=r"(_res)
-        : "r"(d0), "r"(d1), "r"(a0)
-        : "d1");
+        : "=r"(_res), "+r"(d1)
+        : "r"(d0), "r"(a0));
 
     return _res;
 }
@@ -358,9 +357,9 @@ static __inline int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t* line)
 
         "9:"
 
-        : "=r"(_res)
-        : "r"(d0), "r"(d1), "r"(a0)
-        : "d1", "d4", "d5", "d6", "d7", "a1");
+        : "=r"(_res), "+r"(d1)
+        : "r"(d0), "r"(a0)
+        : "d4", "d5", "d6", "d7", "a1");
 
     return _res;
 }
@@ -447,12 +446,12 @@ static __inline fixed_t R_PointToDist(fixed_t x, fixed_t y)
 
         "9:"
 
-        : "=r"(_res)
-        : "r"(d0), "r"(d1)
+        : "=r"(_res), "+r"(d1)
+        : "r"(d0)
 #ifndef version060
-        : "d1", "d2", "a0");
+        : "d2", "a0");
 #else
-        : "d1", "d2", "a0", "fp0");
+        : "d2", "a0", "fp0");
 #endif
 
     return _res;

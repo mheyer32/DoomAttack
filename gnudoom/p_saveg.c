@@ -26,6 +26,7 @@
 #include "i_system.h"
 #include "p_local.h"
 #include "z_zone.h"
+#include <string.h>
 
 /* State.*/
 #include "doomstat.h"

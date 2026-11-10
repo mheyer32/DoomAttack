@@ -180,9 +180,8 @@ static __inline fixed_t P_AproxDistance(fixed_t dx, fixed_t dy)
 
         "9:"
 
-        : "=r"(_res)
-        : "r"(d0), "r"(d1)
-        : "d1");
+        : "=r"(_res), "+r"(d1)
+        : "r"(d0));
 
     return _res;
 };
@@ -295,9 +294,9 @@ static __inline int P_PointOnLineSide(fixed_t x, fixed_t y, line_t* line)
 
         "9:"
 
-        : "=r"(_res)
-        : "r"(a0), "r"(d0), "r"(d1)
-        : "a1", "d1", "d2", "d3", "d4", "d5");
+        : "=r"(_res), "+r"(d1)
+        : "r"(a0), "r"(d0)
+        : "a1", "d2", "d3", "d4", "d5");
 
     return _res;
 }

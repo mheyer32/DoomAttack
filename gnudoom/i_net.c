@@ -62,7 +62,7 @@ static void (*DAN_NetCmd)(void);
 
 char *NetPlugin;
 
-static LONG oldfpustate;
+static LONG oldfpustate __attribute__((used));
 
 static void GetDANPlugin(void)
 {

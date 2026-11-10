@@ -315,9 +315,9 @@ static __inline int P_PointOnDivlineSide(fixed_t x, fixed_t y, divline_t* line)
 
         "9:"
 
-        : "=r"(_res)
-        : "r"(d0), "r"(d1), "r"(a0)
-        : "d1", "d2", "d3", "d4", "d5");
+        : "=r"(_res), "+r"(d1)
+        : "r"(d0), "r"(a0)
+        : "d2", "d3", "d4", "d5");
 
     return _res;
 }

@@ -27,6 +27,7 @@
 #include "m_random.h"
 #include "v_video.h"
 #include "z_zone.h"
+#include <string.h>
 
 #include "doomdef.h"
 

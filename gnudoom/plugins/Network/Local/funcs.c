@@ -7,7 +7,7 @@
 
 /*=====================*/
 
-struct ExecBase *SysBase;
+extern struct ExecBase *SysBase;
 
 doomdata_t **netbuffer;
 doomcom_t *doomcom;

@@ -32,6 +32,7 @@
 #include "i_video.h"
 #include "m_argv.h"
 #include "m_menu.h"
+#include <string.h>
 
 #include "stdlib.h"
 
